@@ -20,12 +20,14 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.milkbowl.vault.economy.Economy;
+import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
+import water.of.cup.boardgames.game.maps.MapManager;
+import water.of.cup.boardgames.listeners.BlockPlace;
 import water.of.cup.boardgames.metrics.Metrics;
 
 public class BoardGames extends JavaPlugin {
 	
-	private static NamespacedKey key;
 	private static BoardGames instance;
 	private static GameManager gameManager = new GameManager();
 	private static ImageManager imageManager = new ImageManager();
@@ -39,8 +41,8 @@ public class BoardGames extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		
-		key = new NamespacedKey(this, "chess_game_item");
-
+		Game.setGameIdKey(new NamespacedKey(this, "game_id_key"));
+		MapManager.setMapValsKey(new NamespacedKey(this, "map_vals_key"));
 		loadConfig();
 
 		boolean loadedImages = imageManager.loadImages();
@@ -55,7 +57,8 @@ public class BoardGames extends JavaPlugin {
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());
 
 //		registerListeners(new BoardInteract(), new BlockPlace(), new InventoryClose(), new InventoryClick(), new HangingBreakByEntity(), new EntityDamageByEntity(), new HangingBreak(), new ChessPlayerJoin(), new BlockBreak());
-
+		registerListeners(new BlockPlace());
+		
 		if(config.getBoolean("settings.chessboard.recipe.enabled"))
 			addGameRecipes();
 
@@ -227,11 +230,7 @@ public class BoardGames extends JavaPlugin {
 	public Economy getEconomy() {
         return economy;
     }
-
-	public static NamespacedKey getKey() {
-		return key;
-	}
-
+	
 //	public DataSource getDataStore() {
 //		return dataStore;
 //	}
