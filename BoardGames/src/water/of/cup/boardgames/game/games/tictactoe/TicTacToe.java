@@ -1,7 +1,7 @@
 package water.of.cup.boardgames.game.games.tictactoe;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GamePlayer;
@@ -10,12 +10,6 @@ public class TicTacToe extends Game {
 
 	public TicTacToe(int rotation) {
 		super(rotation);
-	}
-
-	@Override
-	public void click(Player player, int[] location) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -45,6 +39,18 @@ public class TicTacToe extends Game {
 	@Override
 	protected void startClock() {
 		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ItemStack getBoardItem() {
+		return null;
+	}
+
+	@Override
+	public void click(Player player, double[] loc, ItemStack map) {
+		int[] clickLoc = mapManager.getClickLocation(loc, map);
+		player.sendMessage("you clicked: " + clickLoc[0] + "," + clickLoc[1]);
 		
 	}
 

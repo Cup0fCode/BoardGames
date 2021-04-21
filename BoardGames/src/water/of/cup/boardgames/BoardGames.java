@@ -24,6 +24,7 @@ import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.listeners.BlockPlace;
+import water.of.cup.boardgames.listeners.BoardInteract;
 import water.of.cup.boardgames.metrics.Metrics;
 
 public class BoardGames extends JavaPlugin {
@@ -57,10 +58,10 @@ public class BoardGames extends JavaPlugin {
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());
 
 //		registerListeners(new BoardInteract(), new BlockPlace(), new InventoryClose(), new InventoryClick(), new HangingBreakByEntity(), new EntityDamageByEntity(), new HangingBreak(), new ChessPlayerJoin(), new BlockBreak());
-		registerListeners(new BlockPlace());
+		registerListeners(new BlockPlace(), new BoardInteract());
 		
-		if(config.getBoolean("settings.chessboard.recipe.enabled"))
-			addGameRecipes();
+//		if(config.getBoolean("settings.chessboard.recipe.enabled"))
+//			addGameRecipes();
 
 //		if(config.getBoolean("settings.database.enabled")) {
 //			this.dataStore = new DataSource();;
