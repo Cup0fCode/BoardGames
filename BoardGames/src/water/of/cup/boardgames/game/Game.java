@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
+import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.wagers.WagerManager;
@@ -60,7 +61,7 @@ public abstract class Game {
 		buttons = new ArrayList<Button>();
 	}
 
-	abstract public void click(Player player, int[] location);
+	abstract public void click(Player player, double[] loc, ItemStack map);
 
 	public boolean canPlaceBoard(Location loc, int rotation) {
 		int[] centerLoc = mapManager.getMapValsLocationOnRotatedBoard(placedMapVal);
@@ -119,10 +120,6 @@ public abstract class Game {
 					// create the map
 					ItemStack map = new GameMap(this, mapVal, new ItemStack(Material.FILLED_MAP, 1));
 
-//					MapMeta mapMeta = (MapMeta) itemStack.getItemMeta();
-//					MapView mapView = Bukkit.createMap(loc.getWorld());
-//					itemStack.setItemMeta(mapMeta);
-
 					// spawn itemFrame
 					Location frameLoc = new Location(loc.getWorld(), loc.getBlockX() + x, loc.getBlockY() + y, loc.getBlockZ() + z);
 
@@ -131,17 +128,19 @@ public abstract class Game {
 					frame.setFacingDirection(BlockFace.UP, true);
 					frame.setInvulnerable(true);
 					frame.setFixed(true);
-					frame.setVisible(false);
+					frame.setVisible(true);
+					frameLoc.getBlock().setType(Material.BARRIER);
 				}
 			}
 		}
+		BoardGames.getInstance().getGameManager().addGame(this);
 	}
 
 	public void cancelGame() {
 		wagerManager.endAll();
 	}
 
-	private Button getClickedButton(GamePlayer gamePlayer, int[] loc) { // returns null if no button is clicked
+	protected Button getClickedButton(GamePlayer gamePlayer, int[] loc) { // returns null if no button is clicked
 		for (Button button : buttons) {
 			if (button.clicked(gamePlayer, loc))
 				return button;
@@ -214,4 +213,9 @@ public abstract class Game {
 	public String getGameName() {
 		return gameName;
 	}
+	
+	public void delete() {
+		// TODO: add delete method
+	}
+	public abstract ItemStack getBoardItem();
 }

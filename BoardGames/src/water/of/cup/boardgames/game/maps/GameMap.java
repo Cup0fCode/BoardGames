@@ -37,6 +37,7 @@ public class GameMap extends ItemStack {
 		
 		persistentDataContainer.set(Game.getGameIdKey(), PersistentDataType.INTEGER, gameId);
 		persistentDataContainer.set(MapManager.getMapValsKey(), PersistentDataType.INTEGER, mapVal);
+		this.setItemMeta(itemMeta);
 	}
 
 	public static boolean isGameMap(ItemStack itemStack) {
@@ -51,7 +52,7 @@ public class GameMap extends ItemStack {
 		if (!persistentDataContainer.has(MapManager.getMapValsKey(), PersistentDataType.INTEGER))
 			return false;
 
-		return false;
+		return true;
 	}
 
 	public int getGameId() {

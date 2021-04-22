@@ -35,15 +35,13 @@ public class MapManager {
 		}
 	}
 
-	public int[] getClickLocation(Location location, ItemStack map) {
+	public int[] getClickLocation(double[] locDouble, ItemStack map) {
 		if (!GameMap.isGameMap(map)) // this should never happen
 			return new int[] { 0, 0 };
 
 		GameMap gameMap = new GameMap(map);
-		if (gameMap.getGame().equals(game)) // neither should this
+		if (!gameMap.getGame().equals(game)) // neither should this
 			return new int[] { 0, 0 };
-
-		double[] locDouble = new double[] { location.getX(), location.getZ() };
 
 		// calculate location on map clicked
 		int x = (int) ((locDouble[0] - Math.floor(locDouble[0])) * 128);
