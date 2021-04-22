@@ -31,7 +31,6 @@ public class BoardGames extends JavaPlugin {
 	
 	private static BoardGames instance;
 	private static GameManager gameManager = new GameManager();
-	private static ImageManager imageManager = new ImageManager();
 	//private HashMap<Player, ChessCreateGameInventory> createGameManager = new HashMap<>();
 	private File configFile;
 	private FileConfiguration config;
@@ -45,12 +44,6 @@ public class BoardGames extends JavaPlugin {
 		Game.setGameIdKey(new NamespacedKey(this, "game_id_key"));
 		MapManager.setMapValsKey(new NamespacedKey(this, "map_vals_key"));
 		loadConfig();
-
-		boolean loadedImages = imageManager.loadImages();
-		if(!loadedImages) {
-			Bukkit.getLogger().warning("[ChessBoards] Could not start ChessBoards due to invalid images");
-			return;
-		}
 
 		Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
 		
@@ -222,10 +215,6 @@ public class BoardGames extends JavaPlugin {
 
 	public GameManager getGameManager() {
 		return gameManager;
-	}
-	
-	public ImageManager getImageManager() {
-		return imageManager;
 	}
 	
 	public Economy getEconomy() {
