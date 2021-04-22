@@ -210,4 +210,8 @@ public abstract class Game {
 	protected void createMapManager() {
 		mapManager = new MapManager(mapStructure, gameId, this);
 	}
+
+	public String getGameName() {
+		return gameName;
+	}
 }
