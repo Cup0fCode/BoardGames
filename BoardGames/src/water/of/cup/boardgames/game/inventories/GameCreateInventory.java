@@ -27,26 +27,12 @@ public class GameCreateInventory {
     }
 
     public void build(Player player, final int page, HashMap<String, Object> cachedGameData, CreateInventoryCallback callback) {
-        char[][] guiSetup = new char[6][9];
-
-        for (char[] chars : guiSetup) {
-            Arrays.fill(chars, ' ');
-        }
-
-        for(int y = 1; y <= 3; y++) {
-            for(int x = 1; x <= 7; x++) {
-                guiSetup[y][x] = 'w';
-            }
-        }
-
+        HashMap<Character, GameOption> characterMap = new HashMap<>();
         ArrayList<GameOption> gameOptions = new ArrayList<>(this.gameOptions);
 
         // If there are more than 4 options, use page
         if(gameOptions.size() > 4) {
             gameOptions.clear();
-
-            // Define a "Next" button
-            guiSetup[2][7] = 'x';
 
             // Render only 3 options to make room for next
             int gameIndex = page * 3;
@@ -58,7 +44,8 @@ public class GameCreateInventory {
             }
         }
 
-        HashMap<Character, GameOption> characterMap = new HashMap<>();
+        char[][] guiSetup = getGuiSetup(gameOptions, characterMap);
+
         HashMap<String, Object> gameData = new HashMap<>();
 
         if(cachedGameData == null) {
@@ -77,55 +64,7 @@ public class GameCreateInventory {
             }
         }
 
-        int[] startPos = new int[] {1, 2};
-
-        char startChar = 'a';
-
-        // Define char layout
-        for(GameOption gameOption : gameOptions) {
-            switch (gameOption.getOptionType()) {
-                case TOGGLE: {
-                    guiSetup[startPos[1]][startPos[0]] = startChar;
-                    guiSetup[startPos[1] + 1][startPos[0]] = (char) (startChar + 1);
-
-                    characterMap.put(startChar, gameOption);
-                    characterMap.put((char) (startChar + 1), gameOption);
-
-                    startChar += 2;
-                    break;
-                }
-                case COUNT: {
-                    guiSetup[startPos[1] - 1][startPos[0]] = startChar;
-                    guiSetup[startPos[1]][startPos[0]] = (char) (startChar + 1);
-                    guiSetup[startPos[1] + 1][startPos[0]] = (char) (startChar + 2);
-
-                    characterMap.put(startChar, gameOption);
-                    characterMap.put((char) (startChar + 1), gameOption);
-                    characterMap.put((char) (startChar + 2), gameOption);
-
-                    startChar += 3;
-                    break;
-                }
-            }
-
-            // increment startPos
-            startPos[0] += 2;
-        }
-
-        String[] guiSetupString = new String[6];
-        for(int y = 0; y < guiSetup.length; y++) {
-            StringBuilder row = new StringBuilder();
-            for(int x = 0; x < guiSetup[y].length; x++) {
-                row.append(guiSetup[y][x]);
-            }
-            guiSetupString[y] = row.toString();
-        }
-
-//        Debug:
-//        Bukkit.getLogger().info("[BoardGamesDebug] Gui Setup: ");
-//        for(String line : guiSetupString) {
-//            Bukkit.getLogger().info("'" + line + "'");
-//        }
+        String[] guiSetupString = formatGuiSetup(guiSetup);
 
         // Parse each icon into buttons
         InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, game.getGameName(), guiSetupString);
@@ -148,6 +87,15 @@ public class GameCreateInventory {
                     return true;
                 },
                         ChatColor.GREEN + "Next Page"
+                )
+        );
+
+        gui.addElement(new StaticGuiElement('y', new ItemStack(Material.LIME_STAINED_GLASS_PANE), click -> {
+                    gui.close(true);
+                    callback.onCreateGame(gameData);
+                    return true;
+                },
+                        ChatColor.GREEN + "Create Game"
                 )
         );
 
@@ -271,13 +219,89 @@ public class GameCreateInventory {
         }
 
         // TODO: figure out when they close vs auto closed, add create button
-        gui.setCloseAction(close -> false);
+        gui.setCloseAction(close -> {
+            // They left the inventory, do not create game
+            callback.onCreateGame(null);
+            return false;
+        });
 
         gui.show(player);
     }
 
     public void build(Player player, CreateInventoryCallback callback) {
         build(player, 0, null, callback);
+    }
+
+    private char[][] getGuiSetup(ArrayList<GameOption> gameOptions, HashMap<Character, GameOption> characterMap) {
+        char[][] guiSetup = new char[6][9];
+
+        // Fill all with spaces
+        for (char[] chars : guiSetup) {
+            Arrays.fill(chars, ' ');
+        }
+
+        // Define option background
+        for(int y = 1; y <= 3; y++) {
+            for(int x = 1; x <= 7; x++) {
+                guiSetup[y][x] = 'w';
+            }
+        }
+
+        // Define create
+        guiSetup[5][4] = 'y';
+
+        // Define a "Next" button
+        if(this.gameOptions.size() > 4)
+            guiSetup[2][7] = 'x';
+
+        int[] startPos = new int[] {1, 2};
+
+        char startChar = 'a';
+
+        // Define char layout
+        for(GameOption gameOption : gameOptions) {
+            switch (gameOption.getOptionType()) {
+                case TOGGLE: {
+                    guiSetup[startPos[1]][startPos[0]] = startChar;
+                    guiSetup[startPos[1] + 1][startPos[0]] = (char) (startChar + 1);
+
+                    characterMap.put(startChar, gameOption);
+                    characterMap.put((char) (startChar + 1), gameOption);
+
+                    startChar += 2;
+                    break;
+                }
+                case COUNT: {
+                    guiSetup[startPos[1] - 1][startPos[0]] = startChar;
+                    guiSetup[startPos[1]][startPos[0]] = (char) (startChar + 1);
+                    guiSetup[startPos[1] + 1][startPos[0]] = (char) (startChar + 2);
+
+                    characterMap.put(startChar, gameOption);
+                    characterMap.put((char) (startChar + 1), gameOption);
+                    characterMap.put((char) (startChar + 2), gameOption);
+
+                    startChar += 3;
+                    break;
+                }
+            }
+
+            // increment startPos
+            startPos[0] += 2;
+        }
+
+        return guiSetup;
+    }
+
+    private String[] formatGuiSetup(char[][] guiSetup) {
+        String[] guiSetupString = new String[guiSetup.length];
+        for(int y = 0; y < guiSetup.length; y++) {
+            StringBuilder row = new StringBuilder();
+            for(int x = 0; x < guiSetup[y].length; x++) {
+                row.append(guiSetup[y][x]);
+            }
+            guiSetupString[y] = row.toString();
+        }
+        return guiSetupString;
     }
 
     private boolean isNumeric(String str) {

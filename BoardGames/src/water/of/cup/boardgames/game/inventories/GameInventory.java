@@ -23,7 +23,8 @@ public abstract class GameInventory {
     protected abstract int getMaxQueue();
     protected abstract int getMaxGame();
 
-    private GameCreateInventory gameCreateInventory;
+    private final GameCreateInventory gameCreateInventory;
+    private final GameWaitPlayersInventory gameWaitPlayersInventory;
 
     /*
         - Create game screen
@@ -37,7 +38,10 @@ public abstract class GameInventory {
 
     public GameInventory(Game game) {
         this.game = game;
+
+        // Note: Might want to make these inventories take in one GameInventory instead
         this.gameCreateInventory = new GameCreateInventory(this.game, getOptions());
+        this.gameWaitPlayersInventory = new GameWaitPlayersInventory(this.game, getOptions());
     }
 
     public void build(Player player, GameInventoryCallback callback) {
@@ -51,10 +55,24 @@ public abstract class GameInventory {
         this.gameCreateInventory.build(player, new CreateInventoryCallback() {
             @Override
             public void onCreateGame(HashMap<String, Object> gameData) {
+                // check if gameData has been set, if it has, don't overwrite.
+
                 // Game has been created with gameData
+                if(gameData == null) {
+                    player.sendMessage("Not creating game");
+                    return;
+                }
+
+                // Set game data, open wait players
+                player.sendMessage("Creating game with gameData");
+                gameWaitPlayersInventory.build(player);
             }
         });
+
+        // this.gameJoinInventory.build(player, onJoin -> add, update waitplayers
     }
+
+    // TODO: Reset method, kicks everyone out, called when create game or game owner leaves
 
     public Game getGame() {
         return this.game;
