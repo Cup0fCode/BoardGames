@@ -21,9 +21,9 @@ public class GameCreateInventory {
     private final ArrayList<GameOption> gameOptions;
     private final Game game;
 
-    public GameCreateInventory(Game game, ArrayList<GameOption> gameOptions) {
-        this.gameOptions = gameOptions;
-        this.game = game;
+    public GameCreateInventory(GameInventory gameInventory) {
+        this.gameOptions = gameInventory.getGameOptions();
+        this.game = gameInventory.getGame();
     }
 
     public void build(Player player, final int page, HashMap<String, Object> cachedGameData, CreateInventoryCallback callback) {
@@ -44,8 +44,6 @@ public class GameCreateInventory {
             }
         }
 
-        char[][] guiSetup = getGuiSetup(gameOptions, characterMap);
-
         HashMap<String, Object> gameData = new HashMap<>();
 
         if(cachedGameData == null) {
@@ -64,6 +62,7 @@ public class GameCreateInventory {
             }
         }
 
+        char[][] guiSetup = getGuiSetup(gameOptions, characterMap);
         String[] guiSetupString = formatGuiSetup(guiSetup);
 
         // Parse each icon into buttons

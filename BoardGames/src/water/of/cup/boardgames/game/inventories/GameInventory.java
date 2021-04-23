@@ -26,6 +26,13 @@ public abstract class GameInventory {
     private final GameCreateInventory gameCreateInventory;
     private final GameWaitPlayersInventory gameWaitPlayersInventory;
 
+    private final ArrayList<GameOption> gameOptions;
+
+    // Vars that must be reset
+    private final ArrayList<Player> joinPlayerQueue;
+    private HashMap<String, Object> gameData;
+    private Player gameCreator;
+
     /*
         - Create game screen
             - define options
@@ -38,10 +45,14 @@ public abstract class GameInventory {
 
     public GameInventory(Game game) {
         this.game = game;
+        this.joinPlayerQueue = new ArrayList<>();
+        this.gameOptions = getOptions();
 
-        // Note: Might want to make these inventories take in one GameInventory instead
-        this.gameCreateInventory = new GameCreateInventory(this.game, getOptions());
-        this.gameWaitPlayersInventory = new GameWaitPlayersInventory(this.game, getOptions());
+        // When gameData is null, no game has been created
+        this.gameData = null;
+
+        this.gameCreateInventory = new GameCreateInventory(this);
+        this.gameWaitPlayersInventory = new GameWaitPlayersInventory(this);
     }
 
     public void build(Player player, GameInventoryCallback callback) {
@@ -52,30 +63,68 @@ public abstract class GameInventory {
         // wait players -> accept enough -> move all to ready
         // ready -> onready -> start game
 
-        this.gameCreateInventory.build(player, new CreateInventoryCallback() {
+        this.gameCreateInventory.build(player, handleCreateGame(player));
+
+        // this.gameJoinInventory.build(player, onleave/onJoin -> add, update waitplayers/ check if game has enough players
+    }
+
+    private CreateInventoryCallback handleCreateGame(Player player) {
+        return new CreateInventoryCallback() {
             @Override
-            public void onCreateGame(HashMap<String, Object> gameData) {
+            public void onCreateGame(HashMap<String, Object> gameDataResult) {
                 // check if gameData has been set, if it has, don't overwrite.
+                if(gameData != null) {
+                    player.sendMessage("Game has already been created.");
+                    return;
+                }
 
                 // Game has been created with gameData
-                if(gameData == null) {
-                    player.sendMessage("Not creating game");
+                if(gameDataResult == null) {
+                    player.sendMessage("Exited creating game.");
                     return;
                 }
 
                 // Set game data, open wait players
                 player.sendMessage("Creating game with gameData");
-                gameWaitPlayersInventory.build(player);
-            }
-        });
 
-        // this.gameJoinInventory.build(player, onJoin -> add, update waitplayers
+                gameCreator = player;
+                gameData = new HashMap<>(gameDataResult);
+                gameWaitPlayersInventory.build(player, handleWaitPlayers());
+            }
+        };
+    }
+
+    private WaitPlayersCallback handleWaitPlayers() {
+        return new WaitPlayersCallback() {
+            @Override
+            public void onAccept(Player player) {
+                // TODO: Add them to players
+            }
+
+            @Override
+            public void onDecline(Player player) {
+                // TODO: Remove from queue
+            }
+        };
     }
 
     // TODO: Reset method, kicks everyone out, called when create game or game owner leaves
 
     public Game getGame() {
         return this.game;
+    }
+
+    // This should be called instead of getOptions()
+    public ArrayList<GameOption> getGameOptions() {
+        return new ArrayList<>(this.gameOptions);
+    }
+
+    public ArrayList<Player> getJoinPlayerQueue() {
+        return new ArrayList<>(this.joinPlayerQueue);
+    }
+
+    public Object getGameData(String key) {
+        return this.gameData.get(key);
     }
 
 }
