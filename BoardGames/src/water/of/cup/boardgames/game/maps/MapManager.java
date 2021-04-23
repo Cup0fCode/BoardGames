@@ -3,11 +3,18 @@ package water.of.cup.boardgames.game.maps;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapCanvas;
+import org.bukkit.map.MapRenderer;
+import org.bukkit.map.MapView;
 
 import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.Utils;
+import water.of.cup.boardgames.game.GameImage;
+import water.of.cup.boardgames.game.MathUtils;
 
 public class MapManager {
 	// handles map click maths & map images
@@ -20,16 +27,16 @@ public class MapManager {
 	private Game game;
 
 	public MapManager(int[][] mapStructure, int rotation, Game game) {
-		this.mapStructure = Utils.cloneIntMatrix(mapStructure);
+		this.mapStructure = MathUtils.cloneIntMatrix(mapStructure);
 		this.rotation = rotation;
 		this.game = game;
 		dimensions = new int[] { mapStructure[0].length, mapStructure.length };
 
 		// set rotatedMapStructure
-		rotatedMapStructure = Utils.cloneIntMatrix(mapStructure);
+		rotatedMapStructure = MathUtils.cloneIntMatrix(mapStructure);
 		int i = 0;
 		while (i < rotation) {
-			rotatedMapStructure = Utils.rotateMatrix(rotatedMapStructure);
+			rotatedMapStructure = MathUtils.rotateMatrix(rotatedMapStructure);
 			i++;
 		}
 	}
@@ -51,7 +58,7 @@ public class MapManager {
 		// rotate the clicked position to account for rotated games
 		int i = rotation;
 		while (i < 4) {
-			loc = Utils.rotatePointAroundPoint90Degrees(new int[] { 64, 64 }, loc);
+			loc = MathUtils.rotatePointAroundPoint90Degrees(new int[] { 64, 64 }, loc);
 			i++;
 		}
 
@@ -93,7 +100,7 @@ public class MapManager {
 		int i = 0;
 		while (i < rotation) {
 			i++;
-			loc = Utils.rotatePointAroundPoint90Degrees(new int[] { 0, 0 }, loc);
+			loc = MathUtils.rotatePointAroundPoint90Degrees(new int[] { 0, 0 }, loc);
 		}
 
 		return loc;
@@ -105,7 +112,7 @@ public class MapManager {
 		int i = 0;
 		while (i < r) {
 			i++;
-			loc = Utils.rotatePointAroundPoint90Degrees(new int[] { 0, 0 }, loc);
+			loc = MathUtils.rotatePointAroundPoint90Degrees(new int[] { 0, 0 }, loc);
 		}
 		return mapStructure[loc[1]][loc[0]];
 	}
@@ -134,9 +141,24 @@ public class MapManager {
 		rd = new int[] { rd[0] - 1, rd[1] - 1 };
 		int i = 0;
 		while (i < rotation) {
-			rd = Utils.rotatePointAroundPoint90Degrees(new int[] { 0, 0 }, rd);
+			rd = MathUtils.rotatePointAroundPoint90Degrees(new int[] { 0, 0 }, rd);
 			i++;
 		}
 		return rd;
+	}
+
+	public void renderBoard() {
+		for (int mapVal : getMapVals()) {
+			GameMap map = game.getGameMapByMapVal(mapVal);
+			MapMeta mapMeta = map.getMapMeta();
+			MapView view = mapMeta.getMapView();
+			for (MapRenderer renderer : view.getRenderers())
+				view.removeRenderer(renderer);
+			view.setLocked(false);
+			view.addRenderer(new GameRenderer(game));
+			mapMeta.setMapView(view);
+			map.setItemMeta(mapMeta);
+			
+		}
 	}
 }

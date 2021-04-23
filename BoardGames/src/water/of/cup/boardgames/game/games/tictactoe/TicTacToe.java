@@ -3,7 +3,9 @@ package water.of.cup.boardgames.game.games.tictactoe;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 
 public class TicTacToe extends Game {
@@ -26,7 +28,7 @@ public class TicTacToe extends Game {
 
 	@Override
 	protected void setBoardImage() {
-		// TODO Auto-generated method stub
+		this.gameImage = new GameImage("TICTACTOE_BOARD");
 		
 	}
 
@@ -50,7 +52,9 @@ public class TicTacToe extends Game {
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
+		buttons.add(new Button(this, "TICTACTOE_X", new int[] {clickLoc[0] - 20, clickLoc[1] - 20}, 0, "An x"));
 		player.sendMessage("you clicked: " + clickLoc[0] + "," + clickLoc[1]);
+		mapManager.renderBoard();
 		
 	}
 

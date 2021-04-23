@@ -1,6 +1,5 @@
 package water.of.cup.boardgames.game;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +29,13 @@ public abstract class Game {
 	protected MapManager mapManager;
 	protected HashMap<Player, GamePlayer> players;
 	protected int turn;
-	protected BufferedImage boardImage;
+	protected GameImage gameImage;
 	protected ArrayList<Button> buttons;
 	protected WagerManager wagerManager;
 	protected Clock clock;
-
+	
+	protected ArrayList<GameMap> gameMaps; // game maps for the game
+	//public HashMap<Integer, Integer> mapValMapIds; // <mapval, mapid>
 	protected int[][] mapStructure; // the structure of mapVals, 0 for missing map
 	protected int placedMapVal; // the value of the map at the placed board location
 
@@ -64,6 +65,9 @@ public abstract class Game {
 		players = new HashMap<Player, GamePlayer>();
 		turn = 0;
 		buttons = new ArrayList<Button>();
+		
+		//mapValMapIds = new HashMap<Integer, Integer>();
+		gameMaps = new ArrayList<GameMap>();
 	}
 
 	abstract public void click(Player player, double[] loc, ItemStack map);
@@ -145,7 +149,15 @@ public abstract class Game {
 						continue;
 
 					// create the map
-					ItemStack map = new GameMap(this, mapVal, new ItemStack(Material.FILLED_MAP, 1));
+					GameMap map = new GameMap(this, mapVal, new ItemStack(Material.FILLED_MAP, 1));
+					
+					// set the mapView
+					MapView mapView = Bukkit.createMap(world);
+					MapMeta mapMeta = (MapMeta) map.getItemMeta();
+					mapMeta.setMapView(mapView);
+					map.setItemMeta(mapMeta);
+					//mapValMapIds.put(mapVal, mapView.getId());
+					gameMaps.add(map);
 
 					// spawn itemFrame
 					Location frameLoc = new Location(loc.getWorld(), loc.getBlockX() + x, loc.getBlockY() + y,
@@ -218,6 +230,10 @@ public abstract class Game {
 		}
 		return null;
 	}
+	
+	public GamePlayer getGamePlayer(Player player) {
+		return players.get(player);
+	}
 
 	public ArrayList<GamePlayer> getGamePlayers() {
 		return (ArrayList<GamePlayer>) players.values();
@@ -240,6 +256,33 @@ public abstract class Game {
 	public void delete() {
 		// TODO: add delete method
 	}
+	
+//	public int getMapValsId(int mapVal) {
+//		if (mapValMapIds.containsKey(mapVal))
+//			return mapValMapIds.get(mapVal);
+//		return 0;
+//				
+//	}
+	
+	public ArrayList<GameMap> getGameMaps() {
+		return gameMaps;
+	}
+	
+	public GameMap getGameMapByMapVal(int mapVal) {
+		for (GameMap map : gameMaps) {
+			if (map.getMapVal() == mapVal)
+				return map;
+		}
+		return null;
+	}
+	
+	public GameImage getGameImage() {
+		return gameImage;
+	}
 
 	public abstract ItemStack getBoardItem();
+	
+	public ArrayList<Button> getButtons() {
+		return buttons;
+	}
 }

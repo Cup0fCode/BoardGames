@@ -1,19 +1,36 @@
 package water.of.cup.boardgames.game;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import water.of.cup.boardgames.image_handling.ImageManager;
 
 public class Button {
 	private ArrayList<GamePlayer> visiblePlayers; // only these players can see the button
+	private boolean visibleForAll;
 	private Game game;
 	private String name;
 	private boolean clickAble;
 	private int[] location;
 	private int rotation;
-	private BufferedImage image;
+	private GameImage image;
 	private Boolean turnBased; // if true, button is only clickable when it is a player's turn
 	private Boolean renderTurnBased; // if true, button is only rendered when it is a player's turn
 
+	//public Button(Game game, BufferedImage image, int[] loc, String name, )
+	
+	public Button(Game game, String imageName, int[] location, int rotation, String name) {
+		visiblePlayers = new ArrayList<GamePlayer>();
+		visibleForAll = true;
+		this.game = game;
+		this.name = name;
+		this.clickAble = false;
+		this.location = location;
+		this.rotation = rotation;
+		image = new GameImage(ImageManager.getImage(imageName), rotation);
+		turnBased = false;
+		renderTurnBased = false;
+	}
+	
 	public boolean clicked(GamePlayer gamePlayer, int[] loc) {
 		if (!visiblePlayers.contains(gamePlayer))
 			return false;
@@ -28,7 +45,7 @@ public class Button {
 		// rotate p2
 		int i = 0;
 		while (i < rotation) {
-			p2 = Utils.rotatePointAroundPoint90Degrees(p1, p2);
+			p2 = MathUtils.rotatePointAroundPoint90Degrees(p1, p2);
 			i++;
 		}
 		
@@ -37,5 +54,47 @@ public class Button {
 			return false;
 		
 		return true;
+	}
+	
+	public boolean visibleForPlayer(GamePlayer player) {
+		if (!visiblePlayers.contains(player))
+			return false;
+		
+		if (!game.getTurn().equals(player) && renderTurnBased)
+			return false;
+		
+		return true;
+	}
+
+	public Boolean getRenderTurnBased() {
+		return renderTurnBased;
+	}
+
+	public void setRenderTurnBased(Boolean renderTurnBased) {
+		this.renderTurnBased = renderTurnBased;
+	}
+
+	public GameImage getImage() {
+		return image;
+	}
+
+	public void setImage(GameImage image) {
+		this.image = image;
+	}
+
+	public boolean isVisibleForAll() {
+		return visibleForAll;
+	}
+
+	public void setVisibleForAll(boolean visibleForAll) {
+		this.visibleForAll = visibleForAll;
+	}
+	
+	public int[] getLocation() {
+		return location;
+	}
+	
+	public void addVisiblePlayer(GamePlayer player) {
+		visiblePlayers.add(player);
 	}
 }
