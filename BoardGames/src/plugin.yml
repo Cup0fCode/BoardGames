@@ -9,3 +9,5 @@ commands:
   boardgames:
     description: All commands for the ChessBoards plugin.
     aliases: [bg]
+  debug:
+    description: Debug command for BoardGames.
