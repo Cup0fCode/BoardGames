@@ -38,23 +38,28 @@ public abstract class Game {
 	protected int[][] mapStructure; // the structure of mapVals, 0 for missing map
 	protected int placedMapVal; // the value of the map at the placed board location
 
-	protected abstract void setMapInformation(int rotation); // set mapStructure and placedMapVal
+	protected abstract void setMapInformation(); // set mapStructure and placedMapVal
+
 	private void setGameId() {
-		gameId = 1;
+		gameId = BoardGames.getInstance().getGameManager().nextGameId();
 	}
+
 	protected abstract void setGameName(); // set gameName
+
 	protected abstract void setBoardImage(); // set board Image
+
 	protected abstract void startClock();
-	
+
 	public Game(int rotation) {
-		setMapInformation(rotation);
-		createMapManager();
+		setMapInformation();
+		assert placedMapVal != 0;
+		createMapManager(rotation);
 		setGameId();
 		assert gameId != 0;
 		setGameName();
 		assert gameName != null;
 		setBoardImage();
-		//assert boardImage != null;
+		// assert boardImage != null;
 		wagerManager = new WagerManager();
 		players = new HashMap<Player, GamePlayer>();
 		turn = 0;
@@ -66,22 +71,33 @@ public abstract class Game {
 	public boolean canPlaceBoard(Location loc, int rotation) {
 		int[] centerLoc = mapManager.getMapValsLocationOnRotatedBoard(placedMapVal);
 		int[] mapDimensions = mapManager.getRotatedDimensions();
-		
+
 		// calculate map bounds
-		int minX = 1 - mapDimensions[0] + centerLoc[0];
-		int maxX = mapDimensions[0] - centerLoc[0] - 1;
+		int t1X = -centerLoc[0];
+		int t2X = mapDimensions[0] + t1X;
 
-		int maxY = 0;
-		int minY = 0; // for future changes
+		int t1Y = 0;
+		int t2Y = 0; // for future changes
 
-		int minZ = 1 - mapDimensions[1] + centerLoc[1];
-		int maxZ = mapDimensions[1] - centerLoc[1] - 1;
+		int t1Z = -centerLoc[1];
+		int t2Z = mapDimensions[1] + t1Z;
+
+		// calculate min and max bounds
+		int maxX = Math.max(t1X, t2X);
+		int minX = Math.min(t1X, t2X);
+
+		int maxY = Math.max(t1Y, t2Y);
+		int minY = Math.min(t1Y, t2Y);
+
+		int maxZ = Math.max(t1Z, t2Z);
+		int minZ = Math.min(t1Z, t2Z);
 
 		// check if blocks are empty
 		for (int x = minX; x <= maxX; x++) {
 			for (int y = minY; y <= maxY; y++) {
 				for (int z = minZ; z <= maxZ; z++) {
-					if (!loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY() + y, loc.getBlockZ() + z).isEmpty())
+					if (!loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY() + y, loc.getBlockZ() + z)
+							.isEmpty())
 						return false;
 				}
 			}
@@ -97,22 +113,33 @@ public abstract class Game {
 
 		int[] centerLoc = mapManager.getMapValsLocationOnRotatedBoard(placedMapVal);
 		int[] mapDimensions = mapManager.getRotatedDimensions();
-		
+
 		// calculate map bounds
-		int minX = 1 - mapDimensions[0] + centerLoc[0];
-		int maxX = mapDimensions[0] - centerLoc[0] - 1;
+		int t1X = -centerLoc[0];
+		int t2X = mapDimensions[0] + t1X;
 
-		int maxY = 0;
-		int minY = 0; // for future changes
+		int t1Y = 0;
+		int t2Y = 0; // for future changes
 
-		int minZ = 1 - mapDimensions[1] + centerLoc[1];
-		int maxZ = mapDimensions[1] - centerLoc[1] - 1;
+		int t1Z = -centerLoc[1];
+		int t2Z = mapDimensions[1] + t1Z;
+
+		// calculate min and max bounds
+		int maxX = Math.max(t1X, t2X);
+		int minX = Math.min(t1X, t2X);
+
+		int maxY = Math.max(t1Y, t2Y);
+		int minY = Math.min(t1Y, t2Y);
+
+		int maxZ = Math.max(t1Z, t2Z);
+		int minZ = Math.min(t1Z, t2Z);
 
 		// spawn ItemFrames
 		for (int x = minX; x <= maxX; x++) {
 			for (int y = minY; y <= maxY; y++) {
 				for (int z = minZ; z <= maxZ; z++) {
-					int mapVal = mapManager.getMapValAtLocationOnRotatedBoard(centerLoc[0] + x, centerLoc[0] + z);
+					Bukkit.getLogger().info("placed");
+					int mapVal = mapManager.getMapValAtLocationOnRotatedBoard(x - t1X, z - t1Z);
 					// skip maps with value 0
 					if (mapVal == 0)
 						continue;
@@ -121,7 +148,8 @@ public abstract class Game {
 					ItemStack map = new GameMap(this, mapVal, new ItemStack(Material.FILLED_MAP, 1));
 
 					// spawn itemFrame
-					Location frameLoc = new Location(loc.getWorld(), loc.getBlockX() + x, loc.getBlockY() + y, loc.getBlockZ() + z);
+					Location frameLoc = new Location(loc.getWorld(), loc.getBlockX() + x, loc.getBlockY() + y,
+							loc.getBlockZ() + z);
 
 					ItemFrame frame = world.spawn(frameLoc, ItemFrame.class);
 					frame.setItem(map);
@@ -133,7 +161,6 @@ public abstract class Game {
 				}
 			}
 		}
-		BoardGames.getInstance().getGameManager().addGame(this);
 	}
 
 	public void cancelGame() {
@@ -206,12 +233,13 @@ public abstract class Game {
 		Game.gameIdKey = gameIdKey;
 	}
 
-	protected void createMapManager() {
-		mapManager = new MapManager(mapStructure, gameId, this);
+	protected void createMapManager(int rotation) {
+		mapManager = new MapManager(mapStructure, rotation, this);
 	}
-	
+
 	public void delete() {
 		// TODO: add delete method
 	}
+
 	public abstract ItemStack getBoardItem();
 }

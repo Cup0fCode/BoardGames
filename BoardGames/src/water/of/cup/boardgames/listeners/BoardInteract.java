@@ -115,7 +115,10 @@ public class BoardInteract implements Listener {
 
 			frameLoc.getBlock().setType(Material.AIR);
 
-			player.getWorld().dropItem(frameLoc, game.getBoardItem());
+			ItemStack boardItem = game.getBoardItem();
+
+			if (boardItem != null)
+				player.getWorld().dropItem(frameLoc, boardItem);
 			return;
 
 		}
@@ -123,8 +126,7 @@ public class BoardInteract implements Listener {
 		if (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK))
 
 		{
-			if (gameManager.getGameByPlayer(player) != null
-					&& gameManager.getGameByPlayer(player) != game) {
+			if (gameManager.getGameByPlayer(player) != null && gameManager.getGameByPlayer(player) != game) {
 				player.sendMessage("You must finish your game before joining another.");
 				return;
 			}
@@ -151,8 +153,8 @@ public class BoardInteract implements Listener {
 //			int loc[] = ChessUtils.getChessBoardClickLocation(hitx, hity, gameFrame.getRotation(), direction);
 
 			Vector pos = result.getHitPosition();
-			double[] loc = new double[] {pos.getX(), pos.getZ()};
-			
+			double[] loc = new double[] { pos.getX(), pos.getZ() };
+
 			game.click(player, loc, map);
 
 			e.setCancelled(true);
