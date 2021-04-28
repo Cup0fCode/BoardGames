@@ -319,6 +319,10 @@ public abstract class Game {
         }
 	}
 
+	public String getGameName() {
+		return gameName;
+	}
+	
 	public void delete() {
 		// TODO: game deletion code
 	}

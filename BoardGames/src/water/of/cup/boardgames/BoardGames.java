@@ -20,8 +20,10 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.milkbowl.vault.economy.Economy;
+import water.of.cup.boardgames.commands.DebugCommand;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
+import water.of.cup.boardgames.game.games.tictactoe.TicTacToeInventory;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.listeners.BlockPlace;
 import water.of.cup.boardgames.listeners.BoardInteract;
@@ -46,6 +48,12 @@ public class BoardGames extends JavaPlugin {
 		loadConfig();
 
 		Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
+
+		// Debug:
+//		new TicTacToeInventory(null).build(null, null);
+
+		// Debug:
+		getCommand("debug").setExecutor(new DebugCommand());
 		
 //		getCommand("chessboards").setExecutor(new ChessBoardCommands());
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());
