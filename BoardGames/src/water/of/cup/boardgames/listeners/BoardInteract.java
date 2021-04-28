@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import org.w3c.dom.events.Event;
 
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.Game;
@@ -108,14 +109,16 @@ public class BoardInteract implements Listener {
 			// TODO: check if game is running
 
 			// TODO: check if player has permission to delete game
-
-			game.delete();
-			Location frameLoc = gameFrame.getLocation();
-			gameFrame.remove();
-
-			frameLoc.getBlock().setType(Material.AIR);
-
-			player.getWorld().dropItem(frameLoc, game.getBoardItem());
+			
+			if (game.destroy(gameFrame)) {
+				
+				// drop the board item TODO: check if board item should be dropped (player not in creative, game settings)
+				ItemStack boardItem = game.getBoardItem();
+				if (boardItem != null)
+					player.getWorld().dropItem(e.getClickedBlock().getLocation(), boardItem);
+			}
+				
+			
 			return;
 
 		}
@@ -123,8 +126,7 @@ public class BoardInteract implements Listener {
 		if (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK))
 
 		{
-			if (gameManager.getGameByPlayer(player) != null
-					&& gameManager.getGameByPlayer(player) != game) {
+			if (gameManager.getGameByPlayer(player) != null && gameManager.getGameByPlayer(player) != game) {
 				player.sendMessage("You must finish your game before joining another.");
 				return;
 			}
@@ -151,8 +153,8 @@ public class BoardInteract implements Listener {
 //			int loc[] = ChessUtils.getChessBoardClickLocation(hitx, hity, gameFrame.getRotation(), direction);
 
 			Vector pos = result.getHitPosition();
-			double[] loc = new double[] {pos.getX(), pos.getZ()};
-			
+			double[] loc = new double[] { pos.getX(), pos.getZ() };
+
 			game.click(player, loc, map);
 
 			e.setCancelled(true);

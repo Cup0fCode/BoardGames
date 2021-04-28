@@ -1,6 +1,5 @@
 package water.of.cup.boardgames.game;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +9,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,35 +31,47 @@ public abstract class Game {
 	protected MapManager mapManager;
 	protected HashMap<Player, GamePlayer> players;
 	protected int turn;
-	protected BufferedImage boardImage;
+	protected GameImage gameImage;
 	protected ArrayList<Button> buttons;
 	protected WagerManager wagerManager;
 	protected Clock clock;
 
+	protected ArrayList<GameMap> gameMaps; // game maps for the game
+	// public HashMap<Integer, Integer> mapValMapIds; // <mapval, mapid>
 	protected int[][] mapStructure; // the structure of mapVals, 0 for missing map
 	protected int placedMapVal; // the value of the map at the placed board location
 
-	protected abstract void setMapInformation(int rotation); // set mapStructure and placedMapVal
+	protected abstract void setMapInformation(); // set mapStructure and placedMapVal
+
 	private void setGameId() {
-		gameId = 1;
+		gameId = BoardGames.getInstance().getGameManager().nextGameId();
 	}
+
+	protected abstract void startGame();
+
 	protected abstract void setGameName(); // set gameName
+
 	protected abstract void setBoardImage(); // set board Image
+
 	protected abstract void startClock();
-	
+
 	public Game(int rotation) {
-		setMapInformation(rotation);
-		createMapManager();
+		setMapInformation();
+		assert placedMapVal != 0;
+		createMapManager(rotation);
 		setGameId();
 		assert gameId != 0;
 		setGameName();
 		assert gameName != null;
 		setBoardImage();
-		//assert boardImage != null;
+		// assert boardImage != null;
 		wagerManager = new WagerManager();
 		players = new HashMap<Player, GamePlayer>();
 		turn = 0;
 		buttons = new ArrayList<Button>();
+
+		// mapValMapIds = new HashMap<Integer, Integer>();
+		gameMaps = new ArrayList<GameMap>();
 	}
 
 	abstract public void click(Player player, double[] loc, ItemStack map);
@@ -66,22 +79,33 @@ public abstract class Game {
 	public boolean canPlaceBoard(Location loc, int rotation) {
 		int[] centerLoc = mapManager.getMapValsLocationOnRotatedBoard(placedMapVal);
 		int[] mapDimensions = mapManager.getRotatedDimensions();
-		
+
 		// calculate map bounds
-		int minX = 1 - mapDimensions[0] + centerLoc[0];
-		int maxX = mapDimensions[0] - centerLoc[0] - 1;
+		int t1X = -centerLoc[0];
+		int t2X = mapDimensions[0] + t1X;
 
-		int maxY = 0;
-		int minY = 0; // for future changes
+		int t1Y = 0;
+		int t2Y = 0; // for future changes
 
-		int minZ = 1 - mapDimensions[1] + centerLoc[1];
-		int maxZ = mapDimensions[1] - centerLoc[1] - 1;
+		int t1Z = -centerLoc[1];
+		int t2Z = mapDimensions[1] + t1Z;
+
+		// calculate min and max bounds
+		int maxX = Math.max(t1X, t2X);
+		int minX = Math.min(t1X, t2X);
+
+		int maxY = Math.max(t1Y, t2Y);
+		int minY = Math.min(t1Y, t2Y);
+
+		int maxZ = Math.max(t1Z, t2Z);
+		int minZ = Math.min(t1Z, t2Z);
 
 		// check if blocks are empty
 		for (int x = minX; x <= maxX; x++) {
 			for (int y = minY; y <= maxY; y++) {
 				for (int z = minZ; z <= maxZ; z++) {
-					if (!loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY() + y, loc.getBlockZ() + z).isEmpty())
+					if (!loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY() + y, loc.getBlockZ() + z)
+							.isEmpty())
 						return false;
 				}
 			}
@@ -97,31 +121,51 @@ public abstract class Game {
 
 		int[] centerLoc = mapManager.getMapValsLocationOnRotatedBoard(placedMapVal);
 		int[] mapDimensions = mapManager.getRotatedDimensions();
-		
+
 		// calculate map bounds
-		int minX = 1 - mapDimensions[0] + centerLoc[0];
-		int maxX = mapDimensions[0] - centerLoc[0] - 1;
+		int t1X = -centerLoc[0];
+		int t2X = mapDimensions[0] + t1X;
 
-		int maxY = 0;
-		int minY = 0; // for future changes
+		int t1Y = 0;
+		int t2Y = 0; // for future changes
 
-		int minZ = 1 - mapDimensions[1] + centerLoc[1];
-		int maxZ = mapDimensions[1] - centerLoc[1] - 1;
+		int t1Z = -centerLoc[1];
+		int t2Z = mapDimensions[1] + t1Z;
+
+		// calculate min and max bounds
+		int maxX = Math.max(t1X, t2X);
+		int minX = Math.min(t1X, t2X);
+
+		int maxY = Math.max(t1Y, t2Y);
+		int minY = Math.min(t1Y, t2Y);
+
+		int maxZ = Math.max(t1Z, t2Z);
+		int minZ = Math.min(t1Z, t2Z);
 
 		// spawn ItemFrames
 		for (int x = minX; x <= maxX; x++) {
 			for (int y = minY; y <= maxY; y++) {
 				for (int z = minZ; z <= maxZ; z++) {
-					int mapVal = mapManager.getMapValAtLocationOnRotatedBoard(centerLoc[0] + x, centerLoc[0] + z);
+					Bukkit.getLogger().info("placed");
+					int mapVal = mapManager.getMapValAtLocationOnRotatedBoard(x - t1X, z - t1Z);
 					// skip maps with value 0
 					if (mapVal == 0)
 						continue;
 
 					// create the map
-					ItemStack map = new GameMap(this, mapVal, new ItemStack(Material.FILLED_MAP, 1));
+					GameMap map = new GameMap(this, mapVal, new ItemStack(Material.FILLED_MAP, 1));
+
+					// set the mapView
+					MapView mapView = Bukkit.createMap(world);
+					MapMeta mapMeta = (MapMeta) map.getItemMeta();
+					mapMeta.setMapView(mapView);
+					map.setItemMeta(mapMeta);
+					// mapValMapIds.put(mapVal, mapView.getId());
+					gameMaps.add(map);
 
 					// spawn itemFrame
-					Location frameLoc = new Location(loc.getWorld(), loc.getBlockX() + x, loc.getBlockY() + y, loc.getBlockZ() + z);
+					Location frameLoc = new Location(loc.getWorld(), loc.getBlockX() + x, loc.getBlockY() + y,
+							loc.getBlockZ() + z);
 
 					ItemFrame frame = world.spawn(frameLoc, ItemFrame.class);
 					frame.setItem(map);
@@ -133,7 +177,7 @@ public abstract class Game {
 				}
 			}
 		}
-		BoardGames.getInstance().getGameManager().addGame(this);
+		startGame(); // TODO: remove this after proper game setup is added
 	}
 
 	public void cancelGame() {
@@ -192,6 +236,10 @@ public abstract class Game {
 		return null;
 	}
 
+	public GamePlayer getGamePlayer(Player player) {
+		return players.get(player);
+	}
+
 	public ArrayList<GamePlayer> getGamePlayers() {
 		return (ArrayList<GamePlayer>) players.values();
 	}
@@ -206,8 +254,69 @@ public abstract class Game {
 		Game.gameIdKey = gameIdKey;
 	}
 
-	protected void createMapManager() {
-		mapManager = new MapManager(mapStructure, gameId, this);
+	protected void createMapManager(int rotation) {
+		mapManager = new MapManager(mapStructure, rotation, this);
+	}
+
+	public boolean destroy(ItemFrame gameFrame) {
+		if (!GameMap.isGameMap(gameFrame.getItem()))
+			return false;
+
+		// destroy board
+		GameMap gameMap = new GameMap(gameFrame.getItem());
+		int mapVal = gameMap.getMapVal();
+		destroyBoard(gameFrame.getLocation(), mapVal);
+
+		delete();
+		return true;
+	}
+
+	private void destroyBoard(Location loc, int startMapVal) {
+		int[] centerLoc = mapManager.getMapValsLocationOnRotatedBoard(startMapVal);
+		int[] mapDimensions = mapManager.getRotatedDimensions();
+
+		// calculate map bounds
+		int t1X = -centerLoc[0];
+		int t2X = mapDimensions[0] + t1X;
+
+		int t1Y = 0;
+		int t2Y = 0; // for future changes
+
+		int t1Z = -centerLoc[1];
+		int t2Z = mapDimensions[1] + t1Z;
+
+		// calculate min and max bounds
+		int maxX = Math.max(t1X, t2X);
+		int minX = Math.min(t1X, t2X);
+
+		int maxY = Math.max(t1Y, t2Y);
+		int minY = Math.min(t1Y, t2Y);
+
+		int maxZ = Math.max(t1Z, t2Z);
+		int minZ = Math.min(t1Z, t2Z);
+
+		// destroy blocks
+		for (int x = minX; x <= maxX; x++) {
+			for (int y = minY; y <= maxY; y++) {
+				for (int z = minZ; z <= maxZ; z++) {
+					Block block = loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY() + y,
+							loc.getBlockZ() + z);
+
+					block.setType(Material.AIR);
+				}
+			}
+		}
+		int maxD = Math.max(Math.max(maxX - minX, maxY - minY), maxZ - minZ);
+		
+		// destroy item frames
+		for (Entity entity : loc.getWorld().getNearbyEntities(loc, maxD, maxD, maxD)) {
+            if (entity instanceof ItemFrame && GameMap.isGameMap(((ItemFrame) entity).getItem())) {
+            	ItemFrame frame = (ItemFrame) entity;
+            	if ((new GameMap(frame.getItem())).getGameId() != gameId)
+					continue;
+            	frame.remove();
+            }
+        }
 	}
 
 	public String getGameName() {
@@ -215,7 +324,39 @@ public abstract class Game {
 	}
 	
 	public void delete() {
-		// TODO: add delete method
+		// TODO: game deletion code
 	}
+
+//	public int getMapValsId(int mapVal) {
+//		if (mapValMapIds.containsKey(mapVal))
+//			return mapValMapIds.get(mapVal);
+//		return 0;
+//				
+//	}
+
+	public ArrayList<GameMap> getGameMaps() {
+		return gameMaps;
+	}
+
+	public GameMap getGameMapByMapVal(int mapVal) {
+		for (GameMap map : gameMaps) {
+			if (map.getMapVal() == mapVal)
+				return map;
+		}
+		return null;
+	}
+
+	public GameImage getGameImage() {
+		return gameImage;
+	}
+
 	public abstract ItemStack getBoardItem();
+
+	public ArrayList<Button> getButtons() {
+		return buttons;
+	}
+
+	public int getRotation() {
+		return mapManager.getRotation();
+	}
 }

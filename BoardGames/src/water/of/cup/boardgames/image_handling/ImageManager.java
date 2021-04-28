@@ -1,4 +1,4 @@
-package water.of.cup.boardgames;
+package water.of.cup.boardgames.image_handling;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -12,6 +12,8 @@ import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 
 import org.bukkit.Bukkit;
+
+import water.of.cup.boardgames.BoardGames;
 
 public class ImageManager {
 

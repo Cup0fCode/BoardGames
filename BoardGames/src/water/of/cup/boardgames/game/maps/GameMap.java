@@ -1,12 +1,8 @@
 package water.of.cup.boardgames.game.maps;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.map.MapView;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -34,7 +30,7 @@ public class GameMap extends ItemStack {
 		this.game = game;
 		this.mapVal = mapVal;
 		this.gameId = game.getGameId();
-		
+
 		persistentDataContainer.set(Game.getGameIdKey(), PersistentDataType.INTEGER, gameId);
 		persistentDataContainer.set(MapManager.getMapValsKey(), PersistentDataType.INTEGER, mapVal);
 		this.setItemMeta(itemMeta);
@@ -55,6 +51,10 @@ public class GameMap extends ItemStack {
 		return true;
 	}
 
+	public MapMeta getMapMeta() {
+		return (MapMeta) getItemMeta();
+	}
+	
 	public int getGameId() {
 		return gameId;
 	}

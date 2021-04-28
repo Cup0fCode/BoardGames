@@ -25,7 +25,12 @@ import water.of.cup.boardgames.BoardGames;
 public class GameManager {
 	private BoardGames instance = BoardGames.getInstance();
 
-	private ArrayList<Game> games = new ArrayList<>();;
+	private ArrayList<Game> games = new ArrayList<>();
+	private int lastGameId;
+	
+	public GameManager() {
+		lastGameId = 0;
+	}
 	
 	public void addGame(Game game) {
 		if (!games.contains(game)) {
@@ -115,7 +120,6 @@ public class GameManager {
 		for(Game game : games) {
 			if(game.getGameId() == id) return game;
 		}
-
 		return null;
 	}
 	
@@ -163,6 +167,11 @@ public class GameManager {
 			Bukkit.getLogger().severe("Error writing to gameId: " + gameId);
 			e.printStackTrace();
 		}
+	}
+
+	protected int nextGameId() {
+		// TODO Auto-generated method stub
+		return ++lastGameId;
 	}
 }
   
