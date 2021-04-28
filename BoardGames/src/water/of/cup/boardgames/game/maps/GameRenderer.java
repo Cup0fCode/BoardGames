@@ -24,7 +24,6 @@ public class GameRenderer extends MapRenderer {
 		if (map.isLocked())
 			return;
 		
-		
 		GamePlayer gamePlayer = game.getGamePlayer(player);
 		boolean ingamePlayer = gamePlayer != null;
 		
@@ -35,8 +34,7 @@ public class GameRenderer extends MapRenderer {
 			}
 		}
 		
-		canvas.drawImage(0, 0, gameImage.getImage());
-		
+		canvas.drawImage(0, 0, gameImage.getImage(game.getRotation()));
 		map.setLocked(true);
 	}
 }

@@ -32,7 +32,7 @@ public class Button {
 	}
 	
 	public boolean clicked(GamePlayer gamePlayer, int[] loc) {
-		if (!visiblePlayers.contains(gamePlayer))
+		if (!visibleForAll && !visiblePlayers.contains(gamePlayer))
 			return false;
 		
 		if (turnBased && !game.getTurn().equals(gamePlayer))
@@ -40,16 +40,16 @@ public class Button {
 		
 		
 		int[] p1 = location.clone();
-		int[] p2 = new int[] {location[0], location[1]};
+		int[] p2 = new int[] {location[0] + image.getDimensions()[0], location[1] + image.getDimensions()[1]};
 		
 		// rotate p2
 		int i = 0;
 		while (i < rotation) {
-			p2 = MathUtils.rotatePointAroundPoint90Degrees(p1, p2);
+			p2 = MathUtils.rotatePointAroundPoint90Degrees(new double[] {p1[0], p1[1]}, p2);
 			i++;
 		}
 		
-		// check if clicked loc is between p1 & p2
+		// check if clicked loc not between p1 & p2
 		if (loc[0] < p1[0] == loc[0] < p2[0] || loc[1] < p1[1] == loc[1] < p2[1])
 			return false;
 		
@@ -96,5 +96,13 @@ public class Button {
 	
 	public void addVisiblePlayer(GamePlayer player) {
 		visiblePlayers.add(player);
+	}
+
+	public String getName() {
+		return "" + name;
+	}
+
+	public void setName(String string) {
+		name = string;
 	}
 }

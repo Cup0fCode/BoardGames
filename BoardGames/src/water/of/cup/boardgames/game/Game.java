@@ -44,6 +44,8 @@ public abstract class Game {
 	private void setGameId() {
 		gameId = BoardGames.getInstance().getGameManager().nextGameId();
 	}
+	
+	protected abstract void startGame();
 
 	protected abstract void setGameName(); // set gameName
 
@@ -173,6 +175,7 @@ public abstract class Game {
 				}
 			}
 		}
+		startGame(); //TODO: remove this after proper game setup is added
 	}
 
 	public void cancelGame() {
@@ -284,5 +287,9 @@ public abstract class Game {
 	
 	public ArrayList<Button> getButtons() {
 		return buttons;
+	}
+
+	public int getRotation() {
+		return mapManager.getRotation();
 	}
 }

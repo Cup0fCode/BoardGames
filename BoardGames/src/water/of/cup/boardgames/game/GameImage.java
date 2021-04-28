@@ -10,9 +10,7 @@ public class GameImage {
 	int rotation;
 	
 	public GameImage(String imageName) {
-		BufferedImage image = ImageManager.getImage(imageName);
-		assert image != null;
-		this.image = ImageUtils.copyImage(image);
+		setImage(imageName);
 	}
 	
 	public GameImage(String imageName, int rotation) {
@@ -32,6 +30,12 @@ public class GameImage {
 		return newGameImage;
 	}
 	
+	public void setImage(String imageName) {
+		BufferedImage image = ImageManager.getImage(imageName);
+		assert image != null;
+		this.image = ImageUtils.copyImage(image);
+	}
+	
 	public void addGameImage(GameImage otherGameImage, int[] location) {
 		image = ImageUtils.combineImages(image, otherGameImage.getImage(rotation), location);
 	}
@@ -48,6 +52,12 @@ public class GameImage {
 	
 	public GameImage clone() {
 		return new GameImage(image, rotation);
+	}
+
+	public int[] getDimensions() {
+		
+		// TODO Auto-generated method stub
+		return new int[] {image.getWidth(), image.getHeight()};
 	}
 	
 }

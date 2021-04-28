@@ -34,8 +34,8 @@ public class ImageUtils {
 
 	// referenced:
 	public static BufferedImage combineImages(BufferedImage image1, BufferedImage image2, int[] location) {
-		assert image1.getWidth() > image2.getWidth() + location[0];
-		assert image1.getHeight() > image2.getHeight() + location[1];
+		//assert image1.getWidth() > image2.getWidth() + location[0];
+		//assert image1.getHeight() > image2.getHeight() + location[1];
 		
 		// create the new image
 		BufferedImage combined = new BufferedImage(image1.getWidth(), image1.getHeight(), image1.getType());

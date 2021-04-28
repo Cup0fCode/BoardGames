@@ -58,7 +58,7 @@ public class MapManager {
 		// rotate the clicked position to account for rotated games
 		int i = rotation;
 		while (i < 4) {
-			loc = MathUtils.rotatePointAroundPoint90Degrees(new int[] { 64, 64 }, loc);
+			loc = MathUtils.rotatePointAroundPoint90Degrees(new double[] { 63.5, 63.5 }, loc);
 			i++;
 		}
 
@@ -100,7 +100,7 @@ public class MapManager {
 		int i = 0;
 		while (i < rotation) {
 			i++;
-			loc = MathUtils.rotatePointAroundPoint90Degrees(new int[] { 0, 0 }, loc);
+			loc = MathUtils.rotatePointAroundPoint90Degrees(new double[] { 0, 0 }, loc);
 		}
 
 		return loc;
@@ -112,7 +112,7 @@ public class MapManager {
 		int i = 0;
 		while (i < r) {
 			i++;
-			loc = MathUtils.rotatePointAroundPoint90Degrees(new int[] { 0, 0 }, loc);
+			loc = MathUtils.rotatePointAroundPoint90Degrees(new double[] { 0, 0 }, loc);
 		}
 		return mapStructure[loc[1]][loc[0]];
 	}
@@ -141,7 +141,7 @@ public class MapManager {
 		rd = new int[] { rd[0] - 1, rd[1] - 1 };
 		int i = 0;
 		while (i < rotation) {
-			rd = MathUtils.rotatePointAroundPoint90Degrees(new int[] { 0, 0 }, rd);
+			rd = MathUtils.rotatePointAroundPoint90Degrees(new double[] { 0, 0 }, rd);
 			i++;
 		}
 		return rd;
@@ -158,7 +158,11 @@ public class MapManager {
 			view.addRenderer(new GameRenderer(game));
 			mapMeta.setMapView(view);
 			map.setItemMeta(mapMeta);
-			
+			view.getWorld().getPlayers().forEach(player -> player.sendMap(view));
 		}
+	}
+
+	public int getRotation() {
+		return rotation;
 	}
 }
