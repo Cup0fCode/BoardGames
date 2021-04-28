@@ -59,5 +59,9 @@ public class GameImage {
 		// TODO Auto-generated method stub
 		return new int[] {image.getWidth(), image.getHeight()};
 	}
+
+	public void cropMap(int[] loc) { //crops image to map location
+		image = image.getSubimage(loc[0] * 128, loc[1] * 128, 128, 128);
+	}
 	
 }

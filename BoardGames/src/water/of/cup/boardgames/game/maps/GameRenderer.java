@@ -13,11 +13,17 @@ import water.of.cup.boardgames.game.GamePlayer;
 public class GameRenderer extends MapRenderer {
 	private Game game;
 	private MapManager mapManager;
-
-	public GameRenderer(Game game) {
-		this.game = game;
-	}
+	private int[] loc;
+//
+//	public GameRenderer(Game game) {
+//		this.game = game;
+//	}
 	
+	public GameRenderer(Game game, int[] mapValsLocationOnBoard) {
+		this.game = game;
+		loc = mapValsLocationOnBoard;
+	}
+
 	@Override
 	public void render(MapView map, MapCanvas canvas, Player player) {
 		// used to prevent map from continuously rendering
@@ -28,6 +34,7 @@ public class GameRenderer extends MapRenderer {
 		boolean ingamePlayer = gamePlayer != null;
 		
 		GameImage gameImage = game.getGameImage().clone();
+		gameImage.cropMap(loc);
 		for (Button button : game.getButtons()) {
 			if (button.isVisibleForAll() || ingamePlayer && button.visibleForPlayer(gamePlayer)) {
 				gameImage.addGameImage(button.getImage(), button.getLocation());

@@ -155,7 +155,7 @@ public class MapManager {
 			for (MapRenderer renderer : view.getRenderers())
 				view.removeRenderer(renderer);
 			view.setLocked(false);
-			view.addRenderer(new GameRenderer(game));
+			view.addRenderer(new GameRenderer(game, getMapValsLocationOnBoard(mapVal)));
 			mapMeta.setMapView(view);
 			map.setItemMeta(mapMeta);
 			view.getWorld().getPlayers().forEach(player -> player.sendMap(view));

@@ -21,7 +21,7 @@ public class Battleship extends Game {
 	protected void setMapInformation() {
 		this.mapStructure = new int[][] { { 2 }, { 1 } };
 		this.placedMapVal = 1;
-		this.gameImage = new GameImage("TICTACTOE_BOARD");
+		this.gameImage = new GameImage("BATTLESHIP_BOARD");
 	}
 
 	@Override
@@ -44,14 +44,14 @@ public class Battleship extends Game {
 
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
-		int[] clickLoc = mapManager.getClickLocation(loc, map);
-		if (turn == true) {
-			buttons.add(new Button(this, "TICTACTOE_X", new int[] { clickLoc[0] - 20, clickLoc[1] - 20 }, 0, "An x"));
-			turn = false;
-		} else {
-			buttons.add(new Button(this, "TICTACTOE_O", new int[] { clickLoc[0] - 20, clickLoc[1] - 20 }, 0, "An x"));
-			turn = true;
-		}
+//		int[] clickLoc = mapManager.getClickLocation(loc, map);
+//		if (turn == true) {
+//			buttons.add(new Button(this, "TICTACTOE_X", new int[] { clickLoc[0] - 20, clickLoc[1] - 20 }, 0, "An x"));
+//			turn = false;
+//		} else {
+//			buttons.add(new Button(this, "TICTACTOE_O", new int[] { clickLoc[0] - 20, clickLoc[1] - 20 }, 0, "An x"));
+//			turn = true;
+//		}
 
 		mapManager.renderBoard();
 
