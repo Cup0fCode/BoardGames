@@ -1,4 +1,4 @@
-package water.of.cup.boardgames.game.inventories;
+package water.of.cup.boardgames.game.inventories.create;
 
 import org.bukkit.entity.Player;
 

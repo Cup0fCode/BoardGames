@@ -8,6 +8,9 @@ import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToeInventory;
 
 public class DebugCommand implements CommandExecutor {
+
+    private static TicTacToeInventory ticTacToeInventory;
+
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if(!(commandSender instanceof Player)) return false;
@@ -20,7 +23,16 @@ public class DebugCommand implements CommandExecutor {
                 switch (args[0]) {
                     case "inventory": {
                         player.sendMessage("Opening inv");
-                        new TicTacToeInventory(new TicTacToe(0)).build(player, null);
+                        if(ticTacToeInventory == null) {
+                            ticTacToeInventory = new TicTacToeInventory(new TicTacToe(0));
+                        }
+
+                        ticTacToeInventory.build(player, null);
+                        break;
+                    }
+                    case "reset": {
+                        player.sendMessage("reset");
+                        ticTacToeInventory = null;
                         break;
                     }
                 }

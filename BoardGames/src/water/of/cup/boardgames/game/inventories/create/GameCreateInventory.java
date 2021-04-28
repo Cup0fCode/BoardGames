@@ -1,16 +1,19 @@
-package water.of.cup.boardgames.game.inventories;
+package water.of.cup.boardgames.game.inventories.create;
 
 import de.themoep.inventorygui.DynamicGuiElement;
 import de.themoep.inventorygui.GuiStateElement;
 import de.themoep.inventorygui.InventoryGui;
 import de.themoep.inventorygui.StaticGuiElement;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.inventories.GameInventory;
+import water.of.cup.boardgames.game.inventories.GameOption;
+import water.of.cup.boardgames.game.inventories.GameOptionType;
+import water.of.cup.boardgames.game.inventories.create.CreateInventoryCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -217,7 +220,6 @@ public class GameCreateInventory {
             }
         }
 
-        // TODO: figure out when they close vs auto closed, add create button
         gui.setCloseAction(close -> {
             // They left the inventory, do not create game
             callback.onCreateGame(null);

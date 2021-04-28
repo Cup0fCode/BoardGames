@@ -1,19 +1,15 @@
 package water.of.cup.boardgames.game.inventories;
 
-import de.themoep.inventorygui.DynamicGuiElement;
-import de.themoep.inventorygui.GuiStateElement;
-import de.themoep.inventorygui.InventoryGui;
-import de.themoep.inventorygui.StaticGuiElement;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.inventories.create.CreateInventoryCallback;
+import water.of.cup.boardgames.game.inventories.create.GameCreateInventory;
+import water.of.cup.boardgames.game.inventories.create.GameWaitPlayersInventory;
+import water.of.cup.boardgames.game.inventories.create.WaitPlayersCallback;
+import water.of.cup.boardgames.game.inventories.join.GameJoinInventory;
+import water.of.cup.boardgames.game.inventories.join.JoinGameCallback;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public abstract class GameInventory {
@@ -25,11 +21,13 @@ public abstract class GameInventory {
 
     private final GameCreateInventory gameCreateInventory;
     private final GameWaitPlayersInventory gameWaitPlayersInventory;
+    private final GameJoinInventory gameJoinInventory;
 
     private final ArrayList<GameOption> gameOptions;
 
     // Vars that must be reset
     private final ArrayList<Player> joinPlayerQueue;
+    private final ArrayList<Player> acceptedPlayers;
     private HashMap<String, Object> gameData;
     private Player gameCreator;
 
@@ -46,6 +44,7 @@ public abstract class GameInventory {
     public GameInventory(Game game) {
         this.game = game;
         this.joinPlayerQueue = new ArrayList<>();
+        this.acceptedPlayers = new ArrayList<>();
         this.gameOptions = getOptions();
 
         // When gameData is null, no game has been created
@@ -53,6 +52,7 @@ public abstract class GameInventory {
 
         this.gameCreateInventory = new GameCreateInventory(this);
         this.gameWaitPlayersInventory = new GameWaitPlayersInventory(this);
+        this.gameJoinInventory = new GameJoinInventory(this);
     }
 
     public void build(Player player, GameInventoryCallback callback) {
@@ -63,7 +63,14 @@ public abstract class GameInventory {
         // wait players -> accept enough -> move all to ready
         // ready -> onready -> start game
 
-        this.gameCreateInventory.build(player, handleCreateGame(player));
+        if(gameData == null) {
+            this.gameCreateInventory.build(player, handleCreateGame(player));
+            return;
+        }
+
+        this.gameJoinInventory.build(player, handleJoinGame());
+
+
 
         // this.gameJoinInventory.build(player, onleave/onJoin -> add, update waitplayers/ check if game has enough players
     }
@@ -99,13 +106,59 @@ public abstract class GameInventory {
             @Override
             public void onAccept(Player player) {
                 // TODO: Add them to players
+                gameCreator.sendMessage("Accepting " + player.getDisplayName());
+
+                joinPlayerQueue.remove(player);
+                acceptedPlayers.add(player);
+
+                updateWaitPlayersInventory();
+                updateJoinGameInventory(player);
             }
 
             @Override
             public void onDecline(Player player) {
-                // TODO: Remove from queue
+                gameCreator.sendMessage("Declining " + player.getDisplayName());
+
+                joinPlayerQueue.remove(player);
+
+                // Close inventory for player waiting
+                player.closeInventory();
+
+                updateWaitPlayersInventory();
             }
         };
+    }
+
+    private JoinGameCallback handleJoinGame() {
+        return new JoinGameCallback() {
+            @Override
+            public void onJoin(Player player) {
+                joinPlayerQueue.add(player);
+
+                // update waitplayers
+                updateWaitPlayersInventory();
+                updateJoinGameInventory(player);
+            }
+
+            @Override
+            public void onLeave(Player player) {
+                boolean shouldUpdate = joinPlayerQueue.contains(player) || acceptedPlayers.contains(player);
+                joinPlayerQueue.remove(player);
+                acceptedPlayers.remove(player);
+
+                // update waitplayers
+                if(shouldUpdate)
+                    updateWaitPlayersInventory();
+            }
+        };
+    }
+
+    private void updateWaitPlayersInventory() {
+        gameWaitPlayersInventory.build(gameCreator, handleWaitPlayers());
+    }
+
+    private void updateJoinGameInventory(Player player) {
+        gameJoinInventory.build(player, handleJoinGame());
     }
 
     // TODO: Reset method, kicks everyone out, called when create game or game owner leaves
@@ -123,8 +176,16 @@ public abstract class GameInventory {
         return new ArrayList<>(this.joinPlayerQueue);
     }
 
+    public ArrayList<Player> getAcceptedPlayers() {
+        return new ArrayList<>(this.acceptedPlayers);
+    }
+
     public Object getGameData(String key) {
         return this.gameData.get(key);
+    }
+
+    public Player getGameCreator() {
+        return this.gameCreator;
     }
 
 }

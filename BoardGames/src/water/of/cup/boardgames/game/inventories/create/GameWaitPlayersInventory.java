@@ -1,4 +1,4 @@
-package water.of.cup.boardgames.game.inventories;
+package water.of.cup.boardgames.game.inventories.create;
 
 import de.themoep.inventorygui.GuiElementGroup;
 import de.themoep.inventorygui.InventoryGui;
@@ -9,18 +9,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.inventories.GameInventory;
+import water.of.cup.boardgames.game.inventories.GameOption;
+import water.of.cup.boardgames.game.inventories.InventoryScreen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
-public class GameWaitPlayersInventory {
+public class GameWaitPlayersInventory extends InventoryScreen {
 
     private final GameInventory gameInventory;
     private final ArrayList<GameOption> gameOptions;
     private final Game game;
 
     public GameWaitPlayersInventory(GameInventory gameInventory) {
+        super(gameInventory);
         this.gameInventory = gameInventory;
         this.gameOptions = gameInventory.getGameOptions();
         this.game = gameInventory.getGame();
@@ -29,31 +32,42 @@ public class GameWaitPlayersInventory {
     public void build(Player player, WaitPlayersCallback callback) {
         String[] guiSetup = getGuiSetup();
 
-        // TODO: Probably gonna move this to a utils func
         InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, game.getGameName(), guiSetup);
 
         gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
 
-        // add players head
-        gui.addElement(new StaticGuiElement('s', new ItemStack(Material.SKELETON_SKULL), click -> true,
-                        ChatColor.GREEN + player.getDisplayName()
-                )
-        );
+        renderGameOptions(gui, 's', 'g');
 
-        // loop through gameOptions and add them in
-        GuiElementGroup gameOptionGroup = new GuiElementGroup('g');
-        for(GameOption gameOption : this.gameOptions) {
-            String label = gameOption.getLabel() == null ? "" : gameOption.getLabel();
+        // TODO: (Start here) add players from queue
+        ArrayList<Player> playerQueue = gameInventory.getJoinPlayerQueue();
+        GuiElementGroup playerQueueGroup = new GuiElementGroup('q');
+        for(Player queuePlayer : playerQueue) {
+            playerQueueGroup.addElement((new StaticGuiElement('q',
+                    new ItemStack(Material.SKELETON_SKULL),
+                    click -> {
+                        if(click.getEvent().isLeftClick()) {
+                            callback.onAccept(queuePlayer);
+                        } else if(click.getEvent().isRightClick()) {
+                            callback.onDecline(queuePlayer);
+                        }
 
-            gameOptionGroup.addElement((new StaticGuiElement('g',
-                    new ItemStack(gameOption.getMaterial()),
-                    label + ChatColor.GREEN + gameInventory.getGameData(gameOption.getKey()).toString()
+                        return true;
+                    },
+                    ChatColor.GREEN + queuePlayer.getDisplayName(),
+                    ChatColor.DARK_GREEN + "LEFT CLICK - ACCEPT",
+                    ChatColor.DARK_RED + "RIGHT CLICK - DECLINE"
             )));
         }
 
-        gui.addElement(gameOptionGroup);
+        // Fill in empty spaces with white glass
+        for(int i = playerQueue.size(); i < 12; i++) {
+            playerQueueGroup.addElement((new StaticGuiElement('q',
+                    new ItemStack(Material.WHITE_STAINED_GLASS_PANE),
+                    " "
+            )));
+        }
 
-        // TODO: (Start here) add players from queue
+        gui.addElement(playerQueueGroup);
 
         gui.setCloseAction(close -> {
             // TODO: Reset game inventory
@@ -63,6 +77,8 @@ public class GameWaitPlayersInventory {
 
         gui.show(player);
     }
+
+    // Note: For refresh, look into InventoryGui.get(InventoryHolder holder); / look into dynamic
 
     private String[] getGuiSetup() {
         char[][] guiSetup = new char[6][9];
@@ -86,22 +102,10 @@ public class GameWaitPlayersInventory {
             }
         }
 
-        // Define player skull
+        // Define game creator skull
         guiSetup[1][2] = 's';
 
         return formatGuiSetup(guiSetup);
-    }
-
-    private String[] formatGuiSetup(char[][] guiSetup) {
-        String[] guiSetupString = new String[guiSetup.length];
-        for(int y = 0; y < guiSetup.length; y++) {
-            StringBuilder row = new StringBuilder();
-            for(int x = 0; x < guiSetup[y].length; x++) {
-                row.append(guiSetup[y][x]);
-            }
-            guiSetupString[y] = row.toString();
-        }
-        return guiSetupString;
     }
 
 }
