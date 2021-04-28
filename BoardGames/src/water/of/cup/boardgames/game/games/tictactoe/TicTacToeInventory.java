@@ -2,6 +2,7 @@ package water.of.cup.boardgames.game.games.tictactoe;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
@@ -14,8 +15,11 @@ import java.util.List;
 
 public class TicTacToeInventory extends GameInventory {
 
+    private final Game game;
+
     public TicTacToeInventory(Game game) {
         super(game);
+        this.game = game;
     }
 
     @Override
@@ -51,6 +55,16 @@ public class TicTacToeInventory extends GameInventory {
 
     @Override
     protected int getMaxGame() {
-        return 2;
+        return 3;
     }
+
+    @Override
+    protected void onGameCreate(HashMap<String, Object> gameData, ArrayList<Player> players) {
+        for(Player player : players) {
+            player.sendMessage("Welcome to TIC TAC TOE!");
+        }
+        // TODO: start game set vars
+    }
+
+
 }

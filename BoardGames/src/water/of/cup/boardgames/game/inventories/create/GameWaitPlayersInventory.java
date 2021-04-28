@@ -12,6 +12,7 @@ import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
 import water.of.cup.boardgames.game.inventories.InventoryScreen;
+import water.of.cup.boardgames.game.inventories.InventoryUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,20 +20,18 @@ import java.util.Arrays;
 public class GameWaitPlayersInventory extends InventoryScreen {
 
     private final GameInventory gameInventory;
-    private final ArrayList<GameOption> gameOptions;
     private final Game game;
 
     public GameWaitPlayersInventory(GameInventory gameInventory) {
         super(gameInventory);
         this.gameInventory = gameInventory;
-        this.gameOptions = gameInventory.getGameOptions();
         this.game = gameInventory.getGame();
     }
 
     public void build(Player player, WaitPlayersCallback callback) {
         String[] guiSetup = getGuiSetup();
 
-        String inventoryName = game.getGameName() + " (" + gameInventory.getAcceptedPlayers().size() + "/" + gameInventory.getMaxPlayers() + ")";
+        String inventoryName = game.getGameName() + " (" + gameInventory.getAcceptedPlayers().size() + "/" + (gameInventory.getMaxPlayers() - 1) + ")";
 
         InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, inventoryName, guiSetup);
 
@@ -45,7 +44,7 @@ public class GameWaitPlayersInventory extends InventoryScreen {
         GuiElementGroup playerQueueGroup = new GuiElementGroup('q');
         for(Player queuePlayer : playerQueue) {
             playerQueueGroup.addElement((new StaticGuiElement('q',
-                    new ItemStack(Material.SKELETON_SKULL),
+                    InventoryUtils.getPlayerHead(queuePlayer),
                     click -> {
                         if(click.getEvent().isLeftClick()) {
                             callback.onAccept(queuePlayer);
@@ -72,7 +71,7 @@ public class GameWaitPlayersInventory extends InventoryScreen {
         gui.addElement(playerQueueGroup);
 
         gui.setCloseAction(close -> {
-            // TODO: Reset game inventory
+            callback.onLeave();
             return false;
         });
 

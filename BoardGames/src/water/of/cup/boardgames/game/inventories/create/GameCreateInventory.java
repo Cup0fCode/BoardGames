@@ -10,21 +10,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.inventories.GameInventory;
-import water.of.cup.boardgames.game.inventories.GameOption;
-import water.of.cup.boardgames.game.inventories.GameOptionType;
+import water.of.cup.boardgames.game.inventories.*;
 import water.of.cup.boardgames.game.inventories.create.CreateInventoryCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class GameCreateInventory {
+public class GameCreateInventory extends InventoryScreen {
 
     private final ArrayList<GameOption> gameOptions;
     private final Game game;
 
     public GameCreateInventory(GameInventory gameInventory) {
+        super(gameInventory);
         this.gameOptions = gameInventory.getGameOptions();
         this.game = gameInventory.getGame();
     }
@@ -75,7 +74,8 @@ public class GameCreateInventory {
 
         gui.addElement(new StaticGuiElement('w', new ItemStack(Material.WHITE_STAINED_GLASS_PANE), " "));
 
-        gui.addElement(new StaticGuiElement('x', new ItemStack(Material.SKELETON_SKULL), click -> {
+        ItemStack nextButton = InventoryUtils.getCustomTextureHead(InventoryUtils.RIGHT_ARROW);
+        gui.addElement(new StaticGuiElement('x', nextButton, click -> {
                     int totalPages = (this.gameOptions.size() - 1) / 3;
                     int newPage = page;
 
@@ -160,7 +160,8 @@ public class GameCreateInventory {
 
                             // if no custom values, use num
                             // up button
-                            gui.addElement(new StaticGuiElement(aboveChar, new ItemStack(Material.SKELETON_SKULL), click -> {
+                            ItemStack upButton = InventoryUtils.getCustomTextureHead(InventoryUtils.UP_ARROW);
+                            gui.addElement(new StaticGuiElement(aboveChar, upButton, click -> {
                                         if(gameOption.getCustomValues() == null) {
                                             // TODO: add shift/right click to add more/less
                                             gameData.put(gameOption.getKey(), (int) gameData.get(gameOption.getKey()) + 1);
@@ -186,7 +187,8 @@ public class GameCreateInventory {
                             );
 
                             // down button
-                            gui.addElement(new StaticGuiElement(belowChar, new ItemStack(Material.SKELETON_SKULL), click -> {
+                            ItemStack downButton = InventoryUtils.getCustomTextureHead(InventoryUtils.DOWN_ARROW);
+                            gui.addElement(new StaticGuiElement(belowChar, downButton, click -> {
                                         if(gameOption.getCustomValues() == null) {
                                             if((int) gameData.get(gameOption.getKey()) == 0) return true;
 
@@ -291,18 +293,6 @@ public class GameCreateInventory {
         }
 
         return guiSetup;
-    }
-
-    private String[] formatGuiSetup(char[][] guiSetup) {
-        String[] guiSetupString = new String[guiSetup.length];
-        for(int y = 0; y < guiSetup.length; y++) {
-            StringBuilder row = new StringBuilder();
-            for(int x = 0; x < guiSetup[y].length; x++) {
-                row.append(guiSetup[y][x]);
-            }
-            guiSetupString[y] = row.toString();
-        }
-        return guiSetupString;
     }
 
     private boolean isNumeric(String str) {

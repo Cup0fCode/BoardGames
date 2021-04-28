@@ -27,7 +27,7 @@ public class DebugCommand implements CommandExecutor {
                             ticTacToeInventory = new TicTacToeInventory(new TicTacToe(0));
                         }
 
-                        ticTacToeInventory.build(player, null);
+                        ticTacToeInventory.build(player);
                         break;
                     }
                     case "reset": {

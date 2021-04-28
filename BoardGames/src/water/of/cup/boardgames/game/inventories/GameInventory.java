@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game.inventories;
 
+import de.themoep.inventorygui.InventoryGui;
 import org.bukkit.entity.Player;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.inventories.create.CreateInventoryCallback;
@@ -8,9 +9,12 @@ import water.of.cup.boardgames.game.inventories.create.GameWaitPlayersInventory;
 import water.of.cup.boardgames.game.inventories.create.WaitPlayersCallback;
 import water.of.cup.boardgames.game.inventories.join.GameJoinInventory;
 import water.of.cup.boardgames.game.inventories.join.JoinGameCallback;
+import water.of.cup.boardgames.game.inventories.ready.GameReadyCallback;
+import water.of.cup.boardgames.game.inventories.ready.GameReadyInventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public abstract class GameInventory {
 
@@ -18,10 +22,12 @@ public abstract class GameInventory {
     protected abstract ArrayList<GameOption> getOptions();
     protected abstract int getMaxQueue();
     protected abstract int getMaxGame();
+    protected abstract void onGameCreate(HashMap<String, Object> gameData, ArrayList<Player> players);
 
     private final GameCreateInventory gameCreateInventory;
     private final GameWaitPlayersInventory gameWaitPlayersInventory;
     private final GameJoinInventory gameJoinInventory;
+    private final GameReadyInventory gameReadyInventory;
 
     private final ArrayList<GameOption> gameOptions;
     private final int maxPlayers;
@@ -29,6 +35,7 @@ public abstract class GameInventory {
     // Vars that must be reset
     private final ArrayList<Player> joinPlayerQueue;
     private final ArrayList<Player> acceptedPlayers;
+    private final HashMap<Player, Boolean> playerReadyMap;
     private HashMap<String, Object> gameData;
     private Player gameCreator;
 
@@ -46,6 +53,7 @@ public abstract class GameInventory {
         this.game = game;
         this.joinPlayerQueue = new ArrayList<>();
         this.acceptedPlayers = new ArrayList<>();
+        this.playerReadyMap = new HashMap<>();
         this.gameOptions = getOptions();
         this.maxPlayers = getMaxGame();
 
@@ -55,9 +63,10 @@ public abstract class GameInventory {
         this.gameCreateInventory = new GameCreateInventory(this);
         this.gameWaitPlayersInventory = new GameWaitPlayersInventory(this);
         this.gameJoinInventory = new GameJoinInventory(this);
+        this.gameReadyInventory = new GameReadyInventory(this);
     }
 
-    public void build(Player player, GameInventoryCallback callback) {
+    public void build(Player player) {
         // create game -> gameData -> open wait players
         // join queue -> accept -> add to queue, waiting for game owner
         // wait players -> accept enough -> move all to ready
@@ -69,10 +78,6 @@ public abstract class GameInventory {
         }
 
         this.gameJoinInventory.build(player, handleJoinGame());
-
-
-
-        // this.gameJoinInventory.build(player, onleave/onJoin -> add, update waitplayers/ check if game has enough players
     }
 
     private CreateInventoryCallback handleCreateGame(Player player) {
@@ -107,14 +112,25 @@ public abstract class GameInventory {
         return new WaitPlayersCallback() {
             @Override
             public void onAccept(Player player) {
-                // TODO: Move to accept screen if maxPlayers
                 gameCreator.sendMessage("Accepting " + player.getDisplayName());
 
                 joinPlayerQueue.remove(player);
                 acceptedPlayers.add(player);
 
-                updateWaitPlayersInventory();
-                updateJoinGameInventory(player);
+                // Move players to ready screen
+                if(acceptedPlayers.size() == getMaxPlayers() - 1) {
+                    // Init all player ready
+                    playerReadyMap.put(gameCreator, false);
+                    for(Player player1 : acceptedPlayers) {
+                        playerReadyMap.put(player1, false);
+                        gameReadyInventory.build(player1, handleReady());
+                    }
+
+                    gameReadyInventory.build(gameCreator, handleReady());
+                } else {
+                    updateWaitPlayersInventory();
+                    updateJoinGameInventory(player);
+                }
             }
 
             @Override
@@ -124,9 +140,14 @@ public abstract class GameInventory {
                 joinPlayerQueue.remove(player);
 
                 // Close inventory for player waiting
-                player.closeInventory();
+                closeInventory(player);
 
                 updateWaitPlayersInventory();
+            }
+
+            @Override
+            public void onLeave() {
+                resetGameInventory("Game owner has left");
             }
         };
     }
@@ -135,6 +156,13 @@ public abstract class GameInventory {
         return new JoinGameCallback() {
             @Override
             public void onJoin(Player player) {
+                // If game already started etc, don't let them join
+                if(gameData == null) {
+                    closeInventory(player);
+                    player.sendMessage("No available game to join.");
+                    return;
+                }
+
                 if(joinPlayerQueue.size() < getMaxQueue()) {
                     joinPlayerQueue.add(player);
 
@@ -142,7 +170,7 @@ public abstract class GameInventory {
                     updateWaitPlayersInventory();
                     updateJoinGameInventory(player);
                 } else {
-                    player.closeInventory();
+                    closeInventory(player);
                     player.sendMessage("Too many players are queuing!");
                 }
 
@@ -161,6 +189,37 @@ public abstract class GameInventory {
         };
     }
 
+    private GameReadyCallback handleReady() {
+        return new GameReadyCallback() {
+            @Override
+            public void onReady(Player player) {
+                playerReadyMap.put(player, true);
+
+                // Check if everyone is ready
+                boolean allReady = true;
+                for(Player player1 : playerReadyMap.keySet()) {
+                    if(!playerReadyMap.get(player1)) {
+                        allReady = false;
+                        break;
+                    }
+                }
+
+                if(allReady) {
+                    // Everyone is ready, close invs, reset, give data
+                    onGameCreate(gameData, new ArrayList<>(playerReadyMap.keySet()));
+                    resetGameInventory(null);
+                } else {
+                    updateReadyInventory();
+                }
+            }
+
+            @Override
+            public void onLeave(Player player) {
+                resetGameInventory("Player left ready screen. Game cancelled.");
+            }
+        };
+    }
+
     private void updateWaitPlayersInventory() {
         gameWaitPlayersInventory.build(gameCreator, handleWaitPlayers());
     }
@@ -169,7 +228,42 @@ public abstract class GameInventory {
         gameJoinInventory.build(player, handleJoinGame());
     }
 
+    private void updateReadyInventory() {
+        for(Player player : playerReadyMap.keySet()) {
+            gameReadyInventory.build(player, handleReady());
+        }
+    }
+
     // TODO: Reset method, kicks everyone out, called when create game or game owner leaves
+    private void resetGameInventory(String message) {
+        for(Player player : joinPlayerQueue) {
+            closeInventory(player);
+            if(message != null)
+                player.sendMessage(message);
+        }
+
+        for(Player player : acceptedPlayers) {
+            closeInventory(player);
+            if(message != null)
+                player.sendMessage(message);
+        }
+
+        closeInventory(gameCreator);
+        if(message != null)
+            gameCreator.sendMessage(message);
+
+        joinPlayerQueue.clear();
+        acceptedPlayers.clear();
+        playerReadyMap.clear();
+        gameCreator = null;
+        gameData = null;
+    }
+
+    private void closeInventory(Player player) {
+        InventoryGui gui = InventoryGui.get(player);
+        if(gui != null)
+            gui.close(true);
+    }
 
     public Game getGame() {
         return this.game;
@@ -198,6 +292,23 @@ public abstract class GameInventory {
 
     public int getMaxPlayers() {
         return this.maxPlayers;
+    }
+
+    // Use this inside readyinventory to make sure game creator is included
+    public Set<Player> getReadyPlayers() {
+        return playerReadyMap.keySet();
+    }
+
+    public boolean getReadyStatus(Player player) {
+        return playerReadyMap.get(player);
+    }
+
+    public int getNumReady() {
+        int numReady = 0;
+        for(Player player1 : playerReadyMap.keySet()) {
+            if(playerReadyMap.get(player1)) numReady++;
+        }
+        return numReady;
     }
 
 }

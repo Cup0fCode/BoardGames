@@ -16,7 +16,8 @@ public class InventoryScreen {
     }
 
     public void renderGameOptions(InventoryGui gui, char playerPos, char groupPos) {
-        gui.addElement(new StaticGuiElement(playerPos, new ItemStack(Material.SKELETON_SKULL), click -> true,
+        ItemStack playerHead = InventoryUtils.getPlayerHead(gameInventory.getGameCreator());
+        gui.addElement(new StaticGuiElement(playerPos, playerHead, click -> true,
                         ChatColor.GREEN + gameInventory.getGameCreator().getDisplayName()
                 )
         );

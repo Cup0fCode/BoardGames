@@ -11,6 +11,7 @@ import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
 import water.of.cup.boardgames.game.inventories.InventoryScreen;
+import water.of.cup.boardgames.game.inventories.InventoryUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +46,7 @@ public class GameJoinInventory extends InventoryScreen {
         } else if(gameInventory.getAcceptedPlayers().contains(player)) {
             renderJoinStatus(gui, Material.LIME_WOOL, "Waiting for more players");
         } else {
-            gui.addElement(new StaticGuiElement('z', new ItemStack(Material.SKELETON_SKULL), ChatColor.GREEN + player.getDisplayName()));
+            gui.addElement(new StaticGuiElement('z', InventoryUtils.getPlayerHead(player), ChatColor.GREEN + player.getDisplayName()));
 
             gui.addElement(new StaticGuiElement('a', new ItemStack(Material.LIME_STAINED_GLASS_PANE), click -> {
                         callback.onJoin(player);
@@ -60,7 +61,7 @@ public class GameJoinInventory extends InventoryScreen {
                         callback.onLeave(player);
                         return true;
                     },
-                            ChatColor.GREEN + "Leave Game"
+                            ChatColor.RED + "Leave Game"
                     )
             );
         }
