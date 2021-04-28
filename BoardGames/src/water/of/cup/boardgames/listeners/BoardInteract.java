@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import org.w3c.dom.events.Event;
 
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.Game;
@@ -108,17 +109,16 @@ public class BoardInteract implements Listener {
 			// TODO: check if game is running
 
 			// TODO: check if player has permission to delete game
-
-			game.delete();
-			Location frameLoc = gameFrame.getLocation();
-			gameFrame.remove();
-
-			frameLoc.getBlock().setType(Material.AIR);
-
-			ItemStack boardItem = game.getBoardItem();
-
-			if (boardItem != null)
-				player.getWorld().dropItem(frameLoc, boardItem);
+			
+			if (game.destroy(gameFrame)) {
+				
+				// drop the board item TODO: check if board item should be dropped (player not in creative, game settings)
+				ItemStack boardItem = game.getBoardItem();
+				if (boardItem != null)
+					player.getWorld().dropItem(e.getClickedBlock().getLocation(), boardItem);
+			}
+				
+			
 			return;
 
 		}
