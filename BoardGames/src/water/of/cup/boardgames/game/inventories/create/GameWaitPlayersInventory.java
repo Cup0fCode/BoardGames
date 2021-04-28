@@ -32,7 +32,9 @@ public class GameWaitPlayersInventory extends InventoryScreen {
     public void build(Player player, WaitPlayersCallback callback) {
         String[] guiSetup = getGuiSetup();
 
-        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, game.getGameName(), guiSetup);
+        String inventoryName = game.getGameName() + " (" + gameInventory.getAcceptedPlayers().size() + "/" + gameInventory.getMaxPlayers() + ")";
+
+        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, inventoryName, guiSetup);
 
         gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
 

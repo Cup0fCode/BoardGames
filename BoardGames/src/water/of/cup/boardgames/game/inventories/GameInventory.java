@@ -24,6 +24,7 @@ public abstract class GameInventory {
     private final GameJoinInventory gameJoinInventory;
 
     private final ArrayList<GameOption> gameOptions;
+    private final int maxPlayers;
 
     // Vars that must be reset
     private final ArrayList<Player> joinPlayerQueue;
@@ -46,6 +47,7 @@ public abstract class GameInventory {
         this.joinPlayerQueue = new ArrayList<>();
         this.acceptedPlayers = new ArrayList<>();
         this.gameOptions = getOptions();
+        this.maxPlayers = getMaxGame();
 
         // When gameData is null, no game has been created
         this.gameData = null;
@@ -56,8 +58,6 @@ public abstract class GameInventory {
     }
 
     public void build(Player player, GameInventoryCallback callback) {
-        // TODO: if idle, build create game, else join or wager
-
         // create game -> gameData -> open wait players
         // join queue -> accept -> add to queue, waiting for game owner
         // wait players -> accept enough -> move all to ready
@@ -94,6 +94,8 @@ public abstract class GameInventory {
                 // Set game data, open wait players
                 player.sendMessage("Creating game with gameData");
 
+                // TODO: if gameDataResult contains gameSize, set getMaxGame
+
                 gameCreator = player;
                 gameData = new HashMap<>(gameDataResult);
                 gameWaitPlayersInventory.build(player, handleWaitPlayers());
@@ -105,7 +107,7 @@ public abstract class GameInventory {
         return new WaitPlayersCallback() {
             @Override
             public void onAccept(Player player) {
-                // TODO: Add them to players
+                // TODO: Move to accept screen if maxPlayers
                 gameCreator.sendMessage("Accepting " + player.getDisplayName());
 
                 joinPlayerQueue.remove(player);
@@ -133,11 +135,17 @@ public abstract class GameInventory {
         return new JoinGameCallback() {
             @Override
             public void onJoin(Player player) {
-                joinPlayerQueue.add(player);
+                if(joinPlayerQueue.size() < getMaxQueue()) {
+                    joinPlayerQueue.add(player);
 
-                // update waitplayers
-                updateWaitPlayersInventory();
-                updateJoinGameInventory(player);
+                    // update waitplayers
+                    updateWaitPlayersInventory();
+                    updateJoinGameInventory(player);
+                } else {
+                    player.closeInventory();
+                    player.sendMessage("Too many players are queuing!");
+                }
+
             }
 
             @Override
@@ -186,6 +194,10 @@ public abstract class GameInventory {
 
     public Player getGameCreator() {
         return this.gameCreator;
+    }
+
+    public int getMaxPlayers() {
+        return this.maxPlayers;
     }
 
 }
