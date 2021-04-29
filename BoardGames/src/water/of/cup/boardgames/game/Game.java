@@ -25,6 +25,7 @@ import water.of.cup.boardgames.game.wagers.WagerManager;
 
 public abstract class Game {
 	private static NamespacedKey gameIdKey;
+	private static NamespacedKey gameNameKey;
 
 	protected int gameId;
 	protected String gameName;
@@ -307,16 +308,16 @@ public abstract class Game {
 			}
 		}
 		int maxD = Math.max(Math.max(maxX - minX, maxY - minY), maxZ - minZ);
-		
+
 		// destroy item frames
 		for (Entity entity : loc.getWorld().getNearbyEntities(loc, maxD, maxD, maxD)) {
-            if (entity instanceof ItemFrame && GameMap.isGameMap(((ItemFrame) entity).getItem())) {
-            	ItemFrame frame = (ItemFrame) entity;
-            	if ((new GameMap(frame.getItem())).getGameId() != gameId)
+			if (entity instanceof ItemFrame && GameMap.isGameMap(((ItemFrame) entity).getItem())) {
+				ItemFrame frame = (ItemFrame) entity;
+				if ((new GameMap(frame.getItem())).getGameId() != gameId)
 					continue;
-            	frame.remove();
-            }
-        }
+				frame.remove();
+			}
+		}
 	}
 
 	public void delete() {
@@ -354,5 +355,17 @@ public abstract class Game {
 
 	public int getRotation() {
 		return mapManager.getRotation();
+	}
+
+	public String getName() {
+		return gameName + "";
+	}
+
+	public static NamespacedKey getGameNameKey() {
+		return gameNameKey;
+	}
+
+	public static void setGameNameKey(NamespacedKey gameNameKey) {
+		Game.gameNameKey = gameNameKey;
 	}
 }

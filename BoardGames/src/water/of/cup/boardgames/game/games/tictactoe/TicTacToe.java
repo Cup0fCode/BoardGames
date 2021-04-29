@@ -1,8 +1,10 @@
 package water.of.cup.boardgames.game.games.tictactoe;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import water.of.cup.boardgames.game.BoardItem;
 import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
@@ -25,7 +27,7 @@ public class TicTacToe extends Game {
 
 	@Override
 	protected void setGameName() {
-		this.gameName = "Tic-Tac-Toe";
+		this.gameName = "TicTacToe";
 
 	}
 
@@ -59,8 +61,8 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
-	public ItemStack getBoardItem() {
-		return null;
+	public BoardItem getBoardItem() {
+		return new BoardItem(gameName, new ItemStack(Material.OAK_TRAPDOOR, 1));
 	}
 
 	@Override

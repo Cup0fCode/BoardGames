@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.game.BoardItem;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.games.battleship.Battleship;
@@ -29,15 +30,19 @@ public class BlockPlace implements Listener {
 		double yaw = player.getEyeLocation().getYaw();
 		int rotation = ((int) ((yaw - 45) / 90 + 3) % 4);
 
-		Game game = null;
+		// check if itemStack is boardItem
+		if (!BoardItem.isBoardItem(itemStack))
+			return;
 		
-		if (itemStack.getType() == Material.OAK_SAPLING)
-			game = new TicTacToe(rotation);
-		if (itemStack.getType() == Material.ACACIA_SAPLING)
-			game = new Battleship(rotation);
+		Game game = gameManager.newGame(new BoardItem(itemStack), rotation);
+		
+//		if (itemStack.getType() == Material.OAK_SAPLING)
+//			game = new TicTacToe(rotation);
+//		if (itemStack.getType() == Material.ACACIA_SAPLING)
+//			game = new Battleship(rotation);
 		
 		
-		// if no game return
+		// make sure game exists
 		if (game == null)
 			return;
 		
