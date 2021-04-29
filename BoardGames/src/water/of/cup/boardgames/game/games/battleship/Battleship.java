@@ -1,8 +1,10 @@
 package water.of.cup.boardgames.game.games.battleship;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import water.of.cup.boardgames.game.BoardItem;
 import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
@@ -26,7 +28,7 @@ public class Battleship extends Game {
 
 	@Override
 	protected void setGameName() {
-		this.gameName = "Battle Ship";
+		this.gameName = "BattleShip";
 
 	}
 
@@ -65,8 +67,7 @@ public class Battleship extends Game {
 
 	@Override
 	public ItemStack getBoardItem() {
-		// TODO Auto-generated method stub
-		return null;
+		return new BoardItem(gameName, new ItemStack(Material.OAK_TRAPDOOR, 1));
 	}
 
 	@Override

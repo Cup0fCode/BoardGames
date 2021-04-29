@@ -1,13 +1,12 @@
 package water.of.cup.boardgames.game;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -17,21 +16,61 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.map.MapView;
 import org.bukkit.util.Vector;
 
 import water.of.cup.boardgames.BoardGames;
 
 public class GameManager {
+	private HashMap<String, Class<? extends Game>> nameToGameTypes;
+
 	private BoardGames instance = BoardGames.getInstance();
 
 	private ArrayList<Game> games = new ArrayList<>();
 	private int lastGameId;
-	
+
 	public GameManager() {
 		lastGameId = 0;
+		nameToGameTypes = new HashMap<String, Class<? extends Game>>();
+	}
+
+	@SuppressWarnings("unchecked")
+	public void registerGames(Class<? extends Game>... gameTypes) {
+		for (Class<? extends Game> gameType : gameTypes) {
+			Constructor<? extends Game> cons;
+			try {
+				cons = gameType.getConstructor(int.class);
+				Game game = cons.newInstance(0);
+				nameToGameTypes.put(game.getName(), gameType);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public Game newGame(String name, int rotation) {
+		try {
+			for (String ckey : nameToGameTypes.keySet()) {
+				if (!ckey.equals(name))
+					continue;
+				Constructor<? extends Game> cons = nameToGameTypes.get(ckey).getConstructor(int.class);
+				return cons.newInstance(rotation);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
+	public Game newGame(BoardItem item, int rotation) {
+		return newGame(item.getName(), rotation);
+	}
+	
+	public String[] getGameNames() {
+		return nameToGameTypes.keySet().toArray(new String[nameToGameTypes.keySet().size()]);
+	}
+
 	public void addGame(Game game) {
 		if (!games.contains(game)) {
 			games.add(game);
@@ -46,7 +85,7 @@ public class GameManager {
 		games.remove(game);
 		return true;
 	}
-	
+
 //	public boolean hasGame(ItemStack item) {
 //		for (Game game : games) {
 //			if (game.getItem().equals(item)) {
@@ -55,7 +94,7 @@ public class GameManager {
 //		}
 //		return false;
 //	}
-	
+
 //	public Game getGame(ItemStack item) {
 //		for (Game game : games) {
 //			if (game.getItem().equals(item)) {
@@ -64,7 +103,7 @@ public class GameManager {
 //		}
 //		return null;
 //	}
-	
+
 //	public void loadGames() {
 //		File folder = new File(BoardGames.getInstance().getDataFolder() + "/saved_games");
 //		File[] listOfFiles = folder.listFiles();
@@ -94,35 +133,39 @@ public class GameManager {
 //	}
 
 	public Game getGameByPlayer(Player player) {
-		for(Game game : games) {
-			if(game.hasPlayer(player)) return game;
+		for (Game game : games) {
+			if (game.hasPlayer(player))
+				return game;
 		}
 		return null;
 	}
 
 	public Game getGameByQueuePlayer(Player player) {
-		for(Game game : games) {
-			if(game.getPlayerQueue().contains(player)) return game;
+		for (Game game : games) {
+			if (game.getPlayerQueue().contains(player))
+				return game;
 		}
 
 		return null;
 	}
 
 	public Game getGameByDecisionQueuePlayer(Player player) {
-		for(Game game : games) {
-			if(game.getPlayerDecideQueue().contains(player)) return game;
+		for (Game game : games) {
+			if (game.getPlayerDecideQueue().contains(player))
+				return game;
 		}
 
 		return null;
 	}
 
 	public Game getGameByGameId(int id) {
-		for(Game game : games) {
-			if(game.getGameId() == id) return game;
+		for (Game game : games) {
+			if (game.getGameId() == id)
+				return game;
 		}
 		return null;
 	}
-	
+
 	public ArrayList<Game> getGamesInRegion(World world, Vector p1, Vector p2) {
 		ArrayList<Game> games = new ArrayList<Game>();
 		for (Entity entity : world.getEntities()) {
@@ -140,7 +183,7 @@ public class GameManager {
 	}
 
 	public void saveGames() {
-		for(Game game : this.games) {
+		for (Game game : this.games) {
 			this.storeGame(game);
 		}
 	}
@@ -174,4 +217,3 @@ public class GameManager {
 		return ++lastGameId;
 	}
 }
-  

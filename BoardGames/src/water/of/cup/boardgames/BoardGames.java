@@ -24,6 +24,11 @@ import water.of.cup.boardgames.commands.DebugCommand;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToeInventory;
+import water.of.cup.boardgames.commands.bgCommands;
+import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.GameManager;
+import water.of.cup.boardgames.game.games.battleship.Battleship;
+import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.listeners.BlockPlace;
 import water.of.cup.boardgames.listeners.BoardInteract;
@@ -39,11 +44,14 @@ public class BoardGames extends JavaPlugin {
 	private static Economy economy = null;
 	//private DataSource dataStore;
 
+	@SuppressWarnings("unchecked") // for register games
 	@Override
 	public void onEnable() {
 		instance = this;
 		
+		
 		Game.setGameIdKey(new NamespacedKey(this, "game_id_key"));
+		Game.setGameNameKey(new NamespacedKey(this, "game_name_key"));
 		MapManager.setMapValsKey(new NamespacedKey(this, "map_vals_key"));
 		loadConfig();
 
@@ -54,8 +62,11 @@ public class BoardGames extends JavaPlugin {
 
 		// Debug:
 		getCommand("debug").setExecutor(new DebugCommand());
+		//Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
 		
-//		getCommand("chessboards").setExecutor(new ChessBoardCommands());
+		gameManager.registerGames(TicTacToe.class, Battleship.class);
+		
+		getCommand("bg").setExecutor(new bgCommands());
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());
 
 //		registerListeners(new BoardInteract(), new BlockPlace(), new InventoryClose(), new InventoryClick(), new HangingBreakByEntity(), new EntityDamageByEntity(), new HangingBreak(), new ChessPlayerJoin(), new BlockBreak());
