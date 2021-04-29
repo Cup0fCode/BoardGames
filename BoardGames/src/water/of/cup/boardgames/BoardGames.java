@@ -45,6 +45,7 @@ public class BoardGames extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		
+		
 		Game.setGameIdKey(new NamespacedKey(this, "game_id_key"));
 		Game.setGameNameKey(new NamespacedKey(this, "game_name_key"));
 		MapManager.setMapValsKey(new NamespacedKey(this, "map_vals_key"));
