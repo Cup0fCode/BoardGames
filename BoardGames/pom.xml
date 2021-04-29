@@ -1,43 +1,43 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>BoardGames</groupId>
-  <artifactId>BoardGames</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-<build>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>BoardGames</groupId>
+	<artifactId>BoardGames</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	
+	<build>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
+				<filtering>true</filtering>
 			</resource>
 		</resources>
 
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
+			 <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3.1</version>
 			</plugin>
-
+            
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.4.3</version>
 				<configuration>
-					<artifactSet>
-						<includes>
-							<include>com.zaxxer:*:*:*</include>
-							<include>org.slf4j:*:*:*</include>
-						</includes>
-					</artifactSet>
+					<!-- <relocations> <relocation> <pattern>de.themoep</pattern> <shadedPattern>de.themoep</shadedPattern> 
+						</relocation> </relocations> -->
 				</configuration>
 				<executions>
 					<execution>
@@ -49,6 +49,7 @@
 				</executions>
 			</plugin>
 
+			
 		</plugins>
 	</build>
 	<repositories>
@@ -61,18 +62,14 @@
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
 		</repository>
+		<repository>
+			<id>minebench-repo</id>
+			<url>https://repo.minebench.de/</url>
+		</repository>
 	</repositories>
 	<dependencies>
 
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.9</version>
-			<scope>compile</scope>
-			<type>jar</type>
-		</dependency>
-
 		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
@@ -88,6 +85,7 @@
 			<scope>compile</scope>
 			<type>jar</type>
 		</dependency>
+
 		<dependency>
 			<groupId>com.github.MilkBowl</groupId>
 			<artifactId>VaultAPI</artifactId>
@@ -103,6 +101,13 @@
 					<artifactId>craftbukkit</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>de.themoep</groupId>
+			<artifactId>inventorygui</artifactId>
+			<version>1.4.3-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>
