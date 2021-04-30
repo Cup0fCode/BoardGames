@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game;
 
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 
 import water.of.cup.boardgames.image_handling.ImageManager;
@@ -62,6 +63,21 @@ public class GameImage {
 
 	public void cropMap(int[] loc) { //crops image to map location
 		image = image.getSubimage(loc[0] * 128, loc[1] * 128, 128, 128);
+	}
+	
+	// write a string to a button
+//	public void writeText(String text, int[] loc1, int[] loc2, int size) {
+//		int size = Math.min(loc2[1] - loc1[1], (loc2[0] - loc1[0]) / text.length());
+//		writeText(text, loc1, size);
+//	}
+	
+	public void writeText(String text, int[] loc, int size) {
+		Font font = new Font("Serif", 0, size);
+		image = ImageUtils.writeCenterText(image, loc, text, font);
+	}
+	
+	public void writeText(String text, int[] loc, Font font) {
+		image = ImageUtils.writeCenterText(image, loc, text, font);
 	}
 	
 }

@@ -84,7 +84,7 @@ public class TicTacToe extends Game {
 			
 			String s = checkForWinner();
 			if (s.equals("x"))
-				player.sendMessage("X won");
+				this.gameImage.writeText("X won", new int[] {64, 64}, 16);
 			if (s.equals("o"))
 				player.sendMessage("O won");
 			if (s.equals("t"))

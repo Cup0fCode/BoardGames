@@ -29,7 +29,6 @@ public class Battleship extends Game {
 	@Override
 	protected void setGameName() {
 		this.gameName = "BattleShip";
-
 	}
 
 	@Override
