@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
 import water.of.cup.boardgames.game.inventories.GameOptionType;
@@ -55,13 +56,18 @@ public class TicTacToeInventory extends GameInventory {
 
     @Override
     protected int getMaxGame() {
-        return 3;
+        return 2;
     }
 
     @Override
-    protected void onGameCreate(HashMap<String, Object> gameData, ArrayList<Player> players) {
-        for(Player player : players) {
-            player.sendMessage("Welcome to TIC TAC TOE!");
+    protected boolean hasWagerScreen() {
+        return true;
+    }
+
+    @Override
+    protected void onGameCreate(HashMap<String, Object> gameData, ArrayList<GamePlayer> players) {
+        for(GamePlayer player : players) {
+            player.getPlayer().sendMessage("Welcome to TIC TAC TOE!");
         }
         // TODO: start game set vars
     }

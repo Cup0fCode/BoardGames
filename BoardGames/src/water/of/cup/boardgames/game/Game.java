@@ -242,7 +242,26 @@ public abstract class Game {
 	}
 
 	public ArrayList<GamePlayer> getGamePlayers() {
-		return (ArrayList<GamePlayer>) players.values();
+		return new ArrayList<>(players.values());
+	}
+
+	public boolean addPlayer(Player player) {
+		if(players.containsKey(player)) {
+			return false;
+		}
+
+		GamePlayer newPlayer = new GamePlayer(player);
+		players.put(player, newPlayer);
+		return true;
+	}
+
+	public void removePlayer(Player player) {
+		players.remove(player);
+	}
+
+	// TODO: Move to reset method
+	public void clearGamePlayers() {
+		players.clear();;
 	}
 
 	protected abstract void gamePlayerOutOfTime(GamePlayer turn);
