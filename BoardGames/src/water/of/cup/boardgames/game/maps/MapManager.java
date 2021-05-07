@@ -96,6 +96,17 @@ public class MapManager {
 
 	public int[] getMapValsLocationOnRotatedBoard(int mapVal) {
 		int[] loc = getMapValsLocationOnBoard(mapVal);
+		
+		// check if screen contains mapval
+		for (Screen screen : game.getScreens()) {
+			if (screen.containsMapVal(mapVal)) {
+				// calculate position on board:
+				loc = screen.getPosition();
+				loc[screen.getDirection() % 2] = loc[screen.getDirection() % 2] 
+						+ screen.getMapValsLocationOnScreen(mapVal)[0];
+				break;
+			}
+		}
 
 		int i = 0;
 		while (i < rotation) {

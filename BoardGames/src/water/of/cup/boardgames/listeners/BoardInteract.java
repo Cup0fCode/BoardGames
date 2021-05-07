@@ -59,7 +59,8 @@ public class BoardInteract implements Listener {
 		ItemFrame gameFrame = null;
 		Game game = null;
 		GameMap map = null;
-
+		
+		double minDistance = 100; //used to find the closest map clicked 
 		for (Entity entity : nearbyEntities) {
 
 			if (!(entity instanceof ItemFrame))
@@ -77,27 +78,35 @@ public class BoardInteract implements Listener {
 				double y = pos.getY();
 				double z = pos.getZ();
 
+				// create bounding box
+				double[] bounds = new double[] {0.5, .0313, 0.5};
+				if (frame.getAttachedFace() == BlockFace.NORTH || frame.getAttachedFace() == BlockFace.SOUTH)
+					bounds = new double[] {0.5, 0.5, 0.0313};
+				if (frame.getAttachedFace() == BlockFace.EAST || frame.getAttachedFace() == BlockFace.WEST)
+					bounds = new double[] {0.0313, 0.5, 0.5};
+				
+				
+				BoundingBox box = new BoundingBox(x - bounds[0], y - bounds[1], z - bounds[2], x + bounds[0], y +  bounds[1], z + bounds[2]);
 				// check if player clicked box
-				BoundingBox box = new BoundingBox(x - 0.5, y - .0313, z - 0.5, x + 0.5, y + 0.0313, z + 0.5);
 				RayTraceResult tempResult = box.rayTrace(player.getEyeLocation().toVector(), direction, 5);
 				if (tempResult != null) {
+					double distance = tempResult.getHitPosition().distance(player.getEyeLocation().toVector());
+					if ( distance > minDistance)
+						continue; // if this map is further away than the last map, keep searching
+					minDistance = distance;
 					result = tempResult;
 					gameFrame = frame;
 					map = gameMap;
 					game = gameMap.getGame();
-					break;
+					continue;
 				}
-
-			} else {
-				player.sendMessage("not a game map");
 			}
 		}
 
 		if (game == null) // check if a game is found
 			return;
 
-		if (gameFrame.getAttachedFace().getOppositeFace() != result.getHitBlockFace()) // check that the top of the
-																						// board was hit
+		if (gameFrame.getAttachedFace().getOppositeFace() != result.getHitBlockFace()) // check that the top of the																				// board was hit
 			return;
 
 		// TODO: check for permissions

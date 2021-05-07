@@ -46,14 +46,18 @@ public class Screen {
 	}
 
 	public int[] getClickLocation(int[] loc, int mapVal) {
-		// flip x val if necessary
-		if (direction > 1)
-			loc[0] = 127 - loc[0];
-
 		// add the map's position
+		
+		// flip x val if necessary
+		if (direction < 1)
+			loc[0] = 127 - loc[0];
+		
+		// flip y val
+		loc[1] = 127 - loc[1];
+				
 		int[] mapPos = getMapValsLocationOnScreen(mapVal);
 		loc = new int[] { loc[0] + mapPos[0] * 128, loc[1] + mapPos[1] * 128 };
-
+		
 		return loc;
 	}
 
@@ -103,5 +107,9 @@ public class Screen {
 
 	public void renderScreen() {
 
+	}
+
+	public int getDirection() {
+		return direction;
 	}
 }

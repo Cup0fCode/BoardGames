@@ -54,6 +54,9 @@ public class Battleship extends Game {
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
 		Screen screen = mapManager.getClickedScreen(map);
 		if (screen != null) {
+			if (screen.equals(p1GameScreen)) {
+				player.sendMessage("p1 game screen clicked");
+			}
 			player.sendMessage("Screen clicked: " + clickLoc[0] + "," + clickLoc[1]);
 		} else {
 			player.sendMessage("Board clicked: " + clickLoc[0] + "," + clickLoc[1]);
