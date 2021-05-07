@@ -9,7 +9,7 @@ public interface GameWagerCallback {
 
     void onCancel(RequestWager requestWager);
 
-    void onAccept(RequestWager requestWager);
+    void onAccept(Player player, RequestWager requestWager);
 
     void onLeave(Player player);
 

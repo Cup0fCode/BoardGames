@@ -20,14 +20,14 @@ public class RequestWager {
 		this.ownerBet = playerBettingOn;
 		this.amount = amount;
 		
-		instance.getEconomy().withdrawPlayer(owner, amount);
+//		instance.getEconomy().withdrawPlayer(owner, amount);
 	}
 
 	public Wager createWager(Player otherPlayer) {
-		if (instance.getEconomy().getBalance(otherPlayer) < amount) {
-			otherPlayer.sendMessage(ChatColor.RED + "You do not have enough money to accept this wager.");
-			return null;
-		}
+//		if (instance.getEconomy().getBalance(otherPlayer) < amount) {
+//			otherPlayer.sendMessage(ChatColor.RED + "You do not have enough money to accept this wager.");
+//			return null;
+//		}
 		
 		return new Wager(owner, otherPlayer, ownerBet, amount);
 	}

@@ -30,23 +30,29 @@ public class GameWagerInventory extends InventoryScreen {
         this.game = gameInventory.getGame();
     }
 
-    public void build(Player player, boolean opened, RequestWager selectedWager, GameWagerCallback callback) {
-        if(!opened) {
+    public void build(Player player, GameWagerCallback callback) {
+        WagerOption wagerOption = gameInventory.getWagerOption(player);
+
+        if(!wagerOption.isOpened()) {
             renderJoinWager(player, callback);
             return;
         }
 
-        if(selectedWager == null) {
+        if(wagerOption.getSelectedWager() == null) {
             renderCreateWager(player, callback);
             return;
         }
 
-        renderAcceptWager();
+        // If the wager they have selected is no longer avail (someone else accepted first/cancelled)
+        if(!gameInventory.getRequestWagers().contains(wagerOption.getSelectedWager())) {
+            wagerOption.setSelectedWager(null);
+            renderCreateWager(player, callback);
+            return;
+        }
+
+        renderAcceptWager(player, callback);
     }
 
-    public void build(Player player, GameWagerCallback callback) {
-        build(player, false, null, callback);
-    }
 
     private void renderCreateWager(Player player, GameWagerCallback callback) {
         String[] guiSetup = getCreateWagerViewSetup();
@@ -58,7 +64,7 @@ public class GameWagerInventory extends InventoryScreen {
         gui.addElement(new StaticGuiElement('w', new ItemStack(Material.WHITE_STAINED_GLASS_PANE), " "));
 
         // Render in wagers
-        renderRequestWagers(gui, player, null, callback);
+        renderRequestWagers(gui, player, callback);
 
         // Render create wager buttons
         gui.addElement(new StaticGuiElement('a', InventoryUtils.getPlayerHead(player), player.getDisplayName()));
@@ -111,8 +117,66 @@ public class GameWagerInventory extends InventoryScreen {
         gui.show(player);
     }
 
-    private void renderAcceptWager() {
+    private void renderAcceptWager(Player player, GameWagerCallback callback) {
+        WagerOption wagerOption = gameInventory.getWagerOption(player);
+        RequestWager selectedWager = wagerOption.getSelectedWager();
 
+        String[] guiSetup = getAcceptWagerViewSetup();
+
+        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, game.getGameName(), guiSetup);
+
+        gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
+
+        gui.addElement(new StaticGuiElement('w', new ItemStack(Material.WHITE_STAINED_GLASS_PANE), " "));
+
+        // Render in wagers
+        renderRequestWagers(gui, player, callback);
+
+        // Player skulls
+        gui.addElement(new StaticGuiElement('a', InventoryUtils.getPlayerHead(selectedWager.getOwner()), selectedWager.getOwner().getDisplayName()));
+        gui.addElement(new StaticGuiElement('c', InventoryUtils.getPlayerHead(player), player.getDisplayName()));
+
+        // Wager amount
+        gui.addElement(new StaticGuiElement('b', new ItemStack(Material.GOLD_INGOT), ChatColor.GREEN + "" + selectedWager.getAmount()));
+
+        // Bet skulls
+        Player ownerBetPlayer = selectedWager.getOwnerBet().getPlayer();
+        Player accepterBetPlayer = game.getGamePlayers().get(0).getPlayer() == ownerBetPlayer
+                ? game.getGamePlayers().get(1).getPlayer()
+                : game.getGamePlayers().get(0).getPlayer();
+
+        gui.addElement(new StaticGuiElement('d', InventoryUtils.getPlayerHead(ownerBetPlayer), ownerBetPlayer.getDisplayName()));
+        gui.addElement(new StaticGuiElement('e', InventoryUtils.getPlayerHead(accepterBetPlayer), accepterBetPlayer.getDisplayName()));
+
+        // Accept wager
+        gui.addElement(new StaticGuiElement('f', new ItemStack(Material.LIME_STAINED_GLASS_PANE), click -> {
+                    // Deselect once accepted
+                    wagerOption.setSelectedWager(null);
+
+                    callback.onAccept(player, selectedWager);
+                    return true;
+                },
+                        ChatColor.GREEN + "Accept Wager"
+                )
+        );
+
+        // Decline wager
+        gui.addElement(new StaticGuiElement('h', new ItemStack(Material.RED_STAINED_GLASS_PANE), click -> {
+                    // Deselect
+                    wagerOption.setSelectedWager(null);
+                    this.build(player, callback);
+                    return true;
+                },
+                        ChatColor.RED + "Decline Wager"
+                )
+        );
+
+        gui.setCloseAction(close -> {
+            callback.onLeave(player);
+            return false;
+        });
+
+        gui.show(player);
     }
 
     private void renderBetOptionButton(Player player, InventoryGui gui, char slot, ItemStack itemStack, String text) {
@@ -163,9 +227,13 @@ public class GameWagerInventory extends InventoryScreen {
         );
     }
 
-    private void renderRequestWagers(InventoryGui gui, Player player, RequestWager selectedWager, GameWagerCallback callback) {
+    private void renderRequestWagers(InventoryGui gui, Player player, GameWagerCallback callback) {
+        WagerOption wagerOption = gameInventory.getWagerOption(player);
+        RequestWager selectedWager = wagerOption.getSelectedWager();
+
         ArrayList<RequestWager> requestWagers = gameInventory.getRequestWagers();
         GuiElementGroup requestWagersGroup = new GuiElementGroup('g');
+
         for(RequestWager requestWager : requestWagers) {
             ItemStack playerHead = InventoryUtils.getPlayerHead(requestWager.getOwner());
             requestWagersGroup.addElement((new StaticGuiElement('g',
@@ -175,18 +243,18 @@ public class GameWagerInventory extends InventoryScreen {
                         if(gameInventory.hasRequestWager(player)) {
                             return true;
                         }
-
                         // Deselect if clicked again
                         if(selectedWager != null && selectedWager == requestWager) {
-                            this.build(player, true, null, callback);
+                            wagerOption.setSelectedWager(null);
                         } else {
-                            this.build(player, true, requestWager, callback);
+                            wagerOption.setSelectedWager(requestWager);
                         }
 
+                        this.build(player, callback);
                         return true;
                     },
                     ChatColor.GREEN + requestWager.getOwner().getDisplayName(),
-                    "Betting on " + requestWager.getOwnerBet().getPlayer().getDisplayName()
+                    ChatColor.GREEN + "Betting on " + requestWager.getOwnerBet().getPlayer().getDisplayName()
             )));
         }
 
@@ -205,7 +273,8 @@ public class GameWagerInventory extends InventoryScreen {
         renderGameOptions(gui, 's', 'g');
 
         gui.addElement(new StaticGuiElement('a', new ItemStack(Material.BOOK), click -> {
-                    this.build(player, true, null, callback);
+                    gameInventory.getWagerOption(player).setOpened(true);
+                    this.build(player, callback);
                     return true;
                 },
                         ChatColor.GREEN + "Wagers"
@@ -298,22 +367,23 @@ public class GameWagerInventory extends InventoryScreen {
         // Define wager area
         addWagerArea(guiSetup);
 
-        // Define create wager
+        // Define accept wager
         for(int y = 1; y <= 4; y++) {
             for(int x = 5; x <= 7; x++) {
                 guiSetup[y][x] = 'w';
             }
         }
 
-        // Define player skulls
-        guiSetup[1][5] = 'a'; // wager creator skull
-        guiSetup[1][7] = 'b'; // wager acceptor skull
-        guiSetup[1][6] = 'c'; // wager amount
+        // Define wager skulls
+        guiSetup[1][5] = 'a'; // player1 skull
+        guiSetup[1][6] = 'b'; // wager amount
+        guiSetup[1][7] = 'c'; // player2 skull
 
-        guiSetup[2][5] = 'd'; // wager creator bet
-        guiSetup[2][7] = 'e'; // other game player
+        guiSetup[2][5] = 'd'; // player1 bet
+        guiSetup[2][7] = 'e'; // player2 bet
 
         guiSetup[3][6] = 'f'; // Accept wager
+        guiSetup[4][6] = 'h'; // Decline wager
 
         return formatGuiSetup(guiSetup);
     }

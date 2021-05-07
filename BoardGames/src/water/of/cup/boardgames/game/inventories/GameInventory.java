@@ -16,6 +16,7 @@ import water.of.cup.boardgames.game.inventories.wager.GameWagerCallback;
 import water.of.cup.boardgames.game.inventories.wager.GameWagerInventory;
 import water.of.cup.boardgames.game.inventories.wager.WagerOption;
 import water.of.cup.boardgames.game.wagers.RequestWager;
+import water.of.cup.boardgames.game.wagers.Wager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ public abstract class GameInventory {
     private final HashMap<Player, Boolean> playerReadyMap;
     private final HashMap<Player, WagerOption> wagerViewPlayers;
     private final HashMap<Player, RequestWager> requestWagers;
+    private final ArrayList<Wager> gameWagers;
     private HashMap<String, Object> gameData;
     private Player gameCreator;
 
@@ -65,6 +67,7 @@ public abstract class GameInventory {
         this.playerReadyMap = new HashMap<>();
         this.wagerViewPlayers = new HashMap<>();
         this.requestWagers = new HashMap<>();
+        this.gameWagers = new ArrayList<>();
         this.gameOptions = getOptions();
         this.maxPlayers = getMaxGame();
 
@@ -256,22 +259,35 @@ public abstract class GameInventory {
         return new GameWagerCallback() {
             @Override
             public void onCreate(RequestWager requestWager) {
+                requestWagers.put(requestWager.getOwner(), requestWager);
 
+                updateWagerViewInventories();
             }
 
             @Override
             public void onCancel(RequestWager requestWager) {
+                requestWagers.remove(requestWager.getOwner());
 
+                updateWagerViewInventories();
             }
 
             @Override
-            public void onAccept(RequestWager requestWager) {
+            public void onAccept(Player wagerOpponent, RequestWager requestWager) {
+                requestWagers.remove(requestWager.getOwner());
 
+                Player wagerOwner = requestWager.getOwner();
+
+                wagerOwner.sendMessage(wagerOpponent.getDisplayName() + " has accepted your wager!");
+                wagerOpponent.sendMessage("You have accepted " + wagerOwner.getDisplayName() + "'s wager!");
+
+                gameWagers.add(requestWager.createWager(wagerOpponent));
+
+                updateWagerViewInventories();
             }
 
             @Override
             public void onLeave(Player player) {
-
+                wagerViewPlayers.remove(player);
             }
         };
     }
@@ -287,6 +303,12 @@ public abstract class GameInventory {
     private void updateReadyInventory() {
         for(Player player : playerReadyMap.keySet()) {
             gameReadyInventory.build(player, handleReady());
+        }
+    }
+
+    private void updateWagerViewInventories() {
+        for(Player player : wagerViewPlayers.keySet()) {
+            gameWagerInventory.build(player, handleWager());
         }
     }
 
@@ -312,8 +334,10 @@ public abstract class GameInventory {
         gameCreator = null;
         gameData = null;
 
-        if(clearGamePlayer)
+        if(clearGamePlayer) {
             game.clearGamePlayers();
+            gameWagers.clear();
+        }
     }
 
     private void closeInventory(Player player) {
