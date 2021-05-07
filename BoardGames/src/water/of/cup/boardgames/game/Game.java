@@ -20,7 +20,9 @@ import org.bukkit.map.MapView;
 
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.maps.GameMap;
+import water.of.cup.boardgames.game.maps.MapData;
 import water.of.cup.boardgames.game.maps.MapManager;
+import water.of.cup.boardgames.game.maps.Screen;
 import water.of.cup.boardgames.game.wagers.WagerManager;
 
 public abstract class Game {
@@ -30,6 +32,7 @@ public abstract class Game {
 	protected int gameId;
 	protected String gameName;
 	protected MapManager mapManager;
+	protected ArrayList<Screen> screens;
 	protected HashMap<Player, GamePlayer> players;
 	protected int turn;
 	protected GameImage gameImage;
@@ -42,7 +45,7 @@ public abstract class Game {
 	protected int[][] mapStructure; // the structure of mapVals, 0 for missing map
 	protected int placedMapVal; // the value of the map at the placed board location
 
-	protected abstract void setMapInformation(); // set mapStructure and placedMapVal
+	protected abstract void setMapInformation(int rotation); // set mapStructure and placedMapVal
 
 	private void setGameId() {
 		gameId = BoardGames.getInstance().getGameManager().nextGameId();
@@ -57,7 +60,8 @@ public abstract class Game {
 	protected abstract void startClock();
 
 	public Game(int rotation) {
-		setMapInformation();
+		screens = new ArrayList<Screen>();
+		setMapInformation(rotation);
 		assert placedMapVal != 0;
 		createMapManager(rotation);
 		setGameId();
@@ -143,38 +147,58 @@ public abstract class Game {
 		int maxZ = Math.max(t1Z, t2Z);
 		int minZ = Math.min(t1Z, t2Z);
 
+//		// place barriers:
+//		for (int x = minX; x <= maxX; x++)
+//			for (int y = minY; y <= maxY; y++)
+//				for (int z = minZ; z <= maxZ; z++) {
+//					Location barrierLoc = new Location(loc.getWorld(), loc.getBlockX() + x, loc.getBlockY() + y,
+//							loc.getBlockZ() + z);
+//					barrierLoc.getBlock().setType(Material.BARRIER);
+//				}
+
 		// spawn ItemFrames
 		for (int x = minX; x <= maxX; x++) {
 			for (int y = minY; y <= maxY; y++) {
 				for (int z = minZ; z <= maxZ; z++) {
 					Bukkit.getLogger().info("placed");
-					int mapVal = mapManager.getMapValAtLocationOnRotatedBoard(x - t1X, z - t1Z);
-					// skip maps with value 0
-					if (mapVal == 0)
-						continue;
+					for (MapData mapData : mapManager.getMapDataAtLocationOnRotatedBoard(x - t1X, z - t1Z, y - t1Y)) {
 
-					// create the map
-					GameMap map = new GameMap(this, mapVal, new ItemStack(Material.FILLED_MAP, 1));
+						int mapVal = mapData.getMapVal();
+						// skip maps with value 0
+						if (mapVal == 0)
+							continue;
 
-					// set the mapView
-					MapView mapView = Bukkit.createMap(world);
-					MapMeta mapMeta = (MapMeta) map.getItemMeta();
-					mapMeta.setMapView(mapView);
-					map.setItemMeta(mapMeta);
-					// mapValMapIds.put(mapVal, mapView.getId());
-					gameMaps.add(map);
+						// create the map
+						GameMap map = new GameMap(this, mapVal, new ItemStack(Material.FILLED_MAP, 1));
 
-					// spawn itemFrame
-					Location frameLoc = new Location(loc.getWorld(), loc.getBlockX() + x, loc.getBlockY() + y,
-							loc.getBlockZ() + z);
+						// set the mapView
+						MapView mapView = Bukkit.createMap(world);
+						MapMeta mapMeta = (MapMeta) map.getItemMeta();
+						mapMeta.setMapView(mapView);
+						map.setItemMeta(mapMeta);
+						// mapValMapIds.put(mapVal, mapView.getId());
+						gameMaps.add(map);
 
-					ItemFrame frame = world.spawn(frameLoc, ItemFrame.class);
-					frame.setItem(map);
-					frame.setFacingDirection(BlockFace.UP, true);
-					frame.setInvulnerable(true);
-					frame.setFixed(true);
-					frame.setVisible(true);
-					frameLoc.getBlock().setType(Material.BARRIER);
+						// spawn itemFrame
+						Location frameLoc = new Location(loc.getWorld(), loc.getBlockX() + x, loc.getBlockY() + y,
+								loc.getBlockZ() + z);
+
+						// set world preconditions so the item frame can spawn
+						frameLoc.getBlock().setType(Material.AIR);
+						Block placedOn = frameLoc.getBlock().getRelative(mapData.getBlockFace().getOppositeFace());
+						if (placedOn.getType() == Material.AIR)
+							placedOn.setType(Material.BARRIER);
+						
+						ItemFrame frame = world.spawn(frameLoc, ItemFrame.class);
+						frame.setItem(map);
+						frame.setFacingDirection(mapData.getBlockFace(), true);
+						frame.setInvulnerable(true);
+						frame.setFixed(true);
+						frame.setVisible(true);
+						
+						frameLoc.getBlock().setType(Material.BARRIER);
+					}
+
 				}
 			}
 		}
@@ -370,5 +394,9 @@ public abstract class Game {
 
 	public static void setGameNameKey(NamespacedKey gameNameKey) {
 		Game.gameNameKey = gameNameKey;
+	}
+
+	public ArrayList<Screen> getScreens() {
+		return screens;
 	}
 }

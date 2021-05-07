@@ -15,6 +15,8 @@ public class Button {
 	private GameImage image;
 	private Boolean turnBased; // if true, button is only clickable when it is a player's turn
 	private Boolean renderTurnBased; // if true, button is only rendered when it is a player's turn
+	
+	private String screenName;
 
 	//public Button(Game game, BufferedImage image, int[] loc, String name, )
 	
@@ -104,5 +106,13 @@ public class Button {
 
 	public void setName(String string) {
 		name = string;
+	}
+
+	public String getScreenName() {
+		return screenName;
+	}
+
+	public void setScreenName(String screenName) {
+		this.screenName = screenName;
 	}
 }

@@ -10,9 +10,12 @@ import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.maps.GameMap;
+import water.of.cup.boardgames.game.maps.Screen;
 
 public class Battleship extends Game {
-	boolean turn;
+	private boolean turn;
+	private Screen p1GameScreen;
+	private Screen p2GameScreen;
 
 	public Battleship(int rotation) {
 		super(rotation);
@@ -20,10 +23,13 @@ public class Battleship extends Game {
 	}
 
 	@Override
-	protected void setMapInformation() {
+	protected void setMapInformation(int rotation) {
 		this.mapStructure = new int[][] { { 2 }, { 1 } };
 		this.placedMapVal = 1;
-		this.gameImage = new GameImage("BATTLESHIP_BOARD");
+		p2GameScreen = new Screen(this, "BATTLESHIP_RADAR", 0, new int[] { 0, 0 }, new int[][] { { 3 } }, rotation);
+		screens.add(p2GameScreen);
+		p1GameScreen = new Screen(this, "BATTLESHIP_RADAR", 2, new int[] { 0, 1 }, new int[][] { { 4 } }, rotation);
+		screens.add(p1GameScreen);
 	}
 
 	@Override
@@ -33,7 +39,7 @@ public class Battleship extends Game {
 
 	@Override
 	protected void setBoardImage() {
-		// TODO Auto-generated method stub
+		this.gameImage = new GameImage("BATTLESHIP_BOARD");
 
 	}
 
@@ -45,7 +51,13 @@ public class Battleship extends Game {
 
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
-//		int[] clickLoc = mapManager.getClickLocation(loc, map);
+		int[] clickLoc = mapManager.getClickLocation(loc, map);
+		Screen screen = mapManager.getClickedScreen(map);
+		if (screen != null) {
+			player.sendMessage("Screen clicked: " + clickLoc[0] + "," + clickLoc[1]);
+		} else {
+			player.sendMessage("Board clicked: " + clickLoc[0] + "," + clickLoc[1]);
+		}
 //		if (turn == true) {
 //			buttons.add(new Button(this, "TICTACTOE_X", new int[] { clickLoc[0] - 20, clickLoc[1] - 20 }, 0, "An x"));
 //			turn = false;
@@ -72,7 +84,7 @@ public class Battleship extends Game {
 	@Override
 	protected void startGame() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

@@ -1,19 +1,14 @@
 package water.of.cup.boardgames.game.maps;
 
 import java.util.ArrayList;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
+import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
 import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.MathUtils;
 
 public class MapManager {
@@ -54,6 +49,11 @@ public class MapManager {
 		int y = (int) ((locDouble[1] - Math.floor(locDouble[1])) * 128);
 
 		int[] loc = new int[] { x, y };
+		
+		// return screen loc if a screen was clicked
+		Screen clickedScreen = getClickedScreen(map);
+		if (getClickedScreen(map) != null)
+			return clickedScreen.getClickLocation(loc, gameMap.getMapVal());
 
 		// rotate the clicked position to account for rotated games
 		int i = rotation;
@@ -116,6 +116,27 @@ public class MapManager {
 		}
 		return mapStructure[loc[1]][loc[0]];
 	}
+	
+	public ArrayList<MapData> getMapDataAtLocationOnRotatedBoard(int x, int z, int y) {
+		ArrayList<MapData> mapDatas = new ArrayList<MapData>(); 
+		int r = (4 - rotation) % 4;
+		int[] loc = new int[] { x, z };
+		int i = 0;
+		while (i < r) {
+			i++;
+			loc = MathUtils.rotatePointAroundPoint90Degrees(new double[] { 0, 0 }, loc);
+		}
+		mapDatas.add(new MapData(mapStructure[loc[1]][loc[0]], BlockFace.UP)); // add base board's mapData
+		
+		for (Screen screen : game.getScreens()) {
+			int mapVal = screen.getMapValAtLocation(loc[0], loc[1], y);
+			if (mapVal != 0)
+				mapDatas.add(new MapData(mapVal, screen.getBlockFace())); // add screen mapData
+		}
+		
+		return mapDatas;
+	}
+
 
 	public int[] getDimensions() {
 		return dimensions.clone();
@@ -164,5 +185,15 @@ public class MapManager {
 
 	public int getRotation() {
 		return rotation;
+	}
+
+	public Screen getClickedScreen(ItemStack map) {
+		GameMap gameMap = new GameMap(map);
+		int mapVal = gameMap.getMapVal();
+		for (Screen screen : game.getScreens()) {
+			if (screen.containsMapVal(mapVal))
+				return screen;
+		}
+		return null;
 	}
 }

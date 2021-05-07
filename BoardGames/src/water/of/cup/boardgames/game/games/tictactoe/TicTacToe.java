@@ -38,7 +38,7 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
-	protected void setMapInformation() {
+	protected void setMapInformation(int rotation) {
 		this.mapStructure = new int[][] { { 1 } };
 		this.placedMapVal = 1;
 	}
@@ -135,7 +135,7 @@ public class TicTacToe extends Game {
 			return stringBoard[0][2];
 		}
 		
-		// check all positions fileld
+		// check all positions filled
 		if (turn >= 10)
 			return "t";
 

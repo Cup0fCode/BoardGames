@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -154,6 +155,12 @@ public class BoardInteract implements Listener {
 
 			Vector pos = result.getHitPosition();
 			double[] loc = new double[] { pos.getX(), pos.getZ() };
+			if (gameFrame.getAttachedFace() == BlockFace.WEST || gameFrame.getAttachedFace() == BlockFace.EAST) {
+				loc = new double[] { pos.getZ(), pos.getY() };
+			}
+			if (gameFrame.getAttachedFace() == BlockFace.NORTH || gameFrame.getAttachedFace() == BlockFace.SOUTH) {
+				loc = new double[] { pos.getX(), pos.getY() };
+			}
 
 			game.click(player, loc, map);
 
