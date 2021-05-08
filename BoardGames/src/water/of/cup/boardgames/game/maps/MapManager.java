@@ -192,6 +192,11 @@ public class MapManager {
 			map.setItemMeta(mapMeta);
 			view.getWorld().getPlayers().forEach(player -> player.sendMap(view));
 		}
+		// render screens
+		for (Screen screen : game.getScreens()) {
+			screen.renderScreen();
+		}
+		
 	}
 
 	public int getRotation() {

@@ -12,7 +12,7 @@ import water.of.cup.boardgames.game.GamePlayer;
 
 public class GameRenderer extends MapRenderer {
 	private Game game;
-	private MapManager mapManager;
+	private Screen screen;
 	private int[] loc;
 //
 //	public GameRenderer(Game game) {
@@ -24,6 +24,12 @@ public class GameRenderer extends MapRenderer {
 		loc = mapValsLocationOnBoard;
 	}
 
+	public GameRenderer(Game game, int[] mapValsLocationOnScreen, Screen screen) {
+		this.game = game;
+		loc = mapValsLocationOnScreen;
+		this.screen = screen;
+	}
+
 	@Override
 	public void render(MapView map, MapCanvas canvas, Player player) {
 		// used to prevent map from continuously rendering
@@ -33,15 +39,24 @@ public class GameRenderer extends MapRenderer {
 		GamePlayer gamePlayer = game.getGamePlayer(player);
 		boolean ingamePlayer = gamePlayer != null;
 		
-		GameImage gameImage = game.getGameImage().clone();
-		gameImage.cropMap(loc);
+		GameImage gameImage;
+		if (screen != null) {
+			gameImage = screen.getGameImage().clone();
+		} else {
+			gameImage = game.getGameImage().clone();
+		}
+		
 		for (Button button : game.getButtons()) {
-			if (button.isVisibleForAll() || ingamePlayer && button.visibleForPlayer(gamePlayer)) {
+			// check that button is visible for player &
+			// check that button belongs to screen/board (button.getScreen() returns null if button belongs to game)
+			if (button.getScreen() == screen && (button.isVisibleForAll() || ingamePlayer && button.visibleForPlayer(gamePlayer))) {
 				gameImage.addGameImage(button.getImage(), button.getLocation());
 			}
 		}
 		
-		canvas.drawImage(0, 0, gameImage.getImage(game.getRotation()));
+		gameImage.cropMap(loc);
+		
+		canvas.drawImage(0, 0, gameImage.getImage(screen == null ? game.getRotation() : 0));
 		map.setLocked(true);
 	}
 }

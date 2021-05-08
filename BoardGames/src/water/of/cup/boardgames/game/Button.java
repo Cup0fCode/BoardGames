@@ -2,6 +2,7 @@ package water.of.cup.boardgames.game;
 
 import java.util.ArrayList;
 
+import water.of.cup.boardgames.game.maps.Screen;
 import water.of.cup.boardgames.image_handling.ImageManager;
 
 public class Button {
@@ -16,7 +17,7 @@ public class Button {
 	private Boolean turnBased; // if true, button is only clickable when it is a player's turn
 	private Boolean renderTurnBased; // if true, button is only rendered when it is a player's turn
 	
-	private String screenName;
+	private Screen screen;
 
 	//public Button(Game game, BufferedImage image, int[] loc, String name, )
 	
@@ -107,12 +108,12 @@ public class Button {
 	public void setName(String string) {
 		name = string;
 	}
-
-	public String getScreenName() {
-		return screenName;
+	
+	public void setScreen(Screen screen) {
+		this.screen = screen;
 	}
 
-	public void setScreenName(String screenName) {
-		this.screenName = screenName;
+	public Screen getScreen() {
+		return screen;
 	}
 }

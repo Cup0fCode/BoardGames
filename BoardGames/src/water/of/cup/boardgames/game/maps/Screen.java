@@ -1,6 +1,11 @@
 package water.of.cup.boardgames.game.maps;
 
+import java.util.ArrayList;
+
 import org.bukkit.block.BlockFace;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapRenderer;
+import org.bukkit.map.MapView;
 
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
@@ -21,6 +26,7 @@ public class Screen {
 		dimensions = new int[] { mapStructure[0].length, mapStructure.length };
 		this.mapStructure = mapStructure;
 		this.position = position;
+		this.gameImage = new GameImage(imageName);
 	}
 
 	public int getHeight() {
@@ -47,17 +53,17 @@ public class Screen {
 
 	public int[] getClickLocation(int[] loc, int mapVal) {
 		// add the map's position
-		
+
 		// flip x val if necessary
 		if (direction < 1)
 			loc[0] = 127 - loc[0];
-		
+
 		// flip y val
 		loc[1] = 127 - loc[1];
-				
+
 		int[] mapPos = getMapValsLocationOnScreen(mapVal);
 		loc = new int[] { loc[0] + mapPos[0] * 128, loc[1] + mapPos[1] * 128 };
-		
+
 		return loc;
 	}
 
@@ -106,10 +112,40 @@ public class Screen {
 	}
 
 	public void renderScreen() {
+		for (int mapVal : getMapVals()) {
+			GameMap map = game.getGameMapByMapVal(mapVal);
+			MapMeta mapMeta = map.getMapMeta();
+			MapView view = mapMeta.getMapView();
+			for (MapRenderer renderer : view.getRenderers())
+				view.removeRenderer(renderer);
+			view.setLocked(false);
+			view.addRenderer(new GameRenderer(game, getMapValsLocationOnScreen(mapVal), this));
+			mapMeta.setMapView(view);
+			map.setItemMeta(mapMeta);
+			view.getWorld().getPlayers().forEach(player -> player.sendMap(view));
+		}
+	}
 
+	public int[] getMapVals() {
+		ArrayList<Integer> mapValsList = new ArrayList<Integer>();
+		for (int[] mapValsArray : mapStructure)
+			for (int mapVal : mapValsArray)
+				if (mapVal != 0)
+					mapValsList.add(mapVal);
+
+		int[] mapVals = new int[mapValsList.size()];
+		for (int i = 0; i < mapVals.length; i++) {
+			mapVals[i] = mapValsList.get(i).intValue();
+		}
+
+		return mapVals;
 	}
 
 	public int getDirection() {
 		return direction;
+	}
+
+	public GameImage getGameImage() {
+		return gameImage;
 	}
 }
