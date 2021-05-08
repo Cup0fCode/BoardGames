@@ -56,7 +56,6 @@ public class GameImage {
 	}
 
 	public int[] getDimensions() {
-		
 		// TODO Auto-generated method stub
 		return new int[] {image.getWidth(), image.getHeight()};
 	}

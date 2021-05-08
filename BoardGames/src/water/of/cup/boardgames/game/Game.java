@@ -165,7 +165,7 @@ public abstract class Game {
 
 						int mapVal = mapData.getMapVal();
 						// skip maps with value 0
-						if (mapVal == 0)
+						if (mapVal <= 0)
 							continue;
 
 						// create the map
@@ -216,11 +216,7 @@ public abstract class Game {
 		}
 		return null;
 	}
-
-	public void renderMaps() {
-		// TODO: render maps using mapManager
-	}
-
+	
 	public boolean hasPlayer(Player player) {
 		return players.containsKey(player);
 	}

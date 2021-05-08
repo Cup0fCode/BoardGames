@@ -84,6 +84,10 @@ public class Button {
 	public void setImage(GameImage image) {
 		this.image = image;
 	}
+	
+	public void setImage(String imageName) {
+		image = new GameImage(ImageManager.getImage(imageName), rotation);
+	}
 
 	public boolean isVisibleForAll() {
 		return visibleForAll;

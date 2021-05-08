@@ -7,8 +7,10 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
+import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
+import water.of.cup.boardgames.game.GamePlayer;
 
 public class Screen {
 	private int direction;
@@ -95,6 +97,14 @@ public class Screen {
 					return true;
 		return false;
 	}
+	
+	public Button getClickedButton(GamePlayer gamePlayer, int[] loc) { // returns null if no button is clicked
+		for (Button button : game.getButtons()) {
+			if (button.getScreen() == this && button.clicked(gamePlayer, loc))
+				return button;
+		}
+		return null;
+	}
 
 	public BlockFace getBlockFace() {
 		switch (direction) {
@@ -147,5 +157,9 @@ public class Screen {
 
 	public GameImage getGameImage() {
 		return gameImage;
+	}
+	
+	public void setGameImage(GameImage gameImage) {
+		this.gameImage = gameImage;
 	}
 }

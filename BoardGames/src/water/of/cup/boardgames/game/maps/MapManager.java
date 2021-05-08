@@ -141,7 +141,7 @@ public class MapManager {
 		
 		for (Screen screen : game.getScreens()) {
 			int mapVal = screen.getMapValAtLocation(loc[0], loc[1], y);
-			if (mapVal != 0)
+			if (mapVal > 0)
 				mapDatas.add(new MapData(mapVal, screen.getBlockFace())); // add screen mapData
 		}
 		
@@ -157,7 +157,7 @@ public class MapManager {
 		ArrayList<Integer> mapValsList = new ArrayList<Integer>();
 		for (int[] mapValsArray : mapStructure)
 			for (int mapVal : mapValsArray)
-				if (mapVal != 0)
+				if (mapVal > 0)
 					mapValsList.add(mapVal);
 
 		int[] mapVals = new int[mapValsList.size()];
