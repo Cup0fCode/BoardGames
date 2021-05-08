@@ -30,6 +30,7 @@ import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.games.battleship.Battleship;
 import water.of.cup.boardgames.game.games.checkers.Checkers;
 import water.of.cup.boardgames.game.games.connectfour.ConnectFour;
+import water.of.cup.boardgames.game.games.minesweaper.MineSweeper;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.listeners.BlockPlace;
@@ -66,7 +67,7 @@ public class BoardGames extends JavaPlugin {
 		getCommand("debug").setExecutor(new DebugCommand());
 		//Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
 		
-		gameManager.registerGames(TicTacToe.class, Battleship.class, ConnectFour.class, Checkers.class);
+		gameManager.registerGames(TicTacToe.class, Battleship.class, ConnectFour.class, Checkers.class, MineSweeper.class);
 		
 		getCommand("bg").setExecutor(new bgCommands());
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());

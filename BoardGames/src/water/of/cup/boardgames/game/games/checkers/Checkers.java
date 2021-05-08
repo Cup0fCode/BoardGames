@@ -1,7 +1,5 @@
 package water.of.cup.boardgames.game.games.checkers;
 
-import java.util.ArrayList;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +9,6 @@ import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
-import water.of.cup.boardgames.game.maps.Screen;
 
 public class Checkers extends Game {
 	String turn; // {BLACK, RED, EMPTY}
