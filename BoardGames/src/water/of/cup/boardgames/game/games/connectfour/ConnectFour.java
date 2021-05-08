@@ -184,8 +184,6 @@ public class ConnectFour extends Game {
 			player.sendMessage(checkGameOver().toLowerCase() + " won!");
 			return;
 		}
-			
-		
 		
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
 		Screen screen = mapManager.getClickedScreen(map);
