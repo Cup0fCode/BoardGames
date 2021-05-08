@@ -19,7 +19,6 @@ import water.of.cup.boardgames.game.inventories.wager.GameWagerCallback;
 import water.of.cup.boardgames.game.inventories.wager.GameWagerInventory;
 import water.of.cup.boardgames.game.inventories.wager.WagerOption;
 import water.of.cup.boardgames.game.wagers.RequestWager;
-import water.of.cup.boardgames.game.wagers.Wager;
 import water.of.cup.boardgames.game.wagers.WagerManager;
 
 import java.util.ArrayList;
@@ -79,7 +78,7 @@ public abstract class GameInventory {
 
         // Add wager option if enabled
         if(this.hasWagers) {
-            this.gameOptions.add(0, GameOption.getWagerOption());
+            this.gameOptions.add(0, GameOption.getWagerGameOption());
         }
 
         // When gameData is null, no game has been created
@@ -133,25 +132,27 @@ public abstract class GameInventory {
                     return;
                 }
 
-                // Check if they have enough money
-                if(hasWagers && (instance.getEconomy().getBalance(player) < getGameWagerAmount())) {
-                    player.sendMessage(ChatColor.RED + "Not enough money to create game.");
-                    return;
+                // Check if they have enough moneyDouble.parseDouble(gameWagerData);
+                if(hasWagers) {
+                    double wagerAmount = Double.parseDouble(gameDataResult.get("wager") + "");
+                    if(instance.getEconomy().getBalance(player) < wagerAmount) {
+                        player.sendMessage(ChatColor.RED + "Not enough money to create game.");
+                        return;
+                    }
+
+                    GamePlayer gamePlayer = game.addPlayer(player);
+
+                    // Add game wagers
+                    wagerManager.initGameWager(gamePlayer, wagerAmount);
+                } else {
+                    game.addPlayer(player);
                 }
 
-                // Set game data, open wait players
                 player.sendMessage("Creating game with gameData");
 
                 // TODO: if gameDataResult contains gameSize, set getMaxGame
 
-                // Add game creator to game
-                GamePlayer gamePlayer = game.addPlayer(player);
-
-                // Add game wagers
-                if(hasWagers) {
-                    wagerManager.initGameWager(gamePlayer, getGameWagerAmount());
-                }
-
+                // Set game data, open wait players
                 gameCreator = player;
                 gameData = new HashMap<>(gameDataResult);
                 gameWaitPlayersInventory.build(player, handleWaitPlayers());
@@ -459,7 +460,7 @@ public abstract class GameInventory {
     }
 
     private double getGameWagerAmount() {
-        if(hasWagers) {
+        if(hasWagers && gameData != null) {
             String gameWagerData = gameData.get("wager") + "";
             if(MathUtils.isNumeric(gameWagerData)) {
                 return Double.parseDouble(gameWagerData);

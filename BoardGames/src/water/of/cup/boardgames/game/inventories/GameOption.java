@@ -59,7 +59,7 @@ public class GameOption {
         return this.label;
     }
 
-    public static GameOption getWagerOption() {
+    public static GameOption getWagerGameOption() {
         return new GameOption("wager", Material.GOLD_INGOT, GameOptionType.COUNT, ChatColor.DARK_GREEN + "Wager: ", "0");
     }
 }
