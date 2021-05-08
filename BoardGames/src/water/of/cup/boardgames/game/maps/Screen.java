@@ -57,7 +57,7 @@ public class Screen {
 		// add the map's position
 
 		// flip x val if necessary
-		if (direction < 1)
+		if (direction <= 1)
 			loc[0] = 127 - loc[0];
 
 		// flip y val
