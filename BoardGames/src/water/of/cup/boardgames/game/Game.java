@@ -245,14 +245,14 @@ public abstract class Game {
 		return new ArrayList<>(players.values());
 	}
 
-	public boolean addPlayer(Player player) {
+	public GamePlayer addPlayer(Player player) {
 		if(players.containsKey(player)) {
-			return false;
+			return players.get(player);
 		}
 
 		GamePlayer newPlayer = new GamePlayer(player);
 		players.put(player, newPlayer);
-		return true;
+		return newPlayer;
 	}
 
 	public void removePlayer(Player player) {

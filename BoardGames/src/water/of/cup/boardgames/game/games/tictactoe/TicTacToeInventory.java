@@ -35,9 +35,6 @@ public class TicTacToeInventory extends GameInventory {
         GameOption derped = new GameOption("derped", Material.QUARTZ, GameOptionType.TOGGLE, null, derpedValues.get(0), derpedValues);
         options.add(derped);
 
-        GameOption wager = new GameOption("wager", Material.GOLD_INGOT, GameOptionType.COUNT, ChatColor.DARK_GREEN + "Wager: $", "0");
-        options.add(wager);
-
         List<String> listValues =  Arrays.asList("hello", "jeff", "test");
         GameOption listTest = new GameOption("list", Material.LEATHER, GameOptionType.COUNT, null, listValues.get(0), listValues);
         options.add(listTest);
@@ -59,8 +56,15 @@ public class TicTacToeInventory extends GameInventory {
         return 2;
     }
 
+    // Whether or not game players are allowed to place bets
     @Override
-    protected boolean hasWagerScreen() {
+    protected boolean hasGameWagers() {
+        return true;
+    }
+
+    // Whether or not outside players can place bets, hasGameWagers must be true
+    @Override
+    public boolean hasWagerScreen() {
         return true;
     }
 

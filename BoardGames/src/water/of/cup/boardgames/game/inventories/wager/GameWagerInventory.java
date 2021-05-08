@@ -15,6 +15,7 @@ import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.InventoryScreen;
 import water.of.cup.boardgames.game.inventories.InventoryUtils;
 import water.of.cup.boardgames.game.wagers.RequestWager;
+import water.of.cup.boardgames.game.wagers.WagerManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +24,13 @@ public class GameWagerInventory extends InventoryScreen {
 
     private final Game game;
     private final GameInventory gameInventory;
+    private final WagerManager wagerManager;
 
     public GameWagerInventory(GameInventory gameInventory) {
         super(gameInventory);
         this.gameInventory = gameInventory;
         this.game = gameInventory.getGame();
+        this.wagerManager = gameInventory.getWagerManager();
     }
 
     public void build(Player player, GameWagerCallback callback) {
@@ -44,7 +47,7 @@ public class GameWagerInventory extends InventoryScreen {
         }
 
         // If the wager they have selected is no longer avail (someone else accepted first/cancelled)
-        if(!gameInventory.getRequestWagers().contains(wagerOption.getSelectedWager())) {
+        if(!wagerManager.getRequestWagers().contains(wagerOption.getSelectedWager())) {
             wagerOption.setSelectedWager(null);
             renderCreateWager(player, callback);
             return;
@@ -69,7 +72,7 @@ public class GameWagerInventory extends InventoryScreen {
         // Render create wager buttons
         gui.addElement(new StaticGuiElement('a', InventoryUtils.getPlayerHead(player), player.getDisplayName()));
 
-        boolean hasWager = gameInventory.hasRequestWager(player);
+        boolean hasWager = wagerManager.hasRequestWager(player);
         WagerOption wagerOption = gameInventory.getWagerOption(player);
         ItemStack rightArrow = InventoryUtils.getCustomTextureHead(InventoryUtils.RIGHT_ARROW);
         ItemStack leftArrow = InventoryUtils.getCustomTextureHead(InventoryUtils.LEFT_ARROW);
@@ -91,7 +94,7 @@ public class GameWagerInventory extends InventoryScreen {
 
         if(hasWager) {
             gui.addElement(new StaticGuiElement('i', new ItemStack(Material.RED_STAINED_GLASS_PANE), click -> {
-                        RequestWager requestWager = gameInventory.getRequestWager(player);
+                        RequestWager requestWager = wagerManager.getRequestWager(player);
                         callback.onCancel(requestWager);
                         return true;
                     },
@@ -101,7 +104,12 @@ public class GameWagerInventory extends InventoryScreen {
         } else {
             gui.addElement(new StaticGuiElement('i', new ItemStack(Material.LIME_STAINED_GLASS_PANE), click -> {
                         RequestWager requestWager = new RequestWager(player, wagerOption.getGamePlayer(), wagerOption.getWagerAmount());
-                        callback.onCreate(requestWager);
+                        if(requestWager.canCreate()) {
+                            callback.onCreate(requestWager);
+                        } else {
+                            player.sendMessage(ChatColor.RED + "Not enough money to create wager");
+                        }
+
                         return true;
                     },
                             ChatColor.GREEN + "Create Wager"
@@ -150,10 +158,14 @@ public class GameWagerInventory extends InventoryScreen {
 
         // Accept wager
         gui.addElement(new StaticGuiElement('f', new ItemStack(Material.LIME_STAINED_GLASS_PANE), click -> {
-                    // Deselect once accepted
-                    wagerOption.setSelectedWager(null);
+                    if(selectedWager.canAccept(player)) {
+                        // Deselect once accepted
+                        wagerOption.setSelectedWager(null);
 
-                    callback.onAccept(player, selectedWager);
+                        callback.onAccept(player, selectedWager);
+                    } else {
+                        player.sendMessage(ChatColor.RED + "Not enough money to accept wager");
+                    }
                     return true;
                 },
                         ChatColor.GREEN + "Accept Wager"
@@ -181,7 +193,7 @@ public class GameWagerInventory extends InventoryScreen {
 
     private void renderBetOptionButton(Player player, InventoryGui gui, char slot, ItemStack itemStack, String text) {
         WagerOption wagerOption = gameInventory.getWagerOption(player);
-        boolean hasWager = gameInventory.hasRequestWager(player);
+        boolean hasWager = wagerManager.hasRequestWager(player);
         gui.addElement(new StaticGuiElement(slot, itemStack, click -> {
                     // If they have an open wager, don't let change wager options
                     if(hasWager) return true;
@@ -202,7 +214,7 @@ public class GameWagerInventory extends InventoryScreen {
 
     private void renderWagerButton(Player player, InventoryGui gui, char slot, ItemStack itemStack, boolean increase) {
         WagerOption wagerOption = gameInventory.getWagerOption(player);
-        boolean hasWager = gameInventory.hasRequestWager(player);
+        boolean hasWager = wagerManager.hasRequestWager(player);
         String text = increase ? "Increase Wager" : "Decrease Wager";
         gui.addElement(new StaticGuiElement(slot, itemStack, click -> {
                     // If they have an open wager, don't let change wager options
@@ -214,7 +226,7 @@ public class GameWagerInventory extends InventoryScreen {
                         currAmount++;
                     } else {
                         currAmount--;
-                        if(currAmount <= 0) currAmount = 0;
+                        if(currAmount < 1) currAmount = 1;
                     }
 
                     wagerOption.setWagerAmount(currAmount);
@@ -231,7 +243,7 @@ public class GameWagerInventory extends InventoryScreen {
         WagerOption wagerOption = gameInventory.getWagerOption(player);
         RequestWager selectedWager = wagerOption.getSelectedWager();
 
-        ArrayList<RequestWager> requestWagers = gameInventory.getRequestWagers();
+        ArrayList<RequestWager> requestWagers = wagerManager.getRequestWagers();
         GuiElementGroup requestWagersGroup = new GuiElementGroup('g');
 
         for(RequestWager requestWager : requestWagers) {
@@ -240,7 +252,7 @@ public class GameWagerInventory extends InventoryScreen {
                     playerHead,
                     click -> {
                         // If they have an open wager, don't let them join others.
-                        if(gameInventory.hasRequestWager(player)) {
+                        if(wagerManager.hasRequestWager(player)) {
                             return true;
                         }
                         // Deselect if clicked again

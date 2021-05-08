@@ -7,28 +7,21 @@ import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.GamePlayer;
 
 public class RequestWager {
-	private BoardGames instance = BoardGames.getInstance();
 
-	Player owner;
-
-	GamePlayer ownerBet;
-
-	double amount;
+	private final BoardGames instance = BoardGames.getInstance();
+	private final Player owner;
+	private final GamePlayer ownerBet;
+	private final double amount;
 
 	public RequestWager(Player owner, GamePlayer playerBettingOn, double amount) {
 		this.owner = owner;
 		this.ownerBet = playerBettingOn;
 		this.amount = amount;
-		
-//		instance.getEconomy().withdrawPlayer(owner, amount);
 	}
 
 	public Wager createWager(Player otherPlayer) {
-//		if (instance.getEconomy().getBalance(otherPlayer) < amount) {
-//			otherPlayer.sendMessage(ChatColor.RED + "You do not have enough money to accept this wager.");
-//			return null;
-//		}
-		
+		instance.getEconomy().withdrawPlayer(otherPlayer, amount);
+
 		return new Wager(owner, otherPlayer, ownerBet, amount);
 	}
 
@@ -40,18 +33,24 @@ public class RequestWager {
 		return ownerBet;
 	}
 
-//	public String getOponentColor() {
-//		if (ownerSide.equals("WHITE"))
-//			return "BLACK";
-//		return "WHITE";
-//	}
-
 	public double getAmount() {
 		return amount;
 	}
 
 	public void cancel() {
 		instance.getEconomy().depositPlayer(owner, amount);
+	}
+
+	public boolean canCreate() {
+		return (instance.getEconomy().getBalance(owner) >= amount);
+	}
+
+	public boolean canAccept(Player accepter) {
+		return (instance.getEconomy().getBalance(accepter) >= amount);
+	}
+
+	public void withdrawInitial() {
+		instance.getEconomy().withdrawPlayer(owner, amount);
 	}
 }
 

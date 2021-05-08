@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.MathUtils;
 import water.of.cup.boardgames.game.inventories.*;
 import water.of.cup.boardgames.game.inventories.create.CreateInventoryCallback;
 
@@ -51,7 +52,7 @@ public class GameCreateInventory extends InventoryScreen {
         if(cachedGameData == null) {
             // Load in all options
             for(GameOption gameOption : this.gameOptions) {
-                if(isNumeric(gameOption.getDefaultValue())) {
+                if(MathUtils.isNumeric(gameOption.getDefaultValue())) {
                     gameData.put(gameOption.getKey(), Integer.parseInt(gameOption.getDefaultValue()));
                 } else {
                     gameData.put(gameOption.getKey(), gameOption.getDefaultValue());
@@ -172,7 +173,7 @@ public class GameCreateInventory extends InventoryScreen {
 
                                             String nextElm = gameOption.getCustomValues().get(currIndex + 1);
 
-                                            if(isNumeric(nextElm)) {
+                                            if(MathUtils.isNumeric(nextElm)) {
                                                 gameData.put(gameOption.getKey(), Integer.parseInt(nextElm));
                                             } else {
                                                 gameData.put(gameOption.getKey(), nextElm);
@@ -200,7 +201,7 @@ public class GameCreateInventory extends InventoryScreen {
 
                                             String nextElm = gameOption.getCustomValues().get(currIndex - 1);
 
-                                            if(isNumeric(nextElm)) {
+                                            if(MathUtils.isNumeric(nextElm)) {
                                                 gameData.put(gameOption.getKey(), Integer.parseInt(nextElm));
                                             } else {
                                                 gameData.put(gameOption.getKey(), nextElm);
@@ -294,14 +295,4 @@ public class GameCreateInventory extends InventoryScreen {
 
         return guiSetup;
     }
-
-    private boolean isNumeric(String str) {
-        try {
-            Integer.parseInt(str);
-            return true;
-        } catch(NumberFormatException e){
-            return false;
-        }
-    }
-
 }

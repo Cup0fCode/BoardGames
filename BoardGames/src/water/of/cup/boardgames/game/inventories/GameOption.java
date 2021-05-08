@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game.inventories;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import javax.annotation.Nullable;
@@ -56,5 +57,9 @@ public class GameOption {
 
     public String getLabel() {
         return this.label;
+    }
+
+    public static GameOption getWagerOption() {
+        return new GameOption("wager", Material.GOLD_INGOT, GameOptionType.COUNT, ChatColor.DARK_GREEN + "Wager: ", "0");
     }
 }

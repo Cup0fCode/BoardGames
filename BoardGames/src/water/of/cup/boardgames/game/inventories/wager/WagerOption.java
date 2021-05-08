@@ -12,7 +12,7 @@ public class WagerOption {
 
     public WagerOption(GamePlayer gamePlayer) {
         this.gamePlayer = gamePlayer;
-        this.wagerAmount = 0.0;
+        this.wagerAmount = 1.0;
         this.opened = false;
         this.selectedWager = null;
     }
