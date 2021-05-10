@@ -112,10 +112,7 @@ public class GameCreateInventory extends InventoryScreen {
                     String label = gameOption.getLabel() == null ? "" : gameOption.getLabel();
 
                     gui.addElement(new DynamicGuiElement(curr, () ->
-                            new StaticGuiElement(curr, new ItemStack(gameOption.getMaterial()), click -> {
-                                click.getEvent().getWhoClicked().sendMessage("Clicking " + gameOption.getKey());
-                                return true;
-                            },
+                            new StaticGuiElement(curr, new ItemStack(gameOption.getMaterial()), click -> true,
                                     label + ChatColor.GREEN + gameData.get(gameOption.getKey()).toString() // gameData.get(gameOption.getKey())
                             )));
 
