@@ -69,7 +69,7 @@ public class GameReadyInventory extends InventoryScreen {
         Material readyMat = isReady ? Material.LIME_STAINED_GLASS_PANE : Material.YELLOW_STAINED_GLASS_PANE;
         String readyText = isReady
                 ? ChatColor.GREEN + "" + ChatColor.BOLD + "READY"
-                : ChatColor.RED + "" + ChatColor.BOLD + "NOT READY";
+                : ChatColor.RED + "" + ChatColor.BOLD + "CLICK TO READY";
         gui.addElement(new StaticGuiElement('r', new ItemStack(readyMat), click -> {
                     if(!isReady) {
                         callback.onReady(player);
@@ -122,7 +122,7 @@ public class GameReadyInventory extends InventoryScreen {
         }
 
         // Define ready / leave buttons
-        guiSetup[1][6] = 'r'; // Ready button
+        guiSetup[2][6] = 'r'; // Ready button
         guiSetup[3][6] = 'l'; // Leave button
 
         return formatGuiSetup(guiSetup);
