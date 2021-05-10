@@ -16,6 +16,8 @@ public class Checkers extends Game {
 	int[] selected;
 	Button[][] boardButtons;
 	int movesSinceCapture = 0;
+	
+	boolean canDeSelect;
 
 	public Checkers(int rotation) {
 		super(rotation);
@@ -204,7 +206,6 @@ public class Checkers extends Game {
 	@Override
 	protected void setGameName() {
 		this.gameName = "Checkers";
-
 	}
 
 	@Override
@@ -234,21 +235,22 @@ public class Checkers extends Game {
 		if (position == null)
 			return;
 
-		if (selected == null) {
+		if (selected == null || (canDeSelect && board[position[1]][position[0]].contains(turn))) {
 			// check that selected piece is correct turn
 			if (!board[position[1]][position[0]].contains(turn))
 				return;
 
 			// check if piece must jump
 			if (colorCanJump(turn)) {
-				player.sendMessage("color can jump");
+				player.sendMessage("You must select a piece that can jump if a jump is possible.");
 				// check if piece can jump
 				if (!canJump(position))
 					return;
 			} else if (!canAdvance(position)) // check if piece has normal moves if no jumps available
 				return;
-
+			
 			selected = position;
+			canDeSelect = true;
 		} else {
 			// check that selected piece is correct turn
 			if (!board[selected[1]][selected[0]].contains(turn))
@@ -280,6 +282,7 @@ public class Checkers extends Game {
 			
 			if (isJump && canJump(position)) {
 				selected = position;
+				canDeSelect = false;
 			} else {
 				if (turn.equals("RED")) {
 					turn = "BLACK";
