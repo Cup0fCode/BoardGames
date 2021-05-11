@@ -79,4 +79,7 @@ public class GameImage {
 		image = ImageUtils.writeCenterText(image, loc, text, font);
 	}
 	
+	public void setRotation(int r) {
+		rotation = r;
+	}
 }

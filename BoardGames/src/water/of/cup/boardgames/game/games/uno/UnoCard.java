@@ -47,9 +47,6 @@ public class UnoCard {
 		if (type.equals("DRAW2")) {
 			return new String[] {"DRAW2", "SKIP"};
 		}
-//		if (type.equals("DRAW4")) {
-//			return new String[] {"DRAW4", "SKIP"};
-//		}
 		if (type.equals("REVERSE")) {
 			return new String[] {"REVERSE"};
 		}

@@ -34,6 +34,20 @@ public class Button {
 		renderTurnBased = false;
 	}
 	
+	public Button(Game game, GameImage gameImage, int[] location, int rotation, String name) {
+		visiblePlayers = new ArrayList<GamePlayer>();
+		visibleForAll = true;
+		this.game = game;
+		this.name = name;
+		this.clickAble = false;
+		this.location = location;
+		this.rotation = rotation;
+		image = gameImage.clone();
+		image.setRotation(rotation);
+		turnBased = false;
+		renderTurnBased = false;
+	}
+	
 	public boolean clicked(GamePlayer gamePlayer, int[] loc) {
 		if (!visibleForAll && !visiblePlayers.contains(gamePlayer))
 			return false;

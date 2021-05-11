@@ -25,11 +25,12 @@ public class UnoDeck {
 		// add colored action cards
 		for (String type : new String[] { "DRAW2", "REVERSE", "SKIP" }) {
 			for (String color : new String[] { "RED", "YELLOW", "BLUE", "GREEN" }) {
-				UnoCard card = new UnoCard(type, color);
-				cards.add(card);
+				cards.add(new UnoCard(type, color));
+				cards.add(new UnoCard(type, color));
 			}
 		}
 
+		// add wild cards
 		for (int i = 0; i < 4; i++) {
 			cards.add(new UnoCard("WILD", "ALL"));
 			cards.add(new UnoCard("WILDDRAW4", "ALL"));
