@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
 import water.of.cup.boardgames.game.inventories.GameOptionType;
@@ -34,9 +35,6 @@ public class TicTacToeInventory extends GameInventory {
         GameOption derped = new GameOption("derped", Material.QUARTZ, GameOptionType.TOGGLE, null, derpedValues.get(0), derpedValues);
         options.add(derped);
 
-        GameOption wager = new GameOption("wager", Material.GOLD_INGOT, GameOptionType.COUNT, ChatColor.DARK_GREEN + "Wager: $", "0");
-        options.add(wager);
-
         List<String> listValues =  Arrays.asList("hello", "jeff", "test");
         GameOption listTest = new GameOption("list", Material.LEATHER, GameOptionType.COUNT, null, listValues.get(0), listValues);
         options.add(listTest);
@@ -55,13 +53,25 @@ public class TicTacToeInventory extends GameInventory {
 
     @Override
     protected int getMaxGame() {
-        return 3;
+        return 2;
+    }
+
+    // Whether or not game players are allowed to place bets
+    @Override
+    protected boolean hasGameWagers() {
+        return true;
+    }
+
+    // Whether or not outside players can place bets, hasGameWagers must be true
+    @Override
+    public boolean hasWagerScreen() {
+        return true;
     }
 
     @Override
-    protected void onGameCreate(HashMap<String, Object> gameData, ArrayList<Player> players) {
-        for(Player player : players) {
-            player.sendMessage("Welcome to TIC TAC TOE!");
+    protected void onGameCreate(HashMap<String, Object> gameData, ArrayList<GamePlayer> players) {
+        for(GamePlayer player : players) {
+            player.getPlayer().sendMessage("Welcome to TIC TAC TOE!");
         }
         // TODO: start game set vars
     }

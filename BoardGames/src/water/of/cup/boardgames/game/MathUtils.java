@@ -26,4 +26,13 @@ public class MathUtils {
 	public static int[][] cloneIntMatrix(int[][] matrix) {
 		return Arrays.stream(matrix).map(int[]::clone).toArray(int[][]::new);
 	}
+
+	public static boolean isNumeric(String str) {
+		try {
+			Integer.parseInt(str);
+			return true;
+		} catch(NumberFormatException e){
+			return false;
+		}
+	}
 }

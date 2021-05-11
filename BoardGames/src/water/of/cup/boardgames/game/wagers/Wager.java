@@ -8,76 +8,25 @@ import water.of.cup.boardgames.game.GamePlayer;
 
 
 public class Wager {
-	private BoardGames instance = BoardGames.getInstance();
-	
-	Player player1;
-	Player player2;
 
-	GamePlayer player1Bet;
-
-	double amount;
+	private final BoardGames instance = BoardGames.getInstance();
+	private final Player player1;
+	private Player player2;
+	private final GamePlayer player1Bet;
+	private final double amount;
 	
 	public Wager(Player player1, Player player2, GamePlayer ownerBet, double amount) {
-		
-		instance.getEconomy().withdrawPlayer(player2, amount);
-		instance.getEconomy().withdrawPlayer(player1, amount);
-		
 		this.player1 = player1;
 		this.player2 = player2;
-		
 		this.player1Bet = ownerBet;
-		
 		this.amount = amount;
 	}
-	
-	public Wager(RequestWager requestWager, Player accepter) {
-		player1 = requestWager.getOwner();
-		player2 = accepter;
-		
-		player1Bet = requestWager.getOwnerBet();
-		
-		amount = requestWager.getAmount();
-		
-		instance.getEconomy().withdrawPlayer(player2, amount);
-	}
-	
-//	public Wager(String wagerString) {
-//		for (String arg : wagerString.split("&")) {
-//
-//			String key = arg.substring(0, arg.indexOf(":"));
-//			String result = arg.substring(arg.indexOf(":") + 1);
-//
-//			if (key.equals("Player1")) {
-//				player1 = Bukkit.getPlayer(UUID.fromString(result));
-//				continue;
-//			}
-//			if (key.equals("Player2")) {
-//				player2 = Bukkit.getPlayer(UUID.fromString(result));
-//				continue;
-//			}
-//			if (key.equals("Player1Side")) {
-//				player1Bet = result;
-//				continue;
-//			}
-//			if (key.equals("Amount")) {
-//				amount = Double.valueOf(result);
-//				continue;
-//			}
-//		}
-//	}
 
 	public void complete(GamePlayer winner) {
-		if(instance.getEconomy() == null) return;
-		if (winner == null)
+		if (winner == null) {
 			cancel();
-
-//		if (!(winningColor.equals("WHITE") || winningColor.equals("BLACK"))) {
-//			//give players their money back
-//			instance.getEconomy().depositPlayer(player1, amount);
-//			instance.getEconomy().depositPlayer(player2, amount);
-//			return;
-//		}
-			
+			return;
+		}
 
 		if (winner.equals(player1Bet)) {
 			//player1 won
@@ -90,18 +39,25 @@ public class Wager {
 
 	public void cancel() {
 		instance.getEconomy().depositPlayer(player1, amount);
-		instance.getEconomy().depositPlayer(player2, amount);		
+
+		// Players maybe be null due to game wager
+		if(player2 != null)
+			instance.getEconomy().depositPlayer(player2, amount);
 	}
-	
-//	public String toString() {
-//		String wagerString = "";
-//		wagerString += "Player1:" + player1.getUniqueId().toString() + "&";
-//		wagerString += "Player2:" + player2.getUniqueId().toString() + "&";
-//		
-//		wagerString += "Player1Side:" + player1Bet.getPlayer().getName() + "&";
-//		
-//		wagerString += "Amount:" + amount + "&";
-//		
-//		return wagerString;
-//	}
+
+	public Player getPlayer1() {
+		return player1;
+	}
+
+	public Player getPlayer2() {
+		return player2;
+	}
+
+	public double getAmount() {
+		return this.amount;
+	}
+
+	public void setPlayer2(Player player) {
+		this.player2 = player;
+	}
 }

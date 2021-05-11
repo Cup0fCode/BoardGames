@@ -1,8 +1,12 @@
 package water.of.cup.boardgames.game.inventories;
 
 import de.themoep.inventorygui.InventoryGui;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.game.MathUtils;
 import water.of.cup.boardgames.game.inventories.create.CreateInventoryCallback;
 import water.of.cup.boardgames.game.inventories.create.GameCreateInventory;
 import water.of.cup.boardgames.game.inventories.create.GameWaitPlayersInventory;
@@ -11,6 +15,11 @@ import water.of.cup.boardgames.game.inventories.join.GameJoinInventory;
 import water.of.cup.boardgames.game.inventories.join.JoinGameCallback;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyCallback;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyInventory;
+import water.of.cup.boardgames.game.inventories.wager.GameWagerCallback;
+import water.of.cup.boardgames.game.inventories.wager.GameWagerInventory;
+import water.of.cup.boardgames.game.inventories.wager.WagerOption;
+import water.of.cup.boardgames.game.wagers.RequestWager;
+import water.of.cup.boardgames.game.wagers.WagerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,20 +31,27 @@ public abstract class GameInventory {
     protected abstract ArrayList<GameOption> getOptions();
     protected abstract int getMaxQueue();
     protected abstract int getMaxGame();
-    protected abstract void onGameCreate(HashMap<String, Object> gameData, ArrayList<Player> players);
+    protected abstract boolean hasGameWagers();
+    protected abstract boolean hasWagerScreen();
+    protected abstract void onGameCreate(HashMap<String, Object> gameData, ArrayList<GamePlayer> players);
 
     private final GameCreateInventory gameCreateInventory;
     private final GameWaitPlayersInventory gameWaitPlayersInventory;
     private final GameJoinInventory gameJoinInventory;
     private final GameReadyInventory gameReadyInventory;
+    private final GameWagerInventory gameWagerInventory;
 
+    private final BoardGames instance = BoardGames.getInstance();
     private final ArrayList<GameOption> gameOptions;
     private final int maxPlayers;
+    private final boolean hasWagers;
 
     // Vars that must be reset
     private final ArrayList<Player> joinPlayerQueue;
     private final ArrayList<Player> acceptedPlayers;
     private final HashMap<Player, Boolean> playerReadyMap;
+    private final HashMap<Player, WagerOption> wagerViewPlayers;
+    private final WagerManager wagerManager;
     private HashMap<String, Object> gameData;
     private Player gameCreator;
 
@@ -54,8 +70,16 @@ public abstract class GameInventory {
         this.joinPlayerQueue = new ArrayList<>();
         this.acceptedPlayers = new ArrayList<>();
         this.playerReadyMap = new HashMap<>();
+        this.wagerViewPlayers = new HashMap<>();
+        this.wagerManager = new WagerManager();
         this.gameOptions = getOptions();
         this.maxPlayers = getMaxGame();
+        this.hasWagers = hasGameWagers() && (instance.getEconomy() != null);
+
+        // Add wager option if enabled
+        if(this.hasWagers) {
+            this.gameOptions.add(0, GameOption.getWagerGameOption());
+        }
 
         // When gameData is null, no game has been created
         this.gameData = null;
@@ -64,6 +88,7 @@ public abstract class GameInventory {
         this.gameWaitPlayersInventory = new GameWaitPlayersInventory(this);
         this.gameJoinInventory = new GameJoinInventory(this);
         this.gameReadyInventory = new GameReadyInventory(this);
+        this.gameWagerInventory = new GameWagerInventory(this);
     }
 
     public void build(Player player) {
@@ -72,8 +97,19 @@ public abstract class GameInventory {
         // wait players -> accept enough -> move all to ready
         // ready -> onready -> start game
 
+        // TODO: If ingame, display special inv
+
         if(gameData == null) {
             this.gameCreateInventory.build(player, handleCreateGame(player));
+            return;
+        }
+
+        // If they are in ready screen, show wagers, otherwise don't show anything
+        if(playerReadyMap.size() > 0) {
+            if(this.hasWagers && hasWagerScreen()) {
+                this.wagerViewPlayers.put(player, new WagerOption(game.getGamePlayers().get(0)));
+                this.gameWagerInventory.build(player, handleWager());
+            }
             return;
         }
 
@@ -96,11 +132,27 @@ public abstract class GameInventory {
                     return;
                 }
 
-                // Set game data, open wait players
+                // Check if they have enough moneyDouble.parseDouble(gameWagerData);
+                if(hasWagers) {
+                    double wagerAmount = Double.parseDouble(gameDataResult.get("wager") + "");
+                    if(instance.getEconomy().getBalance(player) < wagerAmount) {
+                        player.sendMessage(ChatColor.RED + "Not enough money to create game.");
+                        return;
+                    }
+
+                    GamePlayer gamePlayer = game.addPlayer(player);
+
+                    // Add game wagers
+                    wagerManager.initGameWager(gamePlayer, wagerAmount);
+                } else {
+                    game.addPlayer(player);
+                }
+
                 player.sendMessage("Creating game with gameData");
 
                 // TODO: if gameDataResult contains gameSize, set getMaxGame
 
+                // Set game data, open wait players
                 gameCreator = player;
                 gameData = new HashMap<>(gameDataResult);
                 gameWaitPlayersInventory.build(player, handleWaitPlayers());
@@ -112,13 +164,36 @@ public abstract class GameInventory {
         return new WaitPlayersCallback() {
             @Override
             public void onAccept(Player player) {
+                // Check if they have enough money
+                if(hasWagers && (instance.getEconomy().getBalance(player) < getGameWagerAmount())) {
+                    gameCreator.sendMessage(ChatColor.RED + "Player no longer has enough money.");
+                    player.sendMessage(ChatColor.RED + "You do not have enough money!");
+
+                    joinPlayerQueue.remove(player);
+                    closeInventory(player);
+
+                    updateWaitPlayersInventory();
+                    return;
+                }
+
                 gameCreator.sendMessage("Accepting " + player.getDisplayName());
 
                 joinPlayerQueue.remove(player);
                 acceptedPlayers.add(player);
 
+                // Add player to game
+                game.addPlayer(player);
+
                 // Move players to ready screen
                 if(acceptedPlayers.size() == getMaxPlayers() - 1) {
+                    // Add to wager (Keep in mind wagers really only work for 2 players)
+                    if(hasWagers) {
+                        wagerManager.addGameWagerPlayer(player, gameCreator);
+                    }
+
+                    // Kick players still in queue
+                    closePlayers(joinPlayerQueue, "Game has started, you have been kicked.");
+
                     // Init all player ready
                     playerReadyMap.put(gameCreator, false);
                     for(Player player1 : acceptedPlayers) {
@@ -147,7 +222,7 @@ public abstract class GameInventory {
 
             @Override
             public void onLeave() {
-                resetGameInventory("Game owner has left");
+                resetGameInventory("Game owner has left", true);
             }
         };
     }
@@ -157,9 +232,15 @@ public abstract class GameInventory {
             @Override
             public void onJoin(Player player) {
                 // If game already started etc, don't let them join
-                if(gameData == null) {
+                if(gameData == null || playerReadyMap.size() > 0) {
                     closeInventory(player);
                     player.sendMessage("No available game to join.");
+                    return;
+                }
+
+                // Check if they have enough money
+                if(hasWagers && (instance.getEconomy().getBalance(player) < getGameWagerAmount())) {
+                    player.sendMessage(ChatColor.RED + "Not enough money to join game.");
                     return;
                 }
 
@@ -181,6 +262,9 @@ public abstract class GameInventory {
                 boolean shouldUpdate = joinPlayerQueue.contains(player) || acceptedPlayers.contains(player);
                 joinPlayerQueue.remove(player);
                 acceptedPlayers.remove(player);
+
+                // Remove player from game
+                game.removePlayer(player);
 
                 // update waitplayers
                 if(shouldUpdate)
@@ -206,8 +290,8 @@ public abstract class GameInventory {
 
                 if(allReady) {
                     // Everyone is ready, close invs, reset, give data
-                    onGameCreate(gameData, new ArrayList<>(playerReadyMap.keySet()));
-                    resetGameInventory(null);
+                    onGameCreate(gameData, game.getGamePlayers());
+                    resetGameInventory(null, false);
                 } else {
                     updateReadyInventory();
                 }
@@ -215,7 +299,42 @@ public abstract class GameInventory {
 
             @Override
             public void onLeave(Player player) {
-                resetGameInventory("Player left ready screen. Game cancelled.");
+                resetGameInventory("Player left ready screen. Game cancelled.", true);
+            }
+        };
+    }
+
+    private GameWagerCallback handleWager() {
+        return new GameWagerCallback() {
+            @Override
+            public void onCreate(RequestWager requestWager) {
+                wagerManager.addRequestWager(requestWager);
+
+                updateWagerViewInventories();
+            }
+
+            @Override
+            public void onCancel(RequestWager requestWager) {
+                wagerManager.cancelRequestWager(requestWager);
+
+                updateWagerViewInventories();
+            }
+
+            @Override
+            public void onAccept(Player wagerOpponent, RequestWager requestWager) {
+                wagerManager.acceptRequestWager(wagerOpponent, requestWager);
+
+                Player wagerOwner = requestWager.getOwner();
+
+                wagerOwner.sendMessage(wagerOpponent.getDisplayName() + " has accepted your wager!");
+                wagerOpponent.sendMessage("You have accepted " + wagerOwner.getDisplayName() + "'s wager!");
+
+                updateWagerViewInventories();
+            }
+
+            @Override
+            public void onLeave(Player player) {
+                wagerViewPlayers.remove(player);
             }
         };
     }
@@ -234,35 +353,56 @@ public abstract class GameInventory {
         }
     }
 
-    // TODO: Reset method, kicks everyone out, called when create game or game owner leaves
-    private void resetGameInventory(String message) {
-        for(Player player : joinPlayerQueue) {
-            closeInventory(player);
-            if(message != null)
-                player.sendMessage(message);
+    private void updateWagerViewInventories() {
+        for(Player player : wagerViewPlayers.keySet()) {
+            gameWagerInventory.build(player, handleWager());
         }
+    }
 
-        for(Player player : acceptedPlayers) {
-            closeInventory(player);
-            if(message != null)
-                player.sendMessage(message);
-        }
+    // TODO: Reset method, kicks everyone out, called when create game or game owner leaves
+    private void resetGameInventory(String message, boolean clearGamePlayer) {
+        // Close players out of inventory
+        closePlayers(joinPlayerQueue, message);
+
+        closePlayers(acceptedPlayers, message);
+
+        closePlayers(new ArrayList<>(wagerViewPlayers.keySet()), message);
 
         closeInventory(gameCreator);
         if(message != null)
             gameCreator.sendMessage(message);
 
+        // Send money back to all request wagers
+        wagerManager.endAllRequestWagers();
+
+        // Clear arrays
         joinPlayerQueue.clear();
         acceptedPlayers.clear();
         playerReadyMap.clear();
+        wagerViewPlayers.clear();
         gameCreator = null;
         gameData = null;
+
+        if(clearGamePlayer) {
+            game.clearGamePlayers();
+
+            // Send money back to game wagers
+            wagerManager.endAllWagers();
+        }
     }
 
     private void closeInventory(Player player) {
         InventoryGui gui = InventoryGui.get(player);
         if(gui != null)
             gui.close(true);
+    }
+
+    private void closePlayers(ArrayList<Player> players, String message) {
+        for(Player player : players) {
+            closeInventory(player);
+            if(message != null)
+                player.sendMessage(message);
+        }
     }
 
     public Game getGame() {
@@ -280,6 +420,14 @@ public abstract class GameInventory {
 
     public ArrayList<Player> getAcceptedPlayers() {
         return new ArrayList<>(this.acceptedPlayers);
+    }
+
+    public WagerManager getWagerManager() {
+        return this.wagerManager;
+    }
+
+    public WagerOption getWagerOption(Player player) {
+        return wagerViewPlayers.get(player);
     }
 
     public Object getGameData(String key) {
@@ -309,6 +457,17 @@ public abstract class GameInventory {
             if(playerReadyMap.get(player1)) numReady++;
         }
         return numReady;
+    }
+
+    private double getGameWagerAmount() {
+        if(hasWagers && gameData != null) {
+            String gameWagerData = gameData.get("wager") + "";
+            if(MathUtils.isNumeric(gameWagerData)) {
+                return Double.parseDouble(gameWagerData);
+            }
+        }
+
+        return 0;
     }
 
 }
