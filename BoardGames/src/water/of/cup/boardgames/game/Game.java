@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.MapData;
 import water.of.cup.boardgames.game.maps.MapManager;
@@ -34,7 +35,8 @@ public abstract class Game {
 	protected MapManager mapManager;
 	protected ArrayList<Screen> screens;
 	protected HashMap<Player, GamePlayer> players;
-	protected int turn;
+	private int turn;
+	private boolean ingame;
 	protected GameImage gameImage;
 	protected ArrayList<Button> buttons;
 	protected WagerManager wagerManager;
@@ -58,6 +60,8 @@ public abstract class Game {
 	protected abstract void setBoardImage(); // set board Image
 
 	protected abstract void startClock();
+
+	protected abstract GameInventory getGameInventory();
 
 	public Game(int rotation) {
 		screens = new ArrayList<Screen>();
@@ -202,11 +206,20 @@ public abstract class Game {
 				}
 			}
 		}
-		startGame(); // TODO: remove this after proper game setup is added
 	}
 
-	public void cancelGame() {
-		wagerManager.endAll();
+	public void endGame(GamePlayer winner) {
+		ingame = false;
+		wagerManager.completeWagers(winner);
+		clearGamePlayers();
+	}
+
+	public void setInGame() {
+		ingame = true;
+	}
+
+	public boolean isIngame() {
+		return ingame;
 	}
 
 	protected Button getClickedButton(GamePlayer gamePlayer, int[] loc) { // returns null if no button is clicked
@@ -237,6 +250,10 @@ public abstract class Game {
 		return ((List<GamePlayer>) players.values()).get(turn);
 	}
 
+	public int getTurnNum() {
+		return turn;
+	}
+
 	public void setTurn(int turn) {
 		this.turn = turn;
 	}
@@ -247,6 +264,14 @@ public abstract class Game {
 
 	public void setTurn(Player player) {
 		setTurn(players.get(player));
+	}
+
+	public void nextTurn() {
+		int nextTurn = turn + 1;
+		if(nextTurn >= players.size()) {
+			nextTurn = 0;
+		}
+		turn = nextTurn;
 	}
 
 	public Player getPlayer(GamePlayer player) {
@@ -265,6 +290,7 @@ public abstract class Game {
 		return new ArrayList<>(players.values());
 	}
 
+	// TODO: Assign a "side"
 	public GamePlayer addPlayer(Player player) {
 		if(players.containsKey(player)) {
 			return players.get(player);
@@ -279,7 +305,6 @@ public abstract class Game {
 		players.remove(player);
 	}
 
-	// TODO: Move to reset method
 	public void clearGamePlayers() {
 		players.clear();;
 	}
@@ -413,5 +438,15 @@ public abstract class Game {
 
 	public ArrayList<Screen> getScreens() {
 		return screens;
+	}
+
+	public WagerManager getWagerManager() {
+		return wagerManager;
+	}
+
+	public void displayGameInventory(Player player) {
+		if(getGameInventory() != null) {
+			getGameInventory().build(player);
+		}
 	}
 }

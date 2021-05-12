@@ -16,9 +16,9 @@ import java.util.List;
 
 public class TicTacToeInventory extends GameInventory {
 
-    private final Game game;
+    private final TicTacToe game;
 
-    public TicTacToeInventory(Game game) {
+    public TicTacToeInventory(TicTacToe game) {
         super(game);
         this.game = game;
     }
@@ -73,7 +73,8 @@ public class TicTacToeInventory extends GameInventory {
         for(GamePlayer player : players) {
             player.getPlayer().sendMessage("Welcome to TIC TAC TOE!");
         }
-        // TODO: start game set vars
+
+        game.startGame();
     }
 
 

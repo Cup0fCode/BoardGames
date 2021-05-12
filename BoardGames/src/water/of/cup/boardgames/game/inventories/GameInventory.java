@@ -71,7 +71,7 @@ public abstract class GameInventory {
         this.acceptedPlayers = new ArrayList<>();
         this.playerReadyMap = new HashMap<>();
         this.wagerViewPlayers = new HashMap<>();
-        this.wagerManager = new WagerManager();
+        this.wagerManager = game.getWagerManager();
         this.gameOptions = getOptions();
         this.maxPlayers = getMaxGame();
         this.hasWagers = hasGameWagers() && (instance.getEconomy() != null);
@@ -98,6 +98,7 @@ public abstract class GameInventory {
         // ready -> onready -> start game
 
         // TODO: If ingame, display special inv
+        if(game.isIngame()) return;
 
         if(gameData == null) {
             this.gameCreateInventory.build(player, handleCreateGame(player));

@@ -162,16 +162,20 @@ public class BoardInteract implements Listener {
 //
 //			int loc[] = ChessUtils.getChessBoardClickLocation(hitx, hity, gameFrame.getRotation(), direction);
 
-			Vector pos = result.getHitPosition();
-			double[] loc = new double[] { pos.getX(), pos.getZ() };
-			if (gameFrame.getAttachedFace() == BlockFace.WEST || gameFrame.getAttachedFace() == BlockFace.EAST) {
-				loc = new double[] { pos.getZ(), pos.getY() };
-			}
-			if (gameFrame.getAttachedFace() == BlockFace.NORTH || gameFrame.getAttachedFace() == BlockFace.SOUTH) {
-				loc = new double[] { pos.getX(), pos.getY() };
-			}
+			if(gameManager.getGameByPlayer(player) != null && gameManager.getGameByPlayer(player).equals(game)) {
+				Vector pos = result.getHitPosition();
+				double[] loc = new double[] { pos.getX(), pos.getZ() };
+				if (gameFrame.getAttachedFace() == BlockFace.WEST || gameFrame.getAttachedFace() == BlockFace.EAST) {
+					loc = new double[] { pos.getZ(), pos.getY() };
+				}
+				if (gameFrame.getAttachedFace() == BlockFace.NORTH || gameFrame.getAttachedFace() == BlockFace.SOUTH) {
+					loc = new double[] { pos.getX(), pos.getY() };
+				}
 
-			game.click(player, loc, map);
+				game.click(player, loc, map);
+			} else {
+				game.displayGameInventory(player);
+			}
 
 			e.setCancelled(true);
 		}

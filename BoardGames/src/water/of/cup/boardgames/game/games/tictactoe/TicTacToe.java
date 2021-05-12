@@ -9,14 +9,15 @@ import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.game.inventories.GameInventory;
 
 public class TicTacToe extends Game {
-	private int turn; // remove when Matt work done
 	private Button[][] board;
+	private final TicTacToeInventory ticTacToeInventory;
 
 	public TicTacToe(int rotation) {
 		super(rotation);
-		turn = 1;
+		ticTacToeInventory = new TicTacToeInventory(this);
 	}
 
 	@Override
@@ -61,36 +62,46 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
+	protected GameInventory getGameInventory() {
+		return ticTacToeInventory;
+	}
+
+	@Override
 	public BoardItem getBoardItem() {
 		return new BoardItem(gameName, new ItemStack(Material.OAK_TRAPDOOR, 1));
 	}
 
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
+		GamePlayer gamePlayer = getGamePlayer(player);
+		if(!getTurn().equals(gamePlayer)) return;
+
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
 		Button b = getClickedButton(getGamePlayer(player), clickLoc);
+
 		if (b != null) {
 			player.sendMessage("you clicked button " + b.getName());
-			if (turn >= 10 || !b.getName().equals("empty"))
-				return;
-			if (turn % 2 == 1) {
+			if (getTurnNum() == 0) {
 				b.getImage().setImage("TICTACTOE_X");
 				b.setName("x");
 			} else {
 				b.getImage().setImage("TICTACTOE_O");
 				b.setName("o");
 			}
-			turn++;
+
+			nextTurn();
 			
 			String s = checkForWinner();
-			if (s.equals("x"))
-				this.gameImage.writeText("X won", new int[] {64, 64}, 16);
-			if (s.equals("o"))
-				player.sendMessage("O won");
-			if (s.equals("t"))
-				player.sendMessage("Tie game");
-			if (!s.equals("n"))
-				turn = 10;
+			if (!s.equals("n")) {
+				GamePlayer winner = null;
+				if (s.equals("x"))
+					winner = getGamePlayers().get(0);
+				else if (s.equals("o"))
+					winner = getGamePlayers().get(1);
+
+				endGame(winner);
+			}
+
 		}
 		player.sendMessage("you clicked: " + clickLoc[0] + "," + clickLoc[1]);
 		mapManager.renderBoard();
@@ -99,6 +110,8 @@ public class TicTacToe extends Game {
 
 	@Override
 	protected void startGame() {
+		setInGame();
+		setTurn(0);
 		placeButtons();
 		mapManager.renderBoard();
 	}
@@ -136,8 +149,17 @@ public class TicTacToe extends Game {
 		}
 		
 		// check all positions filled
-		if (turn >= 10)
-			return "t";
+		boolean tie = true;
+		outer: for (String[] strings : stringBoard) {
+			for (String string : strings) {
+				if (string.equals("empty")) {
+					tie = false;
+					break outer;
+				}
+			}
+		}
+
+		if(tie) return "t";
 
 		return "n";
 	}

@@ -9,6 +9,7 @@ import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.game.inventories.GameInventory;
 
 public class MineSweeper extends Game {
 	private Button[][] boardButtons;
@@ -158,6 +159,11 @@ public class MineSweeper extends Game {
 	protected void startClock() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	protected GameInventory getGameInventory() {
+		return null;
 	}
 
 	@Override
