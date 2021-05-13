@@ -11,13 +11,13 @@ import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 
+import java.util.ArrayList;
+
 public class TicTacToe extends Game {
 	private Button[][] board;
-	private final TicTacToeInventory ticTacToeInventory;
 
 	public TicTacToe(int rotation) {
 		super(rotation);
-		ticTacToeInventory = new TicTacToeInventory(this);
 	}
 
 	@Override
@@ -63,7 +63,15 @@ public class TicTacToe extends Game {
 
 	@Override
 	protected GameInventory getGameInventory() {
-		return ticTacToeInventory;
+		return new TicTacToeInventory(this);
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
+		return new ArrayList<String>() {{
+			add("x");
+			add("o");
+		}};
 	}
 
 	@Override
@@ -74,14 +82,14 @@ public class TicTacToe extends Game {
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
 		GamePlayer gamePlayer = getGamePlayer(player);
-		if(!getTurn().equals(gamePlayer)) return;
+		if(!teamManager.getTurnPlayer().equals(gamePlayer)) return;
 
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
-		Button b = getClickedButton(getGamePlayer(player), clickLoc);
+		Button b = getClickedButton(gamePlayer, clickLoc);
 
 		if (b != null) {
 			player.sendMessage("you clicked button " + b.getName());
-			if (getTurnNum() == 0) {
+			if (teamManager.getTurnTeam().equals("x")) {
 				b.getImage().setImage("TICTACTOE_X");
 				b.setName("x");
 			} else {
@@ -89,15 +97,15 @@ public class TicTacToe extends Game {
 				b.setName("o");
 			}
 
-			nextTurn();
+			teamManager.nextTurn();
 			
 			String s = checkForWinner();
 			if (!s.equals("n")) {
 				GamePlayer winner = null;
 				if (s.equals("x"))
-					winner = getGamePlayers().get(0);
+					winner = teamManager.getGamePlayerByTeam("x");
 				else if (s.equals("o"))
-					winner = getGamePlayers().get(1);
+					winner = teamManager.getGamePlayerByTeam("o");
 
 				endGame(winner);
 			}
@@ -111,9 +119,17 @@ public class TicTacToe extends Game {
 	@Override
 	protected void startGame() {
 		setInGame();
-		setTurn(0);
 		placeButtons();
 		mapManager.renderBoard();
+	}
+
+	public void endGame(GamePlayer gamePlayer) {
+		board = null;
+		buttons.clear();
+
+		// TODO: send winner message
+
+		super.endGame(gamePlayer);
 	}
 
 	private String checkForWinner() { // n: no winner, x: x wins, o: o wins, t: tie

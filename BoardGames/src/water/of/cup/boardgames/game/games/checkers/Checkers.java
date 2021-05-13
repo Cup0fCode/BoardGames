@@ -11,6 +11,8 @@ import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 
+import java.util.ArrayList;
+
 public class Checkers extends Game {
 	String turn; // {BLACK, RED, EMPTY}
 	String[][] board; // {EMPTY, BLACK, BLACK_KING, "RED", "RED_KING"}
@@ -224,6 +226,14 @@ public class Checkers extends Game {
 	@Override
 	protected GameInventory getGameInventory() {
 		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
+		return new ArrayList<String>() {{
+			add("RED");
+			add("BLACK");
+		}};
 	}
 
 	@Override

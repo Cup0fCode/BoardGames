@@ -11,6 +11,8 @@ import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 
+import java.util.ArrayList;
+
 public class MineSweeper extends Game {
 	private Button[][] boardButtons;
 	private boolean[][] bombLocations;
@@ -163,6 +165,11 @@ public class MineSweeper extends Game {
 
 	@Override
 	protected GameInventory getGameInventory() {
+		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
 		return null;
 	}
 

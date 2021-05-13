@@ -31,17 +31,17 @@ public class TicTacToeInventory extends GameInventory {
         GameOption ranked = new GameOption("ranked", Material.EXPERIENCE_BOTTLE, GameOptionType.TOGGLE, null, rankedValues.get(0), rankedValues);
         options.add(ranked);
 
-        List<String> derpedValues =  Arrays.asList("derped", "underped");
-        GameOption derped = new GameOption("derped", Material.QUARTZ, GameOptionType.TOGGLE, null, derpedValues.get(0), derpedValues);
-        options.add(derped);
-
-        List<String> listValues =  Arrays.asList("hello", "jeff", "test");
-        GameOption listTest = new GameOption("list", Material.LEATHER, GameOptionType.COUNT, null, listValues.get(0), listValues);
-        options.add(listTest);
-
-        List<String> cheekyValues =  Arrays.asList("cheeky", "not cheeky");
-        GameOption cheeky = new GameOption("cheeky", Material.QUARTZ, GameOptionType.TOGGLE, null, cheekyValues.get(0), cheekyValues);
-        options.add(cheeky);
+//        List<String> derpedValues =  Arrays.asList("derped", "underped");
+//        GameOption derped = new GameOption("derped", Material.QUARTZ, GameOptionType.TOGGLE, null, derpedValues.get(0), derpedValues);
+//        options.add(derped);
+//
+//        List<String> listValues =  Arrays.asList("hello", "jeff", "test");
+//        GameOption listTest = new GameOption("list", Material.LEATHER, GameOptionType.COUNT, null, listValues.get(0), listValues);
+//        options.add(listTest);
+//
+//        List<String> cheekyValues =  Arrays.asList("cheeky", "not cheeky");
+//        GameOption cheeky = new GameOption("cheeky", Material.QUARTZ, GameOptionType.TOGGLE, null, cheekyValues.get(0), cheekyValues);
+//        options.add(cheeky);
 
         return options;
     }

@@ -11,6 +11,8 @@ import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 
+import java.util.ArrayList;
+
 public class Uno extends Game{
 	private UnoDeck deck;
 
@@ -50,6 +52,11 @@ public class Uno extends Game{
 
 	@Override
 	protected GameInventory getGameInventory() {
+		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
 		return null;
 	}
 

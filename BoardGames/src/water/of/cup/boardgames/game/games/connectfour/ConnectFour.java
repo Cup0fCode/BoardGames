@@ -12,6 +12,8 @@ import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.Screen;
 
+import java.util.ArrayList;
+
 public class ConnectFour extends Game {
 	Screen redScreen;
 	Screen blueScreen;
@@ -181,6 +183,14 @@ public class ConnectFour extends Game {
 	@Override
 	protected GameInventory getGameInventory() {
 		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
+		return new ArrayList<String>() {{
+			add("RED");
+			add("BLUE");
+		}};
 	}
 
 	@Override

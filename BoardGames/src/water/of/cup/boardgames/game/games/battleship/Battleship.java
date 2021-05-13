@@ -13,6 +13,8 @@ import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.Screen;
 
+import java.util.ArrayList;
+
 public class Battleship extends Game {
 	private boolean turn;
 	private Screen p1GameScreen;
@@ -52,6 +54,11 @@ public class Battleship extends Game {
 
 	@Override
 	protected GameInventory getGameInventory() {
+		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
 		return null;
 	}
 
