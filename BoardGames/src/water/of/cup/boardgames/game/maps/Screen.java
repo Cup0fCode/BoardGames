@@ -2,11 +2,13 @@ package water.of.cup.boardgames.game.maps;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
+import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
@@ -132,7 +134,13 @@ public class Screen {
 			view.addRenderer(new GameRenderer(game, getMapValsLocationOnScreen(mapVal), this));
 			mapMeta.setMapView(view);
 			map.setItemMeta(mapMeta);
-			view.getWorld().getPlayers().forEach(player -> player.sendMap(view));
+			
+			Bukkit.getServer().getScheduler().runTaskAsynchronously(BoardGames.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					view.getWorld().getPlayers().forEach(player -> player.sendMap(view));
+				}
+			});
 		}
 	}
 

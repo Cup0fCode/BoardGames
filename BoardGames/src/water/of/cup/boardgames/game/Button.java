@@ -49,6 +49,9 @@ public class Button {
 	}
 	
 	public boolean clicked(GamePlayer gamePlayer, int[] loc) {
+		if (!clickAble)
+			return false;
+		
 		if (!visibleForAll && !visiblePlayers.contains(gamePlayer))
 			return false;
 		
@@ -93,6 +96,10 @@ public class Button {
 
 	public GameImage getImage() {
 		return image;
+	}
+	
+	public void setClickable(boolean c) {
+		clickAble = c;
 	}
 
 	public void setImage(GameImage image) {
