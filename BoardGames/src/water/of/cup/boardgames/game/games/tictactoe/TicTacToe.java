@@ -83,8 +83,6 @@ public class TicTacToe extends Game {
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
 		GamePlayer gamePlayer = getGamePlayer(player);
-		if(!teamManager.getTurnPlayer().equals(gamePlayer)) return;
-
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
 		Button b = getClickedButton(gamePlayer, clickLoc);
 
