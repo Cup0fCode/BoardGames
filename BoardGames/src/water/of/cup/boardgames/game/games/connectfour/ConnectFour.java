@@ -42,6 +42,7 @@ public class ConnectFour extends Game {
 		resetChips();
 		createChipButtons();
 		setChipImages();
+		setInGame();
 	}
 
 	private void resetChips() {
@@ -234,7 +235,6 @@ public class ConnectFour extends Game {
 			if (!winner.equals("EMPTY")) {
 				// game over
 				GamePlayer playerWinner = teamManager.getGamePlayerByTeam(winner);
-
 				endGame(playerWinner);
 			}
 		}

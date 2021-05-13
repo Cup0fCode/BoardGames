@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game.games.minesweaper;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,8 +22,6 @@ public class MineSweeper extends Game {
 	
 	private int openedTiles = 0;
 	private int numberOfBombs = 32;
-	
-	private String gameEnd;
 
 	public MineSweeper(int rotation) {
 		super(rotation);
@@ -52,6 +51,7 @@ public class MineSweeper extends Game {
 		for (int y = 0; y < 16; y++)
 			for (int x = 0; x < 16; x++) {
 				boardButtons[y][x] = new Button(this, "MINESWEEPER_HIDDEN", new int[] { x * 8, y * 8 }, 0, "HIDDEN");
+				boardButtons[y][x].setClickable(true);
 				buttons.add(boardButtons[y][x]);
 			}
 		
@@ -175,11 +175,6 @@ public class MineSweeper extends Game {
 
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
-		if (gameEnd != null) {
-			player.sendMessage(gameEnd);
-			return;
-		}
-		
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
 		Button b = getClickedButton(getGamePlayer(player), clickLoc);
 		int[] position = getButtonLocation(b);
@@ -196,17 +191,23 @@ public class MineSweeper extends Game {
 				// safe tile
 				if (openedTiles + numberOfBombs >= 16 * 16) {
 					// all safe tiles opened
-					gameEnd = player.getDisplayName() + " won!";
-					player.sendMessage(gameEnd);
+					player.sendMessage(player.getDisplayName() + " won!");
+					endGame();
 				}
 			} else {
-				// bomb opened 
-				gameEnd = player.getDisplayName() + " lost!";
-				player.sendMessage(gameEnd);
+				// bomb opened
+				player.sendMessage(player.getDisplayName() + " lost!");
+				endGame();
 			}
 		}
 		mapManager.renderBoard();
 		
+	}
+
+	public void endGame() {
+		buttons.clear();
+		openedTiles = 0;
+		startGame();
 	}
 
 	@Override

@@ -212,8 +212,12 @@ public abstract class Game {
 		if(!hasGameInventory()) {
 			startGame();
 		} else {
-			mapManager.renderBoard();
+			renderInitial();
 		}
+	}
+
+	public void renderInitial() {
+		mapManager.renderBoard();
 	}
 
 	public void endGame(GamePlayer winner) {
