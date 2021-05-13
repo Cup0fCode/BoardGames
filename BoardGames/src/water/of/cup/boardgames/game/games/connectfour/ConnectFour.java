@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game.games.connectfour;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,14 +18,12 @@ import java.util.ArrayList;
 public class ConnectFour extends Game {
 	Screen redScreen;
 	Screen blueScreen;
-	String turn; // {RED, BLUE, OVER}
 	String[][] chipLocations;
 	Button[][] redBoardButtons;
 	Button[][] blueBoardButtons;
 
 	public ConnectFour(int rotation) {
 		super(rotation);
-		turn = "OVER";
 	}
 
 	@Override
@@ -39,7 +38,6 @@ public class ConnectFour extends Game {
 
 	@Override
 	protected void startGame() {
-		turn = "RED";
 		mapManager.renderBoard();
 		resetChips();
 		createChipButtons();
@@ -62,12 +60,14 @@ public class ConnectFour extends Game {
 			for (int x = 0; x < 7; x++) {
 				Button redButton = new Button(this, "CONNECTFOUR_EMPTY", new int[] { 5 + x * 17, 1 + y * 17 }, 0,
 						"EMPTY");
+				redButton.setClickable(true);
 				redButton.setScreen(redScreen);
 				buttons.add(redButton);
 				redBoardButtons[y][x] = redButton;
 
 				Button blueButton = new Button(this, "CONNECTFOUR_EMPTY", new int[] { 124 - (x + 1) * 17, 1 + y * 17 },
 						0, "EMPTY");
+				blueButton.setClickable(true);
 				blueButton.setScreen(blueScreen);
 				buttons.add(blueButton);
 				blueBoardButtons[y][x] = blueButton;
@@ -111,16 +111,29 @@ public class ConnectFour extends Game {
 			}
 		}
 		// check diagonal -1
-				for (int x = 0; x < 4; x++) {
-					yloop: for (int y = 3; y < 6; y++) {
-						String color = chipLocations[y][x];
-						for (int a = 0; a < 4; a++)
-							if (chipLocations[y - a][x + a].equals("EMPTY") || !chipLocations[y - a][x + a].equals(color))
-								continue yloop;
-						// game over
-						return color;
-					}
+		for (int x = 0; x < 4; x++) {
+			yloop: for (int y = 3; y < 6; y++) {
+				String color = chipLocations[y][x];
+				for (int a = 0; a < 4; a++)
+					if (chipLocations[y - a][x + a].equals("EMPTY") || !chipLocations[y - a][x + a].equals(color))
+						continue yloop;
+				// game over
+				return color;
+			}
+		}
+
+		// check all positions filled
+		boolean tie = true;
+		outer: for (String[] strings : chipLocations) {
+			for (String string : strings) {
+				if (string.equals("EMPTY")) {
+					tie = false;
+					break outer;
 				}
+			}
+		}
+
+		if(tie) return "t";
 
 		return "EMPTY";
 	}
@@ -182,7 +195,7 @@ public class ConnectFour extends Game {
 
 	@Override
 	protected GameInventory getGameInventory() {
-		return null;
+		return new ConnectFourInventory(this);
 	}
 
 	@Override
@@ -195,44 +208,53 @@ public class ConnectFour extends Game {
 
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
-		// check if game is over
-		if (turn.equals("EMPTY")) {
-			player.sendMessage(checkGameOver().toLowerCase() + " won!");
-			return;
-		}
-		
+		GamePlayer gamePlayer = getGamePlayer(player);
+		if(!teamManager.getTurnPlayer().equals(gamePlayer)) return;
+
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
 		Screen screen = mapManager.getClickedScreen(map);
 		if (screen == null)
 			return;
-		Button b = screen.getClickedButton(getGamePlayer(player), clickLoc);
+
+		Button b = screen.getClickedButton(gamePlayer, clickLoc);
 		int[] position = getClickedChipLocation(b);
 
 		if (position == null)
 			return;
 
-		if ((turn.equals("RED") && screen == redScreen) || (turn.equals("BLUE") && screen == blueScreen)) {
-			player.sendMessage(turn);
-			int col = position[0];
-			if (placeChip(col, turn) == true) {
-				mapManager.renderBoard();
-				player.sendMessage("Rendered Board");
-				if (turn.equals("RED")) {
-					turn = "BLUE";
-				} else {
-					turn = "RED";
-				}
-				String winner = checkGameOver();
-				if (!winner.equals("EMPTY")) {
-					// game over
-					player.sendMessage(winner.toLowerCase() + " won!");
-					turn = "EMPTY";
-				}
+		String teamTurn = teamManager.getTurnTeam();
+
+		int col = position[0];
+		if (placeChip(col, teamTurn)) {
+			mapManager.renderBoard();
+
+			teamManager.nextTurn();
+
+			String winner = checkGameOver();
+			if (!winner.equals("EMPTY")) {
+				// game over
+				GamePlayer playerWinner = teamManager.getGamePlayerByTeam(winner);
+
+				endGame(playerWinner);
 			}
 		}
+	}
 
-		// if (screen == )
+	public void endGame(GamePlayer gamePlayerWinner) {
+		buttons.clear();
 
+		String message;
+		if(gamePlayerWinner != null) {
+			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+		} else {
+			message = ChatColor.GREEN + "Tie game!";
+		}
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().sendMessage(message);
+		}
+
+		super.endGame(gamePlayerWinner);
 	}
 
 	@Override

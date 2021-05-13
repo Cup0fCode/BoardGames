@@ -105,11 +105,7 @@ public class TicTacToe extends Game {
 			
 			String s = checkForWinner();
 			if (!s.equals("n")) {
-				GamePlayer winner = null;
-				if (s.equals("x"))
-					winner = teamManager.getGamePlayerByTeam("x");
-				else if (s.equals("o"))
-					winner = teamManager.getGamePlayerByTeam("o");
+				GamePlayer winner = teamManager.getGamePlayerByTeam(s);
 
 				endGame(winner);
 			}
