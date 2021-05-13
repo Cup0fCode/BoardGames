@@ -52,22 +52,23 @@ public class Button {
 		if (!clickAble)
 			return false;
 		
-		if (!visibleForAll && !visiblePlayers.contains(gamePlayer))
-			return false;
+		if (!visibleForAll)
+			if (!visiblePlayers.contains(gamePlayer))
+				return false;
 		
-		if (turnBased && !game.getTurn().equals(gamePlayer))
-			return false;
+//		if (turnBased && !game.getTurn().equals(gamePlayer))
+//			return false;
 		
 		
 		int[] p1 = location.clone();
 		int[] p2 = new int[] {location[0] + image.getDimensions()[0], location[1] + image.getDimensions()[1]};
 		
 		// rotate p2
-		int i = 0;
-		while (i < rotation) {
-			p2 = MathUtils.rotatePointAroundPoint90Degrees(new double[] {p1[0], p1[1]}, p2);
-			i++;
-		}
+//		int i = 0;
+//		while (i < rotation) {
+//			p2 = MathUtils.rotatePointAroundPoint90Degrees(new double[] {p1[0], p1[1]}, p2);
+//			i++;
+//		}
 		
 		// check if clicked loc not between p1 & p2
 		if (loc[0] < p1[0] == loc[0] < p2[0] || loc[1] < p1[1] == loc[1] < p2[1])
@@ -77,6 +78,9 @@ public class Button {
 	}
 	
 	public boolean visibleForPlayer(GamePlayer player) {
+		if (visibleForAll)
+			return true;
+		
 		if (!visiblePlayers.contains(player))
 			return false;
 		

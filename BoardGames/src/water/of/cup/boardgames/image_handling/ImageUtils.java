@@ -16,6 +16,11 @@ public class ImageUtils {
 	public static BufferedImage rotateImage(BufferedImage image, int rotation) {
 		int w = image.getWidth();
 		int h = image.getHeight();
+		
+		if (rotation % 2 == 1) {
+			w = image.getHeight();
+			h = image.getWidth();
+		}
 
 		AffineTransform scaleTransform = new AffineTransform();
 		// last-in-first-applied: rotate, scale

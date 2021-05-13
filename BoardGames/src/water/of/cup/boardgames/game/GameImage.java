@@ -57,7 +57,14 @@ public class GameImage {
 
 	public int[] getDimensions() {
 		// TODO Auto-generated method stub
-		return new int[] {image.getWidth(), image.getHeight()};
+//		int[] dim = new int[] {image.getWidth(), image.getHeight()};
+//		int i = 0;
+//		while (i < rotation) {
+//			dim = MathUtils.rotatePointAroundPoint90Degrees(new double[] {0,0}, dim);
+//			i++;
+//		}
+		
+		return (rotation % 2 == 0) ? new int[] {image.getWidth(), image.getHeight()} : new int[] {image.getHeight(), image.getWidth()};
 	}
 
 	public void cropMap(int[] loc) { //crops image to map location
