@@ -9,8 +9,11 @@ import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.Screen;
+
+import java.util.ArrayList;
 
 public class Battleship extends Game {
 	private boolean turn;
@@ -47,6 +50,16 @@ public class Battleship extends Game {
 	protected void startClock() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	protected GameInventory getGameInventory() {
+		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
+		return null;
 	}
 
 	@Override

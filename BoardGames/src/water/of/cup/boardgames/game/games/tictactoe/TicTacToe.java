@@ -9,14 +9,15 @@ import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.game.inventories.GameInventory;
+
+import java.util.ArrayList;
 
 public class TicTacToe extends Game {
-	private int turn; // remove when Matt work done
 	private Button[][] board;
 
 	public TicTacToe(int rotation) {
 		super(rotation);
-		turn = 1;
 	}
 
 	@Override
@@ -62,36 +63,54 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
+	protected GameInventory getGameInventory() {
+		return new TicTacToeInventory(this);
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
+		return new ArrayList<String>() {{
+			add("x");
+			add("o");
+		}};
+	}
+
+	@Override
 	public BoardItem getBoardItem() {
 		return new BoardItem(gameName, new ItemStack(Material.OAK_TRAPDOOR, 1));
 	}
 
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
+		GamePlayer gamePlayer = getGamePlayer(player);
+		if(!teamManager.getTurnPlayer().equals(gamePlayer)) return;
+
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
-		Button b = getClickedButton(getGamePlayer(player), clickLoc);
+		Button b = getClickedButton(gamePlayer, clickLoc);
+
 		if (b != null) {
 			player.sendMessage("you clicked button " + b.getName());
-			if (turn >= 10 || !b.getName().equals("empty"))
-				return;
-			if (turn % 2 == 1) {
+			if (teamManager.getTurnTeam().equals("x")) {
 				b.getImage().setImage("TICTACTOE_X");
 				b.setName("x");
 			} else {
 				b.getImage().setImage("TICTACTOE_O");
 				b.setName("o");
 			}
-			turn++;
+
+			teamManager.nextTurn();
 			
 			String s = checkForWinner();
-			if (s.equals("x"))
-				this.gameImage.writeText("X won", new int[] {64, 64}, 16);
-			if (s.equals("o"))
-				player.sendMessage("O won");
-			if (s.equals("t"))
-				player.sendMessage("Tie game");
-			if (!s.equals("n"))
-				turn = 10;
+			if (!s.equals("n")) {
+				GamePlayer winner = null;
+				if (s.equals("x"))
+					winner = teamManager.getGamePlayerByTeam("x");
+				else if (s.equals("o"))
+					winner = teamManager.getGamePlayerByTeam("o");
+
+				endGame(winner);
+			}
+
 		}
 		player.sendMessage("you clicked: " + clickLoc[0] + "," + clickLoc[1]);
 		mapManager.renderBoard();
@@ -100,8 +119,18 @@ public class TicTacToe extends Game {
 
 	@Override
 	protected void startGame() {
+		setInGame();
 		placeButtons();
 		mapManager.renderBoard();
+	}
+
+	public void endGame(GamePlayer gamePlayer) {
+		board = null;
+		buttons.clear();
+
+		// TODO: send winner message
+
+		super.endGame(gamePlayer);
 	}
 
 	private String checkForWinner() { // n: no winner, x: x wins, o: o wins, t: tie
@@ -137,8 +166,17 @@ public class TicTacToe extends Game {
 		}
 		
 		// check all positions filled
-		if (turn >= 10)
-			return "t";
+		boolean tie = true;
+		outer: for (String[] strings : stringBoard) {
+			for (String string : strings) {
+				if (string.equals("empty")) {
+					tie = false;
+					break outer;
+				}
+			}
+		}
+
+		if(tie) return "t";
 
 		return "n";
 	}

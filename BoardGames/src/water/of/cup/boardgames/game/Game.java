@@ -2,15 +2,9 @@ package water.of.cup.boardgames.game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -19,10 +13,12 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.MapData;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.maps.Screen;
+import water.of.cup.boardgames.game.teams.TeamManager;
 import water.of.cup.boardgames.game.wagers.WagerManager;
 
 public abstract class Game {
@@ -33,12 +29,15 @@ public abstract class Game {
 	protected String gameName;
 	protected MapManager mapManager;
 	protected ArrayList<Screen> screens;
-	protected HashMap<Player, GamePlayer> players;
-	protected int turn;
+//	protected HashMap<Player, GamePlayer> players;
+	private int turn;
+	private boolean ingame;
 	protected GameImage gameImage;
 	protected ArrayList<Button> buttons;
 	protected WagerManager wagerManager;
 	protected Clock clock;
+	protected GameInventory gameInventory;
+	protected TeamManager teamManager;
 
 	protected ArrayList<GameMap> gameMaps; // game maps for the game
 	// public HashMap<Integer, Integer> mapValMapIds; // <mapval, mapid>
@@ -59,6 +58,10 @@ public abstract class Game {
 
 	protected abstract void startClock();
 
+	protected abstract GameInventory getGameInventory();
+
+	public abstract ArrayList<String> getTeamNames();
+
 	public Game(int rotation) {
 		screens = new ArrayList<Screen>();
 		setMapInformation(rotation);
@@ -71,12 +74,14 @@ public abstract class Game {
 		setBoardImage();
 		// assert boardImage != null;
 		wagerManager = new WagerManager();
-		players = new HashMap<Player, GamePlayer>();
 		turn = 0;
 		buttons = new ArrayList<Button>();
+		teamManager = new TeamManager(this);
 
 		// mapValMapIds = new HashMap<Integer, Integer>();
 		gameMaps = new ArrayList<GameMap>();
+
+		gameInventory = getGameInventory();
 	}
 
 	abstract public void click(Player player, double[] loc, ItemStack map);
@@ -202,11 +207,27 @@ public abstract class Game {
 				}
 			}
 		}
-		startGame(); // TODO: remove this after proper game setup is added
+
+		// Debug
+		if(!hasGameInventory()) {
+			startGame();
+		} else {
+			mapManager.renderBoard();
+		}
 	}
 
-	public void cancelGame() {
-		wagerManager.endAll();
+	public void endGame(GamePlayer winner) {
+		ingame = false;
+		wagerManager.completeWagers(winner);
+		clearGamePlayers();
+	}
+
+	public void setInGame() {
+		ingame = true;
+	}
+
+	public boolean isIngame() {
+		return ingame;
 	}
 
 	protected Button getClickedButton(GamePlayer gamePlayer, int[] loc) { // returns null if no button is clicked
@@ -218,7 +239,7 @@ public abstract class Game {
 	}
 	
 	public boolean hasPlayer(Player player) {
-		return players.containsKey(player);
+		return teamManager.getGamePlayer(player) != null;
 	}
 
 	public ArrayList<Game> getPlayerQueue() {
@@ -233,55 +254,43 @@ public abstract class Game {
 		return gameId;
 	}
 
-	public GamePlayer getTurn() {
-		return ((List<GamePlayer>) players.values()).get(turn);
-	}
-
-	public void setTurn(int turn) {
-		this.turn = turn;
-	}
-
-	public void setTurn(GamePlayer gamePlayer) {
-		turn = ((List<GamePlayer>) players.values()).indexOf(gamePlayer);
-	}
-
-	public void setTurn(Player player) {
-		setTurn(players.get(player));
-	}
-
-	public Player getPlayer(GamePlayer player) {
-		for (Player p : players.keySet()) {
-			if (players.get(p).equals(player))
-				return p;
-		}
-		return null;
-	}
-
 	public GamePlayer getGamePlayer(Player player) {
-		return players.get(player);
+		return teamManager.getGamePlayer(player);
 	}
 
 	public ArrayList<GamePlayer> getGamePlayers() {
-		return new ArrayList<>(players.values());
+		return teamManager.getGamePlayers();
 	}
 
-	public GamePlayer addPlayer(Player player) {
-		if(players.containsKey(player)) {
-			return players.get(player);
+	public GamePlayer addPlayer(Player player, String team) {
+		if(teamManager.getGamePlayer(player) != null) {
+			return teamManager.getGamePlayer(player);
 		}
 
 		GamePlayer newPlayer = new GamePlayer(player);
-		players.put(player, newPlayer);
+		if(team == null) {
+			teamManager.addTeam(newPlayer);
+		} else {
+			teamManager.addTeam(newPlayer, team);
+		}
+
 		return newPlayer;
 	}
 
-	public void removePlayer(Player player) {
-		players.remove(player);
+	public GamePlayer addPlayer(Player player) {
+		return addPlayer(player, null);
 	}
 
-	// TODO: Move to reset method
+	public void removePlayer(Player player) {
+		teamManager.removeTeamByPlayer(player);
+	}
+
 	public void clearGamePlayers() {
-		players.clear();;
+		teamManager.resetTeams();
+	}
+
+	public GamePlayer getTurn() {
+		return teamManager.getTurnPlayer();
 	}
 
 	protected abstract void gamePlayerOutOfTime(GamePlayer turn);
@@ -413,5 +422,19 @@ public abstract class Game {
 
 	public ArrayList<Screen> getScreens() {
 		return screens;
+	}
+
+	public WagerManager getWagerManager() {
+		return wagerManager;
+	}
+
+	public void displayGameInventory(Player player) {
+		if(gameInventory != null) {
+			gameInventory.build(player);
+		}
+	}
+
+	public boolean hasGameInventory() {
+		return gameInventory != null;
 	}
 }

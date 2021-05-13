@@ -12,6 +12,7 @@ import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.MathUtils;
 
 public class Uno extends Game {
@@ -173,6 +174,16 @@ public class Uno extends Game {
 	protected void startClock() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	protected GameInventory getGameInventory() {
+		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
+		return null;
 	}
 
 	@Override

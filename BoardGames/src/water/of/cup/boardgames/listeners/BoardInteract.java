@@ -59,8 +59,8 @@ public class BoardInteract implements Listener {
 		ItemFrame gameFrame = null;
 		Game game = null;
 		GameMap map = null;
-		
-		double minDistance = 100; //used to find the closest map clicked 
+
+		double minDistance = 100; //used to find the closest map clicked
 		for (Entity entity : nearbyEntities) {
 
 			if (!(entity instanceof ItemFrame))
@@ -84,8 +84,8 @@ public class BoardInteract implements Listener {
 					bounds = new double[] {0.5, 0.5, 0.0313};
 				if (frame.getAttachedFace() == BlockFace.EAST || frame.getAttachedFace() == BlockFace.WEST)
 					bounds = new double[] {0.0313, 0.5, 0.5};
-				
-				
+
+
 				BoundingBox box = new BoundingBox(x - bounds[0], y - bounds[1], z - bounds[2], x + bounds[0], y +  bounds[1], z + bounds[2]);
 				// check if player clicked box
 				RayTraceResult tempResult = box.rayTrace(player.getEyeLocation().toVector(), direction, 5);
@@ -115,20 +115,19 @@ public class BoardInteract implements Listener {
 
 		if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
 			e.setCancelled(true);
-
 			// TODO: check if game is running
 
 			// TODO: check if player has permission to delete game
-			
+
 			if (game.destroy(gameFrame)) {
-				
+
 				// drop the board item TODO: check if board item should be dropped (player not in creative, game settings)
 				ItemStack boardItem = game.getBoardItem();
 				if (boardItem != null)
 					player.getWorld().dropItem(e.getClickedBlock().getLocation(), boardItem);
 			}
-				
-			
+
+
 			return;
 
 		}
@@ -162,16 +161,21 @@ public class BoardInteract implements Listener {
 //
 //			int loc[] = ChessUtils.getChessBoardClickLocation(hitx, hity, gameFrame.getRotation(), direction);
 
-			Vector pos = result.getHitPosition();
-			double[] loc = new double[] { pos.getX(), pos.getZ() };
-			if (gameFrame.getAttachedFace() == BlockFace.WEST || gameFrame.getAttachedFace() == BlockFace.EAST) {
-				loc = new double[] { pos.getZ(), pos.getY() };
-			}
-			if (gameFrame.getAttachedFace() == BlockFace.NORTH || gameFrame.getAttachedFace() == BlockFace.SOUTH) {
-				loc = new double[] { pos.getX(), pos.getY() };
-			}
+			// Temp dbeug
+			if((gameManager.getGameByPlayer(player) != null && gameManager.getGameByPlayer(player).equals(game)) || !game.hasGameInventory()) {
+				Vector pos = result.getHitPosition();
+				double[] loc = new double[] { pos.getX(), pos.getZ() };
+				if (gameFrame.getAttachedFace() == BlockFace.WEST || gameFrame.getAttachedFace() == BlockFace.EAST) {
+					loc = new double[] { pos.getZ(), pos.getY() };
+				}
+				if (gameFrame.getAttachedFace() == BlockFace.NORTH || gameFrame.getAttachedFace() == BlockFace.SOUTH) {
+					loc = new double[] { pos.getX(), pos.getY() };
+				}
 
-			game.click(player, loc, map);
+				game.click(player, loc, map);
+			} else {
+				game.displayGameInventory(player);
+			}
 
 			e.setCancelled(true);
 		}

@@ -9,6 +9,9 @@ import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.game.inventories.GameInventory;
+
+import java.util.ArrayList;
 
 public class Checkers extends Game {
 	String turn; // {BLACK, RED, EMPTY}
@@ -218,6 +221,19 @@ public class Checkers extends Game {
 	protected void startClock() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	protected GameInventory getGameInventory() {
+		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
+		return new ArrayList<String>() {{
+			add("RED");
+			add("BLACK");
+		}};
 	}
 
 	@Override
