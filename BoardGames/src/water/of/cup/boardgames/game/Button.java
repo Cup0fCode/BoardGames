@@ -22,6 +22,7 @@ public class Button {
 	//public Button(Game game, BufferedImage image, int[] loc, String name, )
 	
 	public Button(Game game, String imageName, int[] location, int rotation, String name) {
+		image = new GameImage(ImageManager.getImage(imageName), rotation);
 		visiblePlayers = new ArrayList<GamePlayer>();
 		visibleForAll = true;
 		this.game = game;
@@ -32,6 +33,7 @@ public class Button {
 		image = new GameImage(ImageManager.getImage(imageName), rotation);
 		turnBased = false;
 		renderTurnBased = false;
+		changeLocationByRotation();
 	}
 	
 	public Button(Game game, GameImage gameImage, int[] location, int rotation, String name) {
@@ -46,7 +48,19 @@ public class Button {
 		image.setRotation(rotation);
 		turnBased = false;
 		renderTurnBased = false;
+		changeLocationByRotation();
 	}
+	private void changeLocationByRotation() {
+		int[] dim = image.getDimensions();
+		if (rotation >= 2) {
+			location[1] -= dim[1];
+		}
+		if (rotation == 1 || rotation == 2) {
+			location[0] -= dim[0];
+		}
+			
+	}
+	
 	
 	public boolean clicked(GamePlayer gamePlayer, int[] loc) {
 		if (!clickAble)
@@ -62,13 +76,6 @@ public class Button {
 		
 		int[] p1 = location.clone();
 		int[] p2 = new int[] {location[0] + image.getDimensions()[0], location[1] + image.getDimensions()[1]};
-		
-		// rotate p2
-//		int i = 0;
-//		while (i < rotation) {
-//			p2 = MathUtils.rotatePointAroundPoint90Degrees(new double[] {p1[0], p1[1]}, p2);
-//			i++;
-//		}
 		
 		// check if clicked loc not between p1 & p2
 		if (loc[0] < p1[0] == loc[0] < p2[0] || loc[1] < p1[1] == loc[1] < p2[1])
