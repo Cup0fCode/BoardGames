@@ -14,6 +14,7 @@ public class TeamManager {
     private final LinkedHashMap<String, GamePlayer> teams;
     private final ArrayList<String> teamNames;
     private String currentTurn;
+    private int turnDirection = 1;
 
     public TeamManager(Game game) {
         this.game = game;
@@ -90,12 +91,16 @@ public class TeamManager {
 
     public void nextTurn() {
         ArrayList<String> teamList = new ArrayList<>(teams.keySet());
-        int nextTurnIndex = teamList.indexOf(currentTurn) + 1;
+        int nextTurnIndex = teamList.indexOf(currentTurn) + turnDirection;
         if(nextTurnIndex >= teamList.size()) {
             currentTurn = teamList.get(0);
         } else {
             currentTurn = teamList.get(nextTurnIndex);
         }
+    }
+    
+    public void switchTurnDirection() {
+    	turnDirection *= -1;
     }
 
     public GamePlayer getGamePlayer(Player player) {

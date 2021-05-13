@@ -1,5 +1,7 @@
 package water.of.cup.boardgames.game.games.conways_game_of_life;
 
+import java.util.ArrayList;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,8 +12,6 @@ import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
-
-import java.util.ArrayList;
 
 public class ConwaysGameOfLife extends Game {
 	boolean[][] cells;
@@ -169,6 +169,18 @@ public class ConwaysGameOfLife extends Game {
 	@Override
 	public ItemStack getBoardItem() {
 		return new BoardItem(gameName, new ItemStack(Material.OAK_TRAPDOOR, 1));
+	}
+
+	@Override
+	protected GameInventory getGameInventory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
