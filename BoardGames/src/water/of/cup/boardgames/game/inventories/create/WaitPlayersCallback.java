@@ -8,6 +8,8 @@ public interface WaitPlayersCallback {
 
     void onDecline(Player player);
 
+    void onStart();
+
     void onLeave();
 
 }

@@ -53,7 +53,17 @@ public class TicTacToeInventory extends GameInventory {
 
     @Override
     protected int getMaxGame() {
+        return 3;
+    }
+
+    @Override
+    protected int getMinGame() {
         return 2;
+    }
+
+    @Override
+    protected boolean hasTeamSelect() {
+        return true;
     }
 
     // Whether or not game players are allowed to place bets
