@@ -297,9 +297,12 @@ public abstract class GameInventory {
                 }
 
                 if(allReady) {
-                    // Everyone is ready, close invs, reset, give data
-                    onGameCreate(gameData, game.getGamePlayers());
-                    resetGameInventory(null, false);
+                    // simultaneous click check
+                    if(gameCreator != null) {
+                        // Everyone is ready, close invs, reset, give data
+                        onGameCreate(gameData, game.getGamePlayers());
+                        resetGameInventory(null, false);
+                    }
                 } else {
                     updateReadyInventory();
                 }
