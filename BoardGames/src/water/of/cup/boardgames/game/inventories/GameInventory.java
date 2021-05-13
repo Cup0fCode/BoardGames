@@ -31,6 +31,8 @@ public abstract class GameInventory {
     protected abstract ArrayList<GameOption> getOptions();
     protected abstract int getMaxQueue();
     protected abstract int getMaxGame();
+    protected abstract int getMinGame();
+    protected abstract boolean hasTeamSelect();
     protected abstract boolean hasGameWagers();
     protected abstract boolean hasWagerScreen();
     protected abstract void onGameCreate(HashMap<String, Object> gameData, ArrayList<GamePlayer> players);
@@ -44,6 +46,7 @@ public abstract class GameInventory {
     private final BoardGames instance = BoardGames.getInstance();
     private final ArrayList<GameOption> gameOptions;
     private final int maxPlayers;
+    private final int minPlayers;
     private final boolean hasWagers;
 
     // Vars that must be reset
@@ -74,7 +77,13 @@ public abstract class GameInventory {
         this.wagerManager = game.getWagerManager();
         this.gameOptions = getOptions();
         this.maxPlayers = getMaxGame();
+        this.minPlayers = getMinGame();
         this.hasWagers = hasGameWagers() && (instance.getEconomy() != null);
+
+        // Add team option if enabled
+        if(hasTeamSelect() && game.getTeamNames() != null) {
+            this.gameOptions.add(0, GameOption.getTeamSelectGameOption(game.getTeamNames()));
+        }
 
         // Add wager option if enabled
         if(this.hasWagers) {
@@ -133,7 +142,12 @@ public abstract class GameInventory {
                     return;
                 }
 
-                // Check if they have enough moneyDouble.parseDouble(gameWagerData);
+                String preselectedTeam = null;
+                if(gameDataResult.containsKey("team") && hasTeamSelect()) {
+                    preselectedTeam = gameDataResult.get("team") + "";
+                }
+
+                // Check if they have enough money
                 if(hasWagers) {
                     double wagerAmount = Double.parseDouble(gameDataResult.get("wager") + "");
                     if(instance.getEconomy().getBalance(player) < wagerAmount) {
@@ -141,17 +155,15 @@ public abstract class GameInventory {
                         return;
                     }
 
-                    GamePlayer gamePlayer = game.addPlayer(player);
+                    GamePlayer gamePlayer = game.addPlayer(player, preselectedTeam);
 
                     // Add game wagers
                     wagerManager.initGameWager(gamePlayer, wagerAmount);
                 } else {
-                    game.addPlayer(player);
+                    game.addPlayer(player, preselectedTeam);
                 }
 
                 player.sendMessage("Creating game with gameData");
-
-                // TODO: if gameDataResult contains gameSize, set getMaxGame
 
                 // Set game data, open wait players
                 gameCreator = player;
@@ -185,24 +197,14 @@ public abstract class GameInventory {
                 // Add player to game
                 game.addPlayer(player);
 
+                // Add to wager (Keep in mind wagers really only work for 2 players)
+                if(hasWagers) {
+                    wagerManager.addGameWagerPlayer(player, gameCreator);
+                }
+
                 // Move players to ready screen
                 if(acceptedPlayers.size() == getMaxPlayers() - 1) {
-                    // Add to wager (Keep in mind wagers really only work for 2 players)
-                    if(hasWagers) {
-                        wagerManager.addGameWagerPlayer(player, gameCreator);
-                    }
-
-                    // Kick players still in queue
-                    closePlayers(joinPlayerQueue, "Game has started, you have been kicked.");
-
-                    // Init all player ready
-                    playerReadyMap.put(gameCreator, false);
-                    for(Player player1 : acceptedPlayers) {
-                        playerReadyMap.put(player1, false);
-                        gameReadyInventory.build(player1, handleReady());
-                    }
-
-                    gameReadyInventory.build(gameCreator, handleReady());
+                    moveToReady();
                 } else {
                     updateWaitPlayersInventory();
                     updateJoinGameInventory(player);
@@ -219,6 +221,11 @@ public abstract class GameInventory {
                 closeInventory(player);
 
                 updateWaitPlayersInventory();
+            }
+
+            @Override
+            public void onStart() {
+                moveToReady();
             }
 
             @Override
@@ -360,6 +367,20 @@ public abstract class GameInventory {
         }
     }
 
+    private void moveToReady() {
+        // Kick players still in queue
+        closePlayers(joinPlayerQueue, "Game has started, you have been kicked.");
+
+        // Init all player ready
+        playerReadyMap.put(gameCreator, false);
+        for(Player player1 : acceptedPlayers) {
+            playerReadyMap.put(player1, false);
+            gameReadyInventory.build(player1, handleReady());
+        }
+
+        gameReadyInventory.build(gameCreator, handleReady());
+    }
+
     // TODO: Reset method, kicks everyone out, called when create game or game owner leaves
     private void resetGameInventory(String message, boolean clearGamePlayer) {
         // Close players out of inventory
@@ -441,6 +462,10 @@ public abstract class GameInventory {
 
     public int getMaxPlayers() {
         return this.maxPlayers;
+    }
+
+    public int getMinPlayers() {
+        return this.minPlayers;
     }
 
     // Use this inside readyinventory to make sure game creator is included

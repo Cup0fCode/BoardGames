@@ -134,6 +134,16 @@ public class ConwaysGameOfLife extends Game {
 	}
 
 	@Override
+	protected GameInventory getGameInventory() {
+		return null;
+	}
+
+	@Override
+	public ArrayList<String> getTeamNames() {
+		return null;
+	}
+
+	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
 		if (player.isSneaking()) {
 			nextGeneration();

@@ -70,6 +70,19 @@ public class GameWaitPlayersInventory extends InventoryScreen {
 
         gui.addElement(playerQueueGroup);
 
+        // If they have enough players to start, render in start game button
+        int numAccepted = gameInventory.getAcceptedPlayers().size();
+        if(numAccepted >= gameInventory.getMinPlayers() - 1) {
+            ItemStack startButton = InventoryUtils.getCustomTextureHead(InventoryUtils.RIGHT_ARROW);
+            gui.addElement(new StaticGuiElement('b', startButton, click -> {
+                        callback.onStart();
+                        return true;
+                    },
+                            ChatColor.GREEN + "Start game with " + numAccepted + (numAccepted == 1 ? " player" : " players")
+                    )
+            );
+        }
+
         gui.setCloseAction(close -> {
             callback.onLeave();
             return false;
@@ -105,6 +118,9 @@ public class GameWaitPlayersInventory extends InventoryScreen {
 
         // Define game creator skull
         guiSetup[1][2] = 's';
+
+        // Define start game button
+        guiSetup[1][4] = 'b';
 
         return formatGuiSetup(guiSetup);
     }

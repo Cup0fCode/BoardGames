@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game.games.tictactoe;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +11,7 @@ import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
+import water.of.cup.boardgames.game.inventories.GameOption;
 
 import java.util.ArrayList;
 
@@ -50,6 +52,7 @@ public class TicTacToe extends Game {
 		for (int x = 0; x < 128; x += 44) {
 			for (int y = 0; y < 128; y += 44) {
 				Button b = new Button(this, "TICTACTOE_EMPTY", new int[] { x, y }, 0, "empty");
+				b.setClickable(true);
 				buttons.add(b);
 				board[y / 44][x / 43] = b;
 			}
@@ -83,6 +86,8 @@ public class TicTacToe extends Game {
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
 		GamePlayer gamePlayer = getGamePlayer(player);
+		if(!teamManager.getTurnPlayer().equals(gamePlayer)) return;
+
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
 		Button b = getClickedButton(gamePlayer, clickLoc);
 
@@ -122,13 +127,22 @@ public class TicTacToe extends Game {
 		mapManager.renderBoard();
 	}
 
-	public void endGame(GamePlayer gamePlayer) {
+	public void endGame(GamePlayer gamePlayerWinner) {
 		board = null;
 		buttons.clear();
 
-		// TODO: send winner message
+		String message;
+		if(gamePlayerWinner != null) {
+			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+		} else {
+			message = ChatColor.GREEN + "Tie game!";
+		}
 
-		super.endGame(gamePlayer);
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().sendMessage(message);
+		}
+
+		super.endGame(gamePlayerWinner);
 	}
 
 	private String checkForWinner() { // n: no winner, x: x wins, o: o wins, t: tie
