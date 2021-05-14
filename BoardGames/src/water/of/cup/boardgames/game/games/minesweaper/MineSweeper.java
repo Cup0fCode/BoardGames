@@ -37,6 +37,7 @@ public class MineSweeper extends Game {
 
 	@Override
 	protected void startGame() {
+		setInGame();
 		createBoard();
 		mapManager.renderBoard();
 	}
@@ -165,7 +166,7 @@ public class MineSweeper extends Game {
 
 	@Override
 	protected GameInventory getGameInventory() {
-		return null;
+		return new MineSweeperInventory(this);
 	}
 
 	@Override
@@ -175,8 +176,11 @@ public class MineSweeper extends Game {
 
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
+		GamePlayer gamePlayer = getGamePlayer(player);
+		if(!teamManager.getTurnPlayer().equals(gamePlayer)) return;
+
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
-		Button b = getClickedButton(getGamePlayer(player), clickLoc);
+		Button b = getClickedButton(gamePlayer, clickLoc);
 		int[] position = getButtonLocation(b);
 		
 		if (position == null)
@@ -191,23 +195,33 @@ public class MineSweeper extends Game {
 				// safe tile
 				if (openedTiles + numberOfBombs >= 16 * 16) {
 					// all safe tiles opened
-					player.sendMessage(player.getDisplayName() + " won!");
-					endGame();
+					endGame(gamePlayer);
 				}
 			} else {
 				// bomb opened
-				player.sendMessage(player.getDisplayName() + " lost!");
-				endGame();
+				endGame(null);
 			}
 		}
 		mapManager.renderBoard();
 		
 	}
 
-	public void endGame() {
+	public void endGame(GamePlayer gamePlayerWinner) {
 		buttons.clear();
 		openedTiles = 0;
-		startGame();
+
+		String message;
+		if(gamePlayerWinner != null) {
+			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+		} else {
+			message = ChatColor.GREEN + "You lost!";
+		}
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().sendMessage(message);
+		}
+
+		super.endGame(gamePlayerWinner);
 	}
 
 	@Override

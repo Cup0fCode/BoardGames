@@ -224,6 +224,9 @@ public abstract class Game {
 		ingame = false;
 		wagerManager.completeWagers(winner);
 		clearGamePlayers();
+
+		// Ensure map gets cleared
+		renderInitial();
 	}
 
 	public void setInGame() {

@@ -52,6 +52,11 @@ public class CheckersInventory extends GameInventory {
     }
 
     @Override
+    protected boolean hasForfeitScreen() {
+        return true;
+    }
+
+    @Override
     protected void onGameCreate(HashMap<String, Object> gameData, ArrayList<GamePlayer> players) {
         for(GamePlayer player : players) {
             player.getPlayer().sendMessage("Welcome to Checkers!");

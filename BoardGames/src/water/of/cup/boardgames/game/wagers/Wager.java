@@ -31,7 +31,7 @@ public class Wager {
 		if (winner.equals(player1Bet)) {
 			//player1 won
 			instance.getEconomy().depositPlayer(player1, amount * 2);
-		} else {
+		} else if(player2 != null) {
 			//player2 won
 			instance.getEconomy().depositPlayer(player2, amount * 2);
 		}
