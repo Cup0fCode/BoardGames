@@ -111,8 +111,6 @@ public class BoardInteract implements Listener {
 
 		// TODO: check for permissions
 
-		// player.sendMessage("Game found! Status: " + game.getGameState().toString());
-
 		if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
 			e.setCancelled(true);
 
@@ -123,7 +121,6 @@ public class BoardInteract implements Listener {
 			}
 
 			// TODO: check if player has permission to delete game
-			// TODO: Might need check to prevent barrier break in creative
 
 			if (!game.isIngame() && game.destroy(gameFrame)) {
 

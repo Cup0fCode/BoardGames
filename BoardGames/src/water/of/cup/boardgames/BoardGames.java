@@ -61,7 +61,7 @@ public class BoardGames extends JavaPlugin {
 		MapManager.setMapValsKey(new NamespacedKey(this, "map_vals_key"));
 		loadConfig();
 
-		Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
+		Bukkit.getLogger().info("[BoardGames] Successfully loaded piece images");
 
 		// Debug:
 //		new TicTacToeInventory(null).build(null, null);
@@ -99,7 +99,7 @@ public class BoardGames extends JavaPlugin {
 
 		// Add bStats
 		Metrics metrics = new Metrics(this, 10153);
-		Bukkit.getLogger().info("[ChessBoards] bStats: " + metrics.isEnabled() + " plugin ver: " + getDescription().getVersion());
+		Bukkit.getLogger().info("[BoardGames] bStats: " + metrics.isEnabled() + " plugin ver: " + getDescription().getVersion());
 
 		metrics.addCustomChart(new Metrics.SimplePie("plugin_version", () -> getDescription().getVersion()));
 	}
@@ -110,7 +110,8 @@ public class BoardGames extends JavaPlugin {
 //		if(databaseEnabled && this.dataStore != null)
 //			this.dataStore.closeConnection();
 
-		gameManager.saveGames();
+		// TODO: Fix/Add save games
+//		gameManager.saveGames();
 
 		/* Disable all current async tasks */
 		Bukkit.getScheduler().cancelTasks(this);
