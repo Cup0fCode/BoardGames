@@ -93,6 +93,8 @@ public class TicTacToe extends Game {
 
 		if (b != null) {
 			player.sendMessage("you clicked button " + b.getName());
+			if(!b.getName().equals("empty")) return;
+
 			if (teamManager.getTurnTeam().equals("x")) {
 				b.getImage().setImage("TICTACTOE_X");
 				b.setName("x");
@@ -102,7 +104,7 @@ public class TicTacToe extends Game {
 			}
 
 			teamManager.nextTurn();
-			
+
 			String s = checkForWinner();
 			if (!s.equals("n")) {
 				GamePlayer winner = teamManager.getGamePlayerByTeam(s);
