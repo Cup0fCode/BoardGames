@@ -121,6 +121,10 @@ public class BoardGames extends JavaPlugin {
 		// TODO: Fix/Add save games
 //		gameManager.saveGames();
 
+		// Disconnect from database
+		if(storageManager != null)
+			storageManager.closeConnection();
+
 		/* Disable all current async tasks */
 		Bukkit.getScheduler().cancelTasks(this);
 	}
