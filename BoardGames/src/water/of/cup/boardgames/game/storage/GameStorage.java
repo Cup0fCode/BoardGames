@@ -23,7 +23,7 @@ public abstract class GameStorage {
         }
     }
 
-    // Adds increment value to storageType
+    // Adds increment value to storageType (Only use num types ex int,double)
     public void updateData(Player player, StorageType storageType, Object increment) {
         if(!canExecute(storageType)) return;
 
