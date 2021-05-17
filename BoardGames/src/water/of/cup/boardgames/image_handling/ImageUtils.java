@@ -16,7 +16,7 @@ public class ImageUtils {
 	public static BufferedImage rotateImage(BufferedImage image, int rotation) {
 		int w = image.getWidth();
 		int h = image.getHeight();
-		
+
 		if (rotation % 2 == 1) {
 			w = image.getHeight();
 			h = image.getWidth();
@@ -24,10 +24,43 @@ public class ImageUtils {
 
 		AffineTransform scaleTransform = new AffineTransform();
 		// last-in-first-applied: rotate, scale
-		// scaleTransform.scale(scaleX, scaleY);
+
+		if (rotation == 1)
+			scaleTransform.translate((w - h) / 2, (w - h) / 2);
+		if (rotation == 3)
+			scaleTransform.translate((h - w) / 2, (h - w) / 2);
+
 		scaleTransform.rotate(Math.PI / 2 * rotation, w / 2, h / 2);
 		AffineTransformOp scaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
 		return scaleOp.filter(image, null);
+
+//		if (rotation == 0)
+//			return copyImage(image);
+//		
+//		double theta = (Math.PI * 2) / 4 * rotation;
+//	    int width = image.getWidth();
+//	    int height = image.getHeight();
+//	    BufferedImage dest;
+//	    if (rotation % 2 == 1) {
+//	        dest = new BufferedImage(height, width, image.getType());
+//	    } else {
+//	        dest = new BufferedImage(width, width, image.getType());
+//	    }
+//
+//	    Graphics2D graphics2D = dest.createGraphics();
+//
+//	    if (rotation == 3) {
+//	        graphics2D.translate((height - width) / 2, (height - width) / 2);
+//	        graphics2D.rotate(theta, height / 2, width / 2);
+//	    } else if (rotation == 1) {
+//	        graphics2D.translate((width - height) / 2, (width - height) / 2);
+//	        graphics2D.rotate(theta, height / 2, width / 2);
+//	    } else {
+//	        graphics2D.translate(0, 0);
+//	        graphics2D.rotate(theta, width / 2, height / 2);
+//	    }
+//	    graphics2D.drawRenderedImage(image, null);
+//	    return dest;
 	}
 
 	// from
@@ -62,7 +95,8 @@ public class ImageUtils {
 		return writeCenterText(image, location, string, font, Color.BLACK);
 	}
 
-	public static BufferedImage writeCenterText(BufferedImage image, int[] location, String string, Font font, Color color) {
+	public static BufferedImage writeCenterText(BufferedImage image, int[] location, String string, Font font,
+			Color color) {
 		BufferedImage clone = copyImage(image);
 		Graphics2D g2 = (Graphics2D) clone.getGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -78,7 +112,7 @@ public class ImageUtils {
 		int adv = metrics.stringWidth(string);
 		// calculate the size of a box to hold the
 		// text with some padding.
-		int[] pos = new int[] {location[0] - adv / 2, location[1] + hgt / 2};
+		int[] pos = new int[] { location[0] - adv / 2, location[1] + hgt / 2 };
 
 		g2.setColor(color);
 		g2.drawString(string, pos[0], pos[1]);

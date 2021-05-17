@@ -94,7 +94,10 @@ public class TeamManager {
         int nextTurnIndex = teamList.indexOf(currentTurn) + turnDirection;
         if(nextTurnIndex >= teamList.size()) {
             currentTurn = teamList.get(0);
-        } else {
+        } else if (nextTurnIndex <= -1) {
+        	currentTurn = teamList.get(teamList.size() - 1);
+        }
+        else {
             currentTurn = teamList.get(nextTurnIndex);
         }
     }

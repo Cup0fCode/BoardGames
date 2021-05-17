@@ -22,6 +22,7 @@ public class GameImage {
 	public GameImage(BufferedImage image, int rotation) {
 		assert image != null;
 		this.image = ImageUtils.copyImage(image);
+		
 		this.rotation = rotation;
 	}
 

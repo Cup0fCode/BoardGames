@@ -16,13 +16,17 @@ import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.MathUtils;
 
 public class Uno extends Game {
+	private boolean isWild;
 	private UnoDeck deck;
 
 	private HashMap<GamePlayer, Integer> playerBoardPosition; // [0,7]
 	private HashMap<GamePlayer, UnoHand> playerHands;
 	private HashMap<GamePlayer, ArrayList<Button>> playerCardButtons;
-	
+
+	private ArrayList<Button> colorButtons;
+
 	private UnoCard currentCard;
+	private Button currentCardButton;
 
 	public Uno(int rotation) {
 		super(rotation);
@@ -40,38 +44,68 @@ public class Uno extends Game {
 		playerBoardPosition = new HashMap<GamePlayer, Integer>();
 		playerCardButtons = new HashMap<GamePlayer, ArrayList<Button>>();
 		createPlayerHands();
-		
+
+		// set current card
 		currentCard = deck.drawCards(1).get(0);
+		while (currentCard.getColor().equals("ALL"))
+			currentCard = deck.drawCards(1).get(0);
+
+		currentCardButton = new Button(this, currentCard.getGameImage(), new int[] { 124, 121 }, 0,
+				"currentCardButton");
+		currentCardButton.setClickable(false);
+		buttons.add(currentCardButton);
+
+		isWild = false;
+
+		// set color buttons
+		colorButtons = new ArrayList<Button>();
+		int i = 0;
+		for (String s : new String[] { "RED", "BLUE", "YELLOW", "GREEN" }) {
+			Button b = new Button(this, "UNOCARD_" + s, new int[] { 120 + (i / 2) * 8, 114 + (i % 2) * 14 }, 0, s);
+			buttons.add(b);
+			colorButtons.add(b);
+			toggleColorButtons();
+			i++;
+		}
+
 		mapManager.renderBoard();
+		super.setInGame();
+	}
+
+	private void toggleColorButtons() {
+		for (Button b : colorButtons) {
+			b.setVisibleForAll(isWild);
+			b.setClickable(isWild);
+		}
 	}
 
 	private void createPlayerHands() {
 		int posCounter = 0;
+		playerHands = new HashMap<GamePlayer, UnoHand>();
 		for (GamePlayer player : super.getGamePlayers()) {
+			player.getPlayer().sendMessage("set");
+
 			playerBoardPosition.put(player, posCounter);
 			playerHands.put(player, new UnoHand());
 			playerDrawCards(player, 7); // draw 7 cards at game start
 			playerCardButtons.put(player, new ArrayList<Button>());
-			setCardButtons(player);
-			
-			
+
 			// pos maths
-			int rotation = posCounter / 2;
-			int[] loc = new int[] { 32, 95 };
-			for (int i = 0; i < rotation; i++) { // rotate initial cords
-				loc = MathUtils.rotatePointAroundPoint90Degrees(new double[] {63.5, 63,5}, loc);
-			}
-			loc[0] += (1 - (posCounter + 1) / 4) * 128; // set X cords
-			loc[1] += (1 - (posCounter - 3) / 4) * 128; // set Y cords
-			
+			int rotation = (posCounter + 1) / 2;
+			int[] loc = new int[] { 0, 0 };
+//			for (int i = 4; i > rotation; i--) { // rotate initial cords
+//				loc = MathUtils.rotatePointAroundPoint90Degrees(new double[] { 63.5, 63.5 }, loc);
+//			}
+			loc[1] += (1 - (posCounter + 2) / 4) * 128; // set Y cords
+			loc[0] += (1 - (posCounter) / 4) * 128; // set X cords
+
 			// create position image
-			Button b =  new Button(this, "UNO_DECK", loc, rotation, "deck");
+			Button b = new Button(this, "UNO_DECK", loc, (4 - rotation) % 4, "deck");
 			buttons.add(b);
-			b.setClickable(false);
-					
-			posCounter++; // TODO: do maths to make player positions evenly spaced
+
 			
 			setCardButtons(player);
+			posCounter++;
 		}
 
 	}
@@ -84,78 +118,116 @@ public class Uno extends Game {
 	private void setCardButtons(GamePlayer player) { // TODO: include page
 		ArrayList<Button> cardButtons = playerCardButtons.get(player);
 		buttons.removeAll(cardButtons);
-		playerCardButtons.clear();
+		cardButtons.clear();
 
 		UnoHand hand = playerHands.get(player);
 		int boardPos = playerBoardPosition.get(player);
 
 		// TODO : add loc rotation maths
-		int rotation = boardPos / 2;
-		
+		int rotation = (boardPos + 1) / 2;
+
 		int[] iLoc = new int[] { 33, 96 };
-		
-		for (int i = 0; i < rotation; i++) { // rotate initial cords
-			iLoc = MathUtils.rotatePointAroundPoint90Degrees(new double[] {63.5, 63,5}, iLoc);
+
+		for (int i = 4; i > rotation; i--) { // rotate initial cords
+			iLoc = MathUtils.rotatePointAroundPoint90Degrees(new double[] { 63.5, 63.5 }, iLoc);
 		}
-		
-		iLoc[0] += (1 - (boardPos + 1) / 4) * 128; // set X cords
-		iLoc[1] += (1 - (boardPos - 3) / 4) * 128; // set Y cords
+
+		iLoc[1] += (1 - (boardPos + 2) / 4) * 128; // set Y cords
+		iLoc[0] += (1 - (boardPos) / 4) * 128; // set X cords
 
 		int handPos = 0;
 		for (UnoCard card : hand.getCards()) {
 			int[] cLoc = new int[] { (handPos % 7) * 9, (handPos / 7) * 15 };
-			
-			for (int i = 0; i < rotation; i++) { // rotate change cords
-				cLoc = MathUtils.rotatePointAroundPoint90Degrees(new double[] {63.5, 63,5}, cLoc);
+
+			for (int i = 4; i > rotation; i--) { // rotate change cords
+				cLoc = MathUtils.rotatePointAroundPoint90Degrees(new double[] { 0, 0 }, cLoc);
 			}
-			
+
 			int[] loc = new int[] { iLoc[0] + cLoc[0], iLoc[1] + cLoc[1] };
 
-			Button cardButton = new Button(this, card.getGameImage(), loc, rotation, "" + handPos);
-			cardButton.setVisibleForAll(false);
-			cardButton.addVisiblePlayer(player);
+			player.getPlayer().sendMessage(loc[0] + "," + loc[1]);
+			Button cardButton = new Button(this, card.getGameImage(), loc, (4 - rotation) % 4, "" + handPos);
+			cardButton.changeLocationByRotation();
+//			cardButton.setVisibleForAll(true);
+//			cardButton.addVisiblePlayer(player);
 			cardButtons.add(cardButton);
-			
+			buttons.add(cardButton);
+			cardButton.setClickable(true);
 			handPos++;
 		}
 
-		buttons.addAll(cardButtons);
 	}
-	
+
 	private UnoCard getSelectedCard(GamePlayer player, Button b) {
 		ArrayList<Button> cardButtons = playerCardButtons.get(player);
 		int index = cardButtons.indexOf(b);
+		if (index == -1)
+			return null;
 		UnoHand hand = playerHands.get(player);
 		return hand.getCards().get(index);
 	}
-	
+
 	private boolean playCard(GamePlayer player, UnoCard card) {
 		if (card.matches(currentCard)) {
 			UnoHand hand = playerHands.get(player);
 			hand.removeCard(card);
 			if (hand.cardsLeft() == 1) {
 				// say uno
-			} else if (hand.cardsLeft() == 0){
-				// player won
-			} 
-			
+				this.getGamePlayers()
+						.forEach((p) -> p.getPlayer().sendMessage(player.getPlayer().getDisplayName() + ": Uno!"));
+			} else if (hand.cardsLeft() == 0) {
+				super.endGame(player);
+			}
+
 			currentCard = card;
+			currentCardButton.setImage(currentCard.getGameImage());
 			setCardButtons(player);
-			
-			
-			doCardActions(card); //changes the turn
-			
-			
+
+			// check if card is wild
+			if (card.getColor().equals("ALL")) {
+				isWild = true;
+				toggleColorButtons();
+				return true;
+			}
+
+			doCardActions(card); // changes the turn
+
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	private void doCardActions(UnoCard card) {
-		// TODO do card actions with messages
-		// & next turn
-		
+		teamManager.nextTurn();
+		GamePlayer player = teamManager.getTurnPlayer();
+
+		for (String action : card.getActions()) {
+			if (action.equals("DRAW2")) {
+				playerHands.get(player).draw(deck, 2);
+				player.getPlayer().sendMessage("You were forced to draw 2 cards.");
+				setCardButtons(player);
+				continue;
+			}
+			if (action.equals("DRAW4")) {
+				playerHands.get(player).draw(deck, 4);
+				player.getPlayer().sendMessage("You were forced to draw 4 cards.");
+				setCardButtons(player);
+				continue;
+			}
+			if (action.equals("SKIP")) {
+				teamManager.nextTurn();
+				player.getPlayer().sendMessage("You were skipped.");
+				continue;
+			}
+			if (action.equals("REVERSE")) {
+				teamManager.switchTurnDirection();
+				teamManager.nextTurn();
+				teamManager.nextTurn();
+				continue;
+			}
+		}
+
 	}
 
 	@Override
@@ -178,7 +250,7 @@ public class Uno extends Game {
 
 	@Override
 	protected GameInventory getGameInventory() {
-		return null;
+		return new UnoInventory(this);
 	}
 
 	@Override
@@ -188,11 +260,64 @@ public class Uno extends Game {
 
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
+		GamePlayer gamePlayer = getGamePlayer(player);
+		if (gamePlayer == null) {
+			player.sendMessage("You are not part of this game.");
+			return;
+		}
+
+		if (gamePlayer != teamManager.getTurnPlayer()) {
+			player.sendMessage("It is not your turn");
+			return;
+		}
+
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
-		UnoCard card = deck.drawCards(1).get(0);
-		Button cardButton = new Button(this, card.getGameImage(), clickLoc, 0, card.getType());
-		buttons.add(cardButton);
-		mapManager.renderBoard();
+		Button b = getClickedButton(gamePlayer, clickLoc);
+
+		if (b == null)
+			return;
+
+		// select wild color
+		if (isWild) {
+			if (colorButtons.contains(b)) {
+				isWild = false;
+				toggleColorButtons();
+				currentCard.setColor(b.getName());
+				doCardActions(currentCard);
+				mapManager.renderBoard();
+				this.getGamePlayers().forEach((p) -> p.getPlayer()
+						.sendMessage(player.getPlayer().getDisplayName() + ": " + b.getName() + "!"));
+			} else {
+				player.sendMessage("Select a color");
+			}
+			return;
+		}
+
+		UnoHand hand = playerHands.get(gamePlayer);
+		if (!hand.canPlay(currentCard)) {
+			player.sendMessage("You have no playable cards and were forced to draw a card.");
+			hand.draw(deck, 1);
+			setCardButtons(gamePlayer);
+			mapManager.renderBoard();
+		}
+
+		UnoCard card = getSelectedCard(gamePlayer, b);
+		if (card == null)
+			return;
+
+		if (playCard(gamePlayer, card)) {
+			player.sendMessage("played card");
+			mapManager.renderBoard();
+		} else {
+			player.sendMessage("You can not play that card.");
+		}
+
+		// if (playCard(gamePlayer, ))
+
+//		UnoCard card = deck.drawCards(1).get(0);
+//		Button cardButton = new Button(this, card.getGameImage(), clickLoc, 0, card.getType());
+//		buttons.add(cardButton);
+//		mapManager.renderBoard();
 	}
 
 	@Override
@@ -203,7 +328,7 @@ public class Uno extends Game {
 
 	@Override
 	public BoardItem getBoardItem() {
-		return new BoardItem(gameName, new ItemStack(Material.OAK_TRAPDOOR, 1));
+		return new BoardItem(gameName, new ItemStack(Material.SPRUCE_TRAPDOOR, 1));
 	}
 
 }
