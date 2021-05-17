@@ -184,9 +184,6 @@ public class MapManager {
 	}
 
 	public void renderBoard() {
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-		LocalDateTime now = LocalDateTime.now();
-		System.out.println(dtf.format(now));
 		for (int mapVal : getMapVals()) {
 			GameMap map = game.getGameMapByMapVal(mapVal);
 			MapMeta mapMeta = map.getMapMeta();

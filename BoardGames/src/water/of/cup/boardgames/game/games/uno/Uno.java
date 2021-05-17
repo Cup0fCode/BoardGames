@@ -148,8 +148,8 @@ public class Uno extends Game {
 			player.getPlayer().sendMessage(loc[0] + "," + loc[1]);
 			Button cardButton = new Button(this, card.getGameImage(), loc, (4 - rotation) % 4, "" + handPos);
 			cardButton.changeLocationByRotation();
-//			cardButton.setVisibleForAll(true);
-//			cardButton.addVisiblePlayer(player);
+			cardButton.setVisibleForAll(false);
+			cardButton.addVisiblePlayer(player);
 			cardButtons.add(cardButton);
 			buttons.add(cardButton);
 			cardButton.setClickable(true);

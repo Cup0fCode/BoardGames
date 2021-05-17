@@ -69,5 +69,11 @@ public class UnoInventory extends GameInventory {
 		return false;
 	}
 
+	@Override
+	protected boolean hasForfeitScreen() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 
 }

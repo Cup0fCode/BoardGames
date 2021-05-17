@@ -1,5 +1,7 @@
 package water.of.cup.boardgames.game.maps;
 
+import java.util.ArrayList;
+
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapRenderer;
@@ -14,6 +16,7 @@ public class GameRenderer extends MapRenderer {
 	private Game game;
 	private Screen screen;
 	private int[] loc;
+	//private ArrayList<Player> renderedPlayers;
 //
 //	public GameRenderer(Game game) {
 //		this.game = game;
@@ -22,6 +25,7 @@ public class GameRenderer extends MapRenderer {
 	public GameRenderer(Game game, int[] mapValsLocationOnBoard) {
 		this.game = game;
 		loc = mapValsLocationOnBoard;
+		//renderedPlayers = new ArrayList<Player>();
 	}
 
 	public GameRenderer(Game game, int[] mapValsLocationOnScreen, Screen screen) {
@@ -32,10 +36,6 @@ public class GameRenderer extends MapRenderer {
 
 	@Override
 	public void render(MapView map, MapCanvas canvas, Player player) {
-		// used to prevent map from continuously rendering
-		if (map.isLocked())
-			return;
-		
 		GamePlayer gamePlayer = game.getGamePlayer(player);
 		boolean ingamePlayer = gamePlayer != null;
 		
@@ -49,7 +49,7 @@ public class GameRenderer extends MapRenderer {
 		for (Button button : game.getButtons()) {
 			// check that button is visible for player &
 			// check that button belongs to screen/board (button.getScreen() returns null if button belongs to game)
-			if (button.getScreen() == screen && (button.isVisibleForAll() || ingamePlayer && button.visibleForPlayer(gamePlayer))) {
+			if (button.getScreen() == screen && (button.isVisibleForAll() || (ingamePlayer && button.visibleForPlayer(gamePlayer)))) {
 				gameImage.addGameImage(button.getImage(), button.getLocation());
 			}
 		}
@@ -57,6 +57,7 @@ public class GameRenderer extends MapRenderer {
 		gameImage.cropMap(loc);
 		
 		canvas.drawImage(0, 0, gameImage.getImage(screen == null ? game.getRotation() : 0));
+		
 		map.setLocked(true);
 	}
 }
