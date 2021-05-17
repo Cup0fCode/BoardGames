@@ -12,6 +12,7 @@ import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.Screen;
+import water.of.cup.boardgames.game.storage.GameStorage;
 
 import java.util.ArrayList;
 
@@ -54,6 +55,11 @@ public class Battleship extends Game {
 
 	@Override
 	protected GameInventory getGameInventory() {
+		return null;
+	}
+
+	@Override
+	protected GameStorage getGameStorage() {
 		return null;
 	}
 

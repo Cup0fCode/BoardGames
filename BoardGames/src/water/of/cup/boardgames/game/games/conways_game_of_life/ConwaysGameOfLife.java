@@ -12,6 +12,7 @@ import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
+import water.of.cup.boardgames.game.storage.GameStorage;
 
 public class ConwaysGameOfLife extends Game {
 	boolean[][] cells;
@@ -165,6 +166,11 @@ public class ConwaysGameOfLife extends Game {
 	@Override
 	protected GameInventory getGameInventory() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected GameStorage getGameStorage() {
 		return null;
 	}
 

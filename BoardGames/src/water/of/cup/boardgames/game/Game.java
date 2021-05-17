@@ -18,6 +18,7 @@ import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.MapData;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.maps.Screen;
+import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.teams.TeamManager;
 import water.of.cup.boardgames.game.wagers.WagerManager;
 
@@ -38,6 +39,7 @@ public abstract class Game {
 	protected Clock clock;
 	protected GameInventory gameInventory;
 	protected TeamManager teamManager;
+	protected GameStorage gameStorage;
 
 	protected ArrayList<GameMap> gameMaps; // game maps for the game
 	// public HashMap<Integer, Integer> mapValMapIds; // <mapval, mapid>
@@ -59,6 +61,8 @@ public abstract class Game {
 	protected abstract void startClock();
 
 	protected abstract GameInventory getGameInventory();
+
+	protected abstract GameStorage getGameStorage();
 
 	public abstract ArrayList<String> getTeamNames();
 
@@ -82,6 +86,7 @@ public abstract class Game {
 		gameMaps = new ArrayList<GameMap>();
 
 		gameInventory = getGameInventory();
+		gameStorage = getGameStorage();
 	}
 
 	abstract public void click(Player player, double[] loc, ItemStack map);
@@ -443,5 +448,9 @@ public abstract class Game {
 
 	public boolean hasGameInventory() {
 		return gameInventory != null;
+	}
+
+	public boolean hasGameStorage() {
+		return gameStorage != null && BoardGames.getInstance().getStorageManager() != null;
 	}
 }

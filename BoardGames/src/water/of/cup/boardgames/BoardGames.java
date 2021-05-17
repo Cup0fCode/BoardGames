@@ -35,6 +35,7 @@ import water.of.cup.boardgames.game.games.conways_game_of_life.ConwaysGameOfLife
 import water.of.cup.boardgames.game.games.minesweaper.MineSweeper;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
 import water.of.cup.boardgames.game.maps.MapManager;
+import water.of.cup.boardgames.game.storage.StorageManager;
 import water.of.cup.boardgames.listeners.BlockBreak;
 import water.of.cup.boardgames.listeners.BlockPlace;
 import water.of.cup.boardgames.listeners.BoardInteract;
@@ -50,18 +51,22 @@ public class BoardGames extends JavaPlugin {
 	private static Economy economy = null;
 	//private DataSource dataStore;
 
+	private StorageManager storageManager;
+
 	@SuppressWarnings("unchecked") // for register games
 	@Override
 	public void onEnable() {
 		instance = this;
-		
+
+//		TODO: if(config.getBoolean("settings.database.enabled"))
+		loadStorage();
 		
 		Game.setGameIdKey(new NamespacedKey(this, "game_id_key"));
 		Game.setGameNameKey(new NamespacedKey(this, "game_name_key"));
 		MapManager.setMapValsKey(new NamespacedKey(this, "map_vals_key"));
 		loadConfig();
 
-		Bukkit.getLogger().info("[BoardGames] Successfully loaded piece images");
+//		Bukkit.getLogger().info("[BoardGames] Successfully loaded piece images");
 
 		// Debug:
 //		new TicTacToeInventory(null).build(null, null);
@@ -184,7 +189,7 @@ public class BoardGames extends JavaPlugin {
 
         defaultConfig.put("settings.database.host", "localhost");
         defaultConfig.put("settings.database.port", "3306");
-        defaultConfig.put("settings.database.database", "chessboards");
+        defaultConfig.put("settings.database.database", "boardgames");
         defaultConfig.put("settings.database.username", "root");
         defaultConfig.put("settings.database.password", " ");
         defaultConfig.put("settings.database.enabled", false); // Database disabled by default
@@ -246,6 +251,14 @@ public class BoardGames extends JavaPlugin {
 	public Economy getEconomy() {
         return economy;
     }
+
+    public void loadStorage() {
+		storageManager = new StorageManager();
+	}
+
+	public StorageManager getStorageManager() {
+		return storageManager;
+	}
 	
 //	public DataSource getDataStore() {
 //		return dataStore;

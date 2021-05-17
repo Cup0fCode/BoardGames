@@ -14,6 +14,7 @@ import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.MathUtils;
+import water.of.cup.boardgames.game.storage.GameStorage;
 
 public class Uno extends Game {
 	private UnoDeck deck;
@@ -178,6 +179,11 @@ public class Uno extends Game {
 
 	@Override
 	protected GameInventory getGameInventory() {
+		return null;
+	}
+
+	@Override
+	protected GameStorage getGameStorage() {
 		return null;
 	}
 

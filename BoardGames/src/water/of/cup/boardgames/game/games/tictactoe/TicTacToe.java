@@ -12,6 +12,8 @@ import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
+import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.game.storage.StorageType;
 
 import java.util.ArrayList;
 
@@ -71,6 +73,11 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
+	protected GameStorage getGameStorage() {
+		return new TicTacToeStorage(this);
+	}
+
+	@Override
 	public ArrayList<String> getTeamNames() {
 		return new ArrayList<String>() {{
 			add("x");
@@ -125,9 +132,28 @@ public class TicTacToe extends Game {
 		mapManager.renderBoard();
 	}
 
+	private void updateGameStorage(GamePlayer gamePlayerWinner) {
+		if(!hasGameStorage()) return;
+
+		if(gamePlayerWinner == null) {
+			for(GamePlayer player : teamManager.getGamePlayers()) {
+				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
+			}
+		} else {
+			GamePlayer gamePlayerLoser = teamManager.getGamePlayers().get(0).equals(gamePlayerWinner)
+					? teamManager.getGamePlayers().get(1)
+					: teamManager.getGamePlayers().get(0);
+
+			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
+			gameStorage.updateData(gamePlayerLoser.getPlayer(), StorageType.LOSSES, 1);
+		}
+	}
+
 	public void endGame(GamePlayer gamePlayerWinner) {
 		board = null;
 		buttons.clear();
+
+		updateGameStorage(gamePlayerWinner);
 
 		String message;
 		if(gamePlayerWinner != null) {

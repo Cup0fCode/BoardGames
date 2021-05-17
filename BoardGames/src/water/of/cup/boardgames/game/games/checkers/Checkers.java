@@ -12,6 +12,7 @@ import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
+import water.of.cup.boardgames.game.storage.GameStorage;
 
 import java.util.ArrayList;
 
@@ -236,6 +237,11 @@ public class Checkers extends Game {
 	@Override
 	protected GameInventory getGameInventory() {
 		return new CheckersInventory(this);
+	}
+
+	@Override
+	protected GameStorage getGameStorage() {
+		return null;
 	}
 
 	@Override
