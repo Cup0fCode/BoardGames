@@ -1,5 +1,7 @@
 package water.of.cup.boardgames.game.games.checkers;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +16,6 @@ import water.of.cup.boardgames.game.inventories.GameInventory;
 import java.util.ArrayList;
 
 public class Checkers extends Game {
-	String turn; // {BLACK, RED, EMPTY}
 	String[][] board; // {EMPTY, BLACK, BLACK_KING, "RED", "RED_KING"}
 	int[] selected;
 	Button[][] boardButtons;
@@ -33,13 +34,21 @@ public class Checkers extends Game {
 	}
 
 	@Override
+	public void renderInitial() {
+		setUpBoard();
+		mapManager.renderBoard();
+	}
+
+	@Override
 	protected void startGame() {
-		turn = "BLACK";
+		setInGame();
 		setUpBoard();
 		mapManager.renderBoard();
 	}
 
 	private void setUpBoard() {
+		buttons.clear();
+
 		board = new String[8][8];
 		boardButtons = new Button[8][8];
 		for (int x = 0; x < 8; x++) {
@@ -53,6 +62,7 @@ public class Checkers extends Game {
 					board[y][x] = "BLACK";
 				}
 				Button b = new Button(this, "CHECKERS_EMPTY", new int[] { 4 + x * 15, 4 + y * 15 }, 0, "EMPTY");
+				b.setClickable(true);
 				boardButtons[y][x] = b;
 				buttons.add(b);
 			}
@@ -225,7 +235,7 @@ public class Checkers extends Game {
 
 	@Override
 	protected GameInventory getGameInventory() {
-		return null;
+		return new CheckersInventory(this);
 	}
 
 	@Override
@@ -238,26 +248,25 @@ public class Checkers extends Game {
 
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
-		// check if game is over
-		if (turn.equals("EMPTY")) {
-			player.sendMessage(checkGameOver().toLowerCase() + " won!");
-			return;
-		}
+		GamePlayer gamePlayer = getGamePlayer(player);
+		if(!teamManager.getTurnPlayer().equals(gamePlayer)) return;
 
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
-		Button b = getClickedButton(getGamePlayer(player), clickLoc);
+		Button b = getClickedButton(gamePlayer, clickLoc);
 		int[] position = getButtonLocation(b);
 
 		if (position == null)
 			return;
 
-		if (selected == null || (canDeSelect && board[position[1]][position[0]].contains(turn))) {
+		String teamTurn = teamManager.getTurnTeam();
+
+		if (selected == null || (canDeSelect && board[position[1]][position[0]].contains(teamTurn))) {
 			// check that selected piece is correct turn
-			if (!board[position[1]][position[0]].contains(turn))
+			if (!board[position[1]][position[0]].contains(teamTurn))
 				return;
 
 			// check if piece must jump
-			if (colorCanJump(turn)) {
+			if (colorCanJump(teamTurn)) {
 				player.sendMessage("You must select a piece that can jump if a jump is possible.");
 				// check if piece can jump
 				if (!canJump(position))
@@ -269,7 +278,7 @@ public class Checkers extends Game {
 			canDeSelect = true;
 		} else {
 			// check that selected piece is correct turn
-			if (!board[selected[1]][selected[0]].contains(turn))
+			if (!board[selected[1]][selected[0]].contains(teamTurn))
 				return;
 
 			// check if can make move
@@ -300,23 +309,40 @@ public class Checkers extends Game {
 				selected = position;
 				canDeSelect = false;
 			} else {
-				if (turn.equals("RED")) {
-					turn = "BLACK";
-				} else {
-					turn = "RED";
-				}
+				teamManager.nextTurn();
 			}
 		}
-		
-		if (!checkGameOver().equals("EMPTY")) {
-			turn = "EMPTY";
-			player.sendMessage(checkGameOver().toLowerCase() + " won!");
+
+		String winner = checkGameOver();
+		if (!winner.equals("EMPTY")) {
+			GamePlayer playerWinner = teamManager.getGamePlayerByTeam(winner);
+			endGame(playerWinner);
+			return;
 		}
-		
 
 		updateButtons();
 		mapManager.renderBoard();
 
+	}
+
+	public void endGame(GamePlayer gamePlayerWinner) {
+		buttons.clear();
+		movesSinceCapture = 0;
+		selected = null;
+		canDeSelect = false;
+
+		String message;
+		if(gamePlayerWinner != null) {
+			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+		} else {
+			message = ChatColor.GREEN + "Tie game!";
+		}
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().sendMessage(message);
+		}
+
+		super.endGame(gamePlayerWinner);
 	}
 
 	private String checkGameOver() { // returns empty for game not over

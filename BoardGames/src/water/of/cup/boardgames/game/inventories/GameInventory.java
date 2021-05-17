@@ -11,6 +11,8 @@ import water.of.cup.boardgames.game.inventories.create.CreateInventoryCallback;
 import water.of.cup.boardgames.game.inventories.create.GameCreateInventory;
 import water.of.cup.boardgames.game.inventories.create.GameWaitPlayersInventory;
 import water.of.cup.boardgames.game.inventories.create.WaitPlayersCallback;
+import water.of.cup.boardgames.game.inventories.ingame.GameForfeitCallback;
+import water.of.cup.boardgames.game.inventories.ingame.GameForfeitInventory;
 import water.of.cup.boardgames.game.inventories.join.GameJoinInventory;
 import water.of.cup.boardgames.game.inventories.join.JoinGameCallback;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyCallback;
@@ -33,8 +35,9 @@ public abstract class GameInventory {
     protected abstract int getMaxGame();
     protected abstract int getMinGame();
     protected abstract boolean hasTeamSelect();
-    protected abstract boolean hasGameWagers();
-    protected abstract boolean hasWagerScreen();
+    protected abstract boolean hasGameWagers(); // 1v1 only
+    protected abstract boolean hasWagerScreen(); // 1v1 only
+    protected abstract boolean hasForfeitScreen(); // 1v1 only
     protected abstract void onGameCreate(HashMap<String, Object> gameData, ArrayList<GamePlayer> players);
 
     private final GameCreateInventory gameCreateInventory;
@@ -42,6 +45,7 @@ public abstract class GameInventory {
     private final GameJoinInventory gameJoinInventory;
     private final GameReadyInventory gameReadyInventory;
     private final GameWagerInventory gameWagerInventory;
+    private final GameForfeitInventory gameForfeitInventory;
 
     private final BoardGames instance = BoardGames.getInstance();
     private final ArrayList<GameOption> gameOptions;
@@ -98,6 +102,7 @@ public abstract class GameInventory {
         this.gameJoinInventory = new GameJoinInventory(this);
         this.gameReadyInventory = new GameReadyInventory(this);
         this.gameWagerInventory = new GameWagerInventory(this);
+        this.gameForfeitInventory = new GameForfeitInventory(this);
     }
 
     public void build(Player player) {
@@ -106,7 +111,11 @@ public abstract class GameInventory {
         // wait players -> accept enough -> move all to ready
         // ready -> onready -> start game
 
-        // TODO: If ingame, display special inv
+        if(hasForfeitScreen() && game.isIngame() && game.hasPlayer(player)) {
+            this.gameForfeitInventory.build(player, handleForfeit());
+            return;
+        }
+
         if(game.isIngame()) return;
 
         if(gameData == null) {
@@ -131,7 +140,7 @@ public abstract class GameInventory {
             @Override
             public void onCreateGame(HashMap<String, Object> gameDataResult) {
                 // check if gameData has been set, if it has, don't overwrite.
-                if(gameData != null) {
+                if(gameData != null || game.isIngame()) {
                     player.sendMessage("Game has already been created.");
                     return;
                 }
@@ -168,7 +177,13 @@ public abstract class GameInventory {
                 // Set game data, open wait players
                 gameCreator = player;
                 gameData = new HashMap<>(gameDataResult);
-                gameWaitPlayersInventory.build(player, handleWaitPlayers());
+
+                if(maxPlayers == 1) {
+                    onGameCreate(gameData, game.getGamePlayers());
+                    resetGameInventory(null, false);
+                } else {
+                    gameWaitPlayersInventory.build(player, handleWaitPlayers());
+                }
             }
         };
     }
@@ -297,9 +312,12 @@ public abstract class GameInventory {
                 }
 
                 if(allReady) {
-                    // Everyone is ready, close invs, reset, give data
-                    onGameCreate(gameData, game.getGamePlayers());
-                    resetGameInventory(null, false);
+                    // simultaneous click check
+                    if(gameCreator != null) {
+                        // Everyone is ready, close invs, reset, give data
+                        onGameCreate(gameData, game.getGamePlayers());
+                        resetGameInventory(null, false);
+                    }
                 } else {
                     updateReadyInventory();
                 }
@@ -347,6 +365,26 @@ public abstract class GameInventory {
         };
     }
 
+    private GameForfeitCallback handleForfeit() {
+        return new GameForfeitCallback() {
+            @Override
+            public void onForfeit(Player player) {
+                if(game.isIngame() && game.hasPlayer(player)) {
+                    GamePlayer winner = null;
+
+                    for(GamePlayer gamePlayer : game.getGamePlayers()) {
+                        if(!gamePlayer.getPlayer().equals(player)) {
+                            winner = gamePlayer;
+                            break;
+                        }
+                    }
+
+                    game.endGame(winner);
+                }
+            }
+        };
+    }
+
     private void updateWaitPlayersInventory() {
         gameWaitPlayersInventory.build(gameCreator, handleWaitPlayers());
     }
@@ -381,7 +419,7 @@ public abstract class GameInventory {
         gameReadyInventory.build(gameCreator, handleReady());
     }
 
-    // TODO: Reset method, kicks everyone out, called when create game or game owner leaves
+    // Reset method, kicks everyone out, called when create game or game owner leaves
     private void resetGameInventory(String message, boolean clearGamePlayer) {
         // Close players out of inventory
         closePlayers(joinPlayerQueue, message);

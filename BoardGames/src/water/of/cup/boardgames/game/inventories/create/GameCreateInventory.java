@@ -161,8 +161,10 @@ public class GameCreateInventory extends InventoryScreen {
                             ItemStack upButton = InventoryUtils.getCustomTextureHead(InventoryUtils.UP_ARROW);
                             gui.addElement(new StaticGuiElement(aboveChar, upButton, click -> {
                                         if(gameOption.getCustomValues() == null) {
-                                            // TODO: add shift/right click to add more/less
-                                            gameData.put(gameOption.getKey(), (int) gameData.get(gameOption.getKey()) + 1);
+                                            int increment = 1;
+                                            if(click.getType().isShiftClick()) increment = 10;
+
+                                            gameData.put(gameOption.getKey(), (int) gameData.get(gameOption.getKey()) + increment);
                                         } else {
                                             String currItem = gameData.get(gameOption.getKey()) + "";
                                             int currIndex = gameOption.getCustomValues().indexOf(currItem);
@@ -188,9 +190,14 @@ public class GameCreateInventory extends InventoryScreen {
                             ItemStack downButton = InventoryUtils.getCustomTextureHead(InventoryUtils.DOWN_ARROW);
                             gui.addElement(new StaticGuiElement(belowChar, downButton, click -> {
                                         if(gameOption.getCustomValues() == null) {
-                                            if((int) gameData.get(gameOption.getKey()) == 0) return true;
+                                            int decrement = 1;
+                                            if(click.getType().isShiftClick()) decrement = 10;
 
-                                            gameData.put(gameOption.getKey(), (int) gameData.get(gameOption.getKey()) - 1);
+                                            int newValue = ((int) gameData.get(gameOption.getKey())) - decrement;
+
+                                            if(newValue < 0) newValue = 0;
+
+                                            gameData.put(gameOption.getKey(), newValue);
                                         } else {
                                             String currItem = gameData.get(gameOption.getKey()) + "";
                                             int currIndex = gameOption.getCustomValues().indexOf(currItem);

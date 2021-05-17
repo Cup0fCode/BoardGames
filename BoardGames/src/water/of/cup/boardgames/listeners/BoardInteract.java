@@ -111,15 +111,18 @@ public class BoardInteract implements Listener {
 
 		// TODO: check for permissions
 
-		// player.sendMessage("Game found! Status: " + game.getGameState().toString());
-
 		if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
 			e.setCancelled(true);
-			// TODO: check if game is running
+
+			// If they punch mid game, show ff option
+			if(game.isIngame() && game.hasPlayer(player)) {
+				game.displayGameInventory(player);
+				return;
+			}
 
 			// TODO: check if player has permission to delete game
 
-			if (game.destroy(gameFrame)) {
+			if (!game.isIngame() && game.destroy(gameFrame)) {
 
 				// drop the board item TODO: check if board item should be dropped (player not in creative, game settings)
 				ItemStack boardItem = game.getBoardItem();
@@ -127,9 +130,7 @@ public class BoardInteract implements Listener {
 					player.getWorld().dropItem(e.getClickedBlock().getLocation(), boardItem);
 			}
 
-
 			return;
-
 		}
 
 		if (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK))
@@ -162,7 +163,7 @@ public class BoardInteract implements Listener {
 //			int loc[] = ChessUtils.getChessBoardClickLocation(hitx, hity, gameFrame.getRotation(), direction);
 
 			// Temp dbeug
-			if((gameManager.getGameByPlayer(player) != null && gameManager.getGameByPlayer(player).equals(game)) || !game.hasGameInventory()) {
+			if(game.hasPlayer(player) || !game.hasGameInventory()) {
 				Vector pos = result.getHitPosition();
 				double[] loc = new double[] { pos.getX(), pos.getZ() };
 				if (gameFrame.getAttachedFace() == BlockFace.WEST || gameFrame.getAttachedFace() == BlockFace.EAST) {

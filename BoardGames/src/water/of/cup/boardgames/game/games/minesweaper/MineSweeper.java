@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game.games.minesweaper;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,8 +22,6 @@ public class MineSweeper extends Game {
 	
 	private int openedTiles = 0;
 	private int numberOfBombs = 32;
-	
-	private String gameEnd;
 
 	public MineSweeper(int rotation) {
 		super(rotation);
@@ -38,6 +37,7 @@ public class MineSweeper extends Game {
 
 	@Override
 	protected void startGame() {
+		setInGame();
 		createBoard();
 		mapManager.renderBoard();
 	}
@@ -52,6 +52,7 @@ public class MineSweeper extends Game {
 		for (int y = 0; y < 16; y++)
 			for (int x = 0; x < 16; x++) {
 				boardButtons[y][x] = new Button(this, "MINESWEEPER_HIDDEN", new int[] { x * 8, y * 8 }, 0, "HIDDEN");
+				boardButtons[y][x].setClickable(true);
 				buttons.add(boardButtons[y][x]);
 			}
 		
@@ -165,7 +166,7 @@ public class MineSweeper extends Game {
 
 	@Override
 	protected GameInventory getGameInventory() {
-		return null;
+		return new MineSweeperInventory(this);
 	}
 
 	@Override
@@ -175,13 +176,11 @@ public class MineSweeper extends Game {
 
 	@Override
 	public void click(Player player, double[] loc, ItemStack map) {
-		if (gameEnd != null) {
-			player.sendMessage(gameEnd);
-			return;
-		}
-		
+		GamePlayer gamePlayer = getGamePlayer(player);
+		if(!teamManager.getTurnPlayer().equals(gamePlayer)) return;
+
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
-		Button b = getClickedButton(getGamePlayer(player), clickLoc);
+		Button b = getClickedButton(gamePlayer, clickLoc);
 		int[] position = getButtonLocation(b);
 		
 		if (position == null)
@@ -196,17 +195,33 @@ public class MineSweeper extends Game {
 				// safe tile
 				if (openedTiles + numberOfBombs >= 16 * 16) {
 					// all safe tiles opened
-					gameEnd = player.getDisplayName() + " won!";
-					player.sendMessage(gameEnd);
+					endGame(gamePlayer);
 				}
 			} else {
-				// bomb opened 
-				gameEnd = player.getDisplayName() + " lost!";
-				player.sendMessage(gameEnd);
+				// bomb opened
+				endGame(null);
 			}
 		}
 		mapManager.renderBoard();
 		
+	}
+
+	public void endGame(GamePlayer gamePlayerWinner) {
+		buttons.clear();
+		openedTiles = 0;
+
+		String message;
+		if(gamePlayerWinner != null) {
+			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+		} else {
+			message = ChatColor.GREEN + "You lost!";
+		}
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().sendMessage(message);
+		}
+
+		super.endGame(gamePlayerWinner);
 	}
 
 	@Override

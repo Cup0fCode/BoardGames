@@ -184,6 +184,7 @@ public class GameManager {
 
 	public void saveGames() {
 		for (Game game : this.games) {
+			Bukkit.getLogger().info("[BoardGames] storing game: " + game.getName());
 			this.storeGame(game);
 		}
 	}
@@ -196,18 +197,18 @@ public class GameManager {
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
-				Bukkit.getLogger().severe("[ChessBoards] Created game file for gameId: " + gameId);
+				Bukkit.getLogger().severe("[BoardGames] Created game file for gameId: " + gameId);
 			} catch (IOException e1) {
-				Bukkit.getLogger().severe("Error creating game file for gameId: " + gameId);
+				Bukkit.getLogger().severe("[BoardGames] Error creating game file for gameId: " + gameId);
 				e1.printStackTrace();
 			}
 		}
 
 		try {
-			Bukkit.getLogger().severe("[ChessBoards] Writing game data to gameId: " + gameId);
+			Bukkit.getLogger().severe("[BoardGames] Writing game data to gameId: " + gameId);
 			Files.write(Paths.get(file.getPath()), gameData.getBytes());
 		} catch (IOException e) {
-			Bukkit.getLogger().severe("Error writing to gameId: " + gameId);
+			Bukkit.getLogger().severe("[BoardGames] Error writing to gameId: " + gameId);
 			e.printStackTrace();
 		}
 	}

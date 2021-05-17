@@ -53,7 +53,7 @@ public class TicTacToeInventory extends GameInventory {
 
     @Override
     protected int getMaxGame() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -75,6 +75,11 @@ public class TicTacToeInventory extends GameInventory {
     // Whether or not outside players can place bets, hasGameWagers must be true
     @Override
     public boolean hasWagerScreen() {
+        return true;
+    }
+
+    @Override
+    protected boolean hasForfeitScreen() {
         return true;
     }
 

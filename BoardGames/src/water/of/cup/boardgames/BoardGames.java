@@ -35,6 +35,7 @@ import water.of.cup.boardgames.game.games.conways_game_of_life.ConwaysGameOfLife
 import water.of.cup.boardgames.game.games.minesweaper.MineSweeper;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
 import water.of.cup.boardgames.game.maps.MapManager;
+import water.of.cup.boardgames.listeners.BlockBreak;
 import water.of.cup.boardgames.listeners.BlockPlace;
 import water.of.cup.boardgames.listeners.BoardInteract;
 import water.of.cup.boardgames.metrics.Metrics;
@@ -60,7 +61,7 @@ public class BoardGames extends JavaPlugin {
 		MapManager.setMapValsKey(new NamespacedKey(this, "map_vals_key"));
 		loadConfig();
 
-		Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
+		Bukkit.getLogger().info("[BoardGames] Successfully loaded piece images");
 
 		// Debug:
 //		new TicTacToeInventory(null).build(null, null);
@@ -75,7 +76,7 @@ public class BoardGames extends JavaPlugin {
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());
 
 //		registerListeners(new BoardInteract(), new BlockPlace(), new InventoryClose(), new InventoryClick(), new HangingBreakByEntity(), new EntityDamageByEntity(), new HangingBreak(), new ChessPlayerJoin(), new BlockBreak());
-		registerListeners(new BlockPlace(), new BoardInteract());
+		registerListeners(new BlockPlace(), new BoardInteract(), new BlockBreak());
 		
 //		if(config.getBoolean("settings.chessboard.recipe.enabled"))
 //			addGameRecipes();
@@ -98,7 +99,7 @@ public class BoardGames extends JavaPlugin {
 
 		// Add bStats
 		Metrics metrics = new Metrics(this, 10153);
-		Bukkit.getLogger().info("[ChessBoards] bStats: " + metrics.isEnabled() + " plugin ver: " + getDescription().getVersion());
+		Bukkit.getLogger().info("[BoardGames] bStats: " + metrics.isEnabled() + " plugin ver: " + getDescription().getVersion());
 
 		metrics.addCustomChart(new Metrics.SimplePie("plugin_version", () -> getDescription().getVersion()));
 	}
@@ -109,7 +110,8 @@ public class BoardGames extends JavaPlugin {
 //		if(databaseEnabled && this.dataStore != null)
 //			this.dataStore.closeConnection();
 
-		gameManager.saveGames();
+		// TODO: Fix/Add save games
+//		gameManager.saveGames();
 
 		/* Disable all current async tasks */
 		Bukkit.getScheduler().cancelTasks(this);

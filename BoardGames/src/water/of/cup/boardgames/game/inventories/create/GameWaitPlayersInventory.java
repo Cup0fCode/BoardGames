@@ -39,7 +39,7 @@ public class GameWaitPlayersInventory extends InventoryScreen {
 
         renderGameOptions(gui, 's', 'g');
 
-        // TODO: (Start here) add players from queue
+        // Add players from queue
         ArrayList<Player> playerQueue = gameInventory.getJoinPlayerQueue();
         GuiElementGroup playerQueueGroup = new GuiElementGroup('q');
         for(Player queuePlayer : playerQueue) {

@@ -41,6 +41,7 @@ public class ConwaysGameOfLife extends Game {
 		for (int y = 0; y < 32; y++)
 			for (int x = 0; x < 32; x++) {
 				Button b = new Button(this, "CONWAYS_DEAD", new int[] { x * 4, y * 4 }, 0, "cell");
+				b.setClickable(true);
 				buttons.add(b);
 				cellButtons[y][x] = b;
 			}
