@@ -58,13 +58,16 @@ public class BoardGames extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 
+		// Config loads database settings
+		loadConfig();
+
 //		TODO: if(config.getBoolean("settings.database.enabled"))
 		loadStorage();
 		
 		Game.setGameIdKey(new NamespacedKey(this, "game_id_key"));
 		Game.setGameNameKey(new NamespacedKey(this, "game_name_key"));
 		MapManager.setMapValsKey(new NamespacedKey(this, "map_vals_key"));
-		loadConfig();
+
 
 //		Bukkit.getLogger().info("[BoardGames] Successfully loaded piece images");
 

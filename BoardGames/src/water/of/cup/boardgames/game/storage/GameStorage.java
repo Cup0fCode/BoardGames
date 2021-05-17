@@ -23,13 +23,40 @@ public abstract class GameStorage {
         }
     }
 
-    public void updateData(Player player, StorageType storageType, Object value) {
-        // check if tracking is enabled for this storageType
-        // check if gamestores includes storagetype
-        // update getTableName with storageType and value
-        // think about increment/decrement int values, might want to add to enum
-        if(!game.hasGameStorage()) return;
+    // Adds increment value to storageType
+    public void updateData(Player player, StorageType storageType, Object increment) {
+        if(!canExecute(storageType)) return;
 
+        instance.getStorageManager().updateColumn(player, getTableName(), storageType, increment, false);
+    }
+
+    // Untested
+    public void setData(Player player, StorageType storageType, Object newValue) {
+        if(!canExecute(storageType)) return;
+
+        instance.getStorageManager().updateColumn(player, getTableName(), storageType, newValue, true);
+    }
+
+    private boolean canExecute(StorageType storageType) {
+        // Checks to make sure database is initialized and enabled
+        if(!game.hasGameStorage()) return false;
+
+        // Checks to make sure the game storage has the storage type
+        if(!hasStorageType(storageType)) return false;
+
+        // TODO: Check if tracking is enabled for this storageType in config
+
+        return true;
+    }
+
+    private boolean hasStorageType(StorageType storageType) {
+        for(StorageType type : getGameStores()) {
+            if (type == storageType) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

@@ -135,6 +135,8 @@ public class TicTacToe extends Game {
 	private void updateGameStorage(GamePlayer gamePlayerWinner) {
 		if(!hasGameStorage()) return;
 
+		// TODO: Check if "ranked"
+
 		if(gamePlayerWinner == null) {
 			for(GamePlayer player : teamManager.getGamePlayers()) {
 				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
