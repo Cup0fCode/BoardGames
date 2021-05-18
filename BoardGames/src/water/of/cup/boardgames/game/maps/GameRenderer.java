@@ -1,6 +1,7 @@
 package water.of.cup.boardgames.game.maps;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.UUID;
 
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
@@ -16,26 +17,33 @@ public class GameRenderer extends MapRenderer {
 	private Game game;
 	private Screen screen;
 	private int[] loc;
-	//private ArrayList<Player> renderedPlayers;
-//
-//	public GameRenderer(Game game) {
-//		this.game = game;
-//	}
+	private HashSet<UUID> rendered;
 	
 	public GameRenderer(Game game, int[] mapValsLocationOnBoard) {
+		super(true);
 		this.game = game;
 		loc = mapValsLocationOnBoard;
-		//renderedPlayers = new ArrayList<Player>();
+		rendered = new HashSet<UUID>();
 	}
 
 	public GameRenderer(Game game, int[] mapValsLocationOnScreen, Screen screen) {
+		super(true);
 		this.game = game;
 		loc = mapValsLocationOnScreen;
 		this.screen = screen;
+		rendered = new HashSet<UUID>();
 	}
 
 	@Override
 	public void render(MapView map, MapCanvas canvas, Player player) {
+		if (rendered == null)
+			rendered = new HashSet<UUID>();
+		if (rendered.contains(player.getUniqueId())) { 
+			return;
+		}
+		
+		rendered.add(player.getUniqueId());
+		
 		GamePlayer gamePlayer = game.getGamePlayer(player);
 		boolean ingamePlayer = gamePlayer != null;
 		
@@ -55,9 +63,6 @@ public class GameRenderer extends MapRenderer {
 		}
 		
 		gameImage.cropMap(loc);
-		
 		canvas.drawImage(0, 0, gameImage.getImage(screen == null ? game.getRotation() : 0));
-		
-		map.setLocked(true);
 	}
 }

@@ -188,23 +188,21 @@ public class MapManager {
 			GameMap map = game.getGameMapByMapVal(mapVal);
 			MapMeta mapMeta = map.getMapMeta();
 			MapView view = mapMeta.getMapView();
+
 			for (MapRenderer renderer : view.getRenderers())
 				view.removeRenderer(renderer);
-			view.setLocked(false);
 
 			GameRenderer renderer = new GameRenderer(game, getMapValsLocationOnBoard(mapVal));
-
 			view.addRenderer(renderer);
 			mapMeta.setMapView(view);
 			map.setItemMeta(mapMeta);
-			
+
 			Bukkit.getServer().getScheduler().runTaskAsynchronously(BoardGames.getInstance(), new Runnable() {
 				@Override
 				public void run() {
 					view.getWorld().getPlayers().forEach(player -> player.sendMap(view));
 				}
 			});
-			//view.getWorld().getPlayers().forEach(player -> player.sendMap(view));
 		}
 		// render screens
 		for (Screen screen : game.getScreens()) {
