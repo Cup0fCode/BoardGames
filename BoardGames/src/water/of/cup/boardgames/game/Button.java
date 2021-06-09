@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import water.of.cup.boardgames.game.maps.Screen;
@@ -150,5 +151,10 @@ public class Button {
 
 	public Screen getScreen() {
 		return screen;
+	}
+
+	public void setImage(BufferedImage image) {
+		this.image = new GameImage(image, 0);
+		
 	}
 }
