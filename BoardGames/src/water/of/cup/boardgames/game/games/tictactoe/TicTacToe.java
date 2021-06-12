@@ -135,7 +135,9 @@ public class TicTacToe extends Game {
 	private void updateGameStorage(GamePlayer gamePlayerWinner) {
 		if(!hasGameStorage()) return;
 
-		// TODO: Check if "ranked"
+		// Check if game is "ranked"
+		if(hasGameData("ranked")
+				&& (getGameData("ranked") + "").equals("unranked")) return;
 
 		if(gamePlayerWinner == null) {
 			for(GamePlayer player : teamManager.getGamePlayers()) {

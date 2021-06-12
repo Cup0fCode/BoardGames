@@ -14,6 +14,7 @@ public abstract class GameStorage {
     protected abstract String getTableName();
     protected abstract StorageType[] getGameStores();
 
+    //TODO: leaderboard commands
     public GameStorage(Game game) {
         this.game = game;
 

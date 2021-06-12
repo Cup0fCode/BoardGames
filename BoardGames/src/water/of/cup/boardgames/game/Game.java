@@ -46,6 +46,8 @@ public abstract class Game {
 	protected int[][] mapStructure; // the structure of mapVals, 0 for missing map
 	protected int placedMapVal; // the value of the map at the placed board location
 
+	private HashMap<String, Object> gameData;
+
 	protected abstract void setMapInformation(int rotation); // set mapStructure and placedMapVal
 
 	private void setGameId() {
@@ -87,6 +89,8 @@ public abstract class Game {
 
 		gameInventory = getGameInventory();
 		gameStorage = getGameStorage();
+
+		gameData = new HashMap<>();
 	}
 
 	abstract public void click(Player player, double[] loc, ItemStack map);
@@ -452,5 +456,17 @@ public abstract class Game {
 
 	public boolean hasGameStorage() {
 		return gameStorage != null && BoardGames.getInstance().getStorageManager() != null;
+	}
+
+	public void setGameData(HashMap<String, Object> gameData) {
+		this.gameData = new HashMap<>(gameData);
+	}
+
+	public boolean hasGameData(String key) {
+		return this.gameData.containsKey(key);
+	}
+
+	public Object getGameData(String key) {
+		return this.gameData.get(key);
 	}
 }

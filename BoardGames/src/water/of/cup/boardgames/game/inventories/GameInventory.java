@@ -178,6 +178,8 @@ public abstract class GameInventory {
                 gameCreator = player;
                 gameData = new HashMap<>(gameDataResult);
 
+                game.setGameData(gameData);
+
                 if(maxPlayers == 1) {
                     onGameCreate(gameData, game.getGamePlayers());
                     resetGameInventory(null, false);

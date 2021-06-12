@@ -44,7 +44,8 @@ public class StorageManager {
 
         tableSqlBuilder.append("CREATE TABLE IF NOT EXISTS `").append(tableName).append("` (");
         tableSqlBuilder.append("`id` int PRIMARY KEY AUTO_INCREMENT,");
-        tableSqlBuilder.append("`uuid` varchar(255) UNIQUE");
+        tableSqlBuilder.append("`uuid` varchar(255) UNIQUE,");
+        tableSqlBuilder.append("`username` varchar(255)");
 
         for(StorageType storageType : storageTypes) {
             tableSqlBuilder.append(",")
@@ -121,14 +122,15 @@ public class StorageManager {
     public void updateColumn(Player player, String tableName, StorageType storageType, Object updated, boolean replace) {
         executorService.submit(() -> {
             try {
+                String playerName = player.getName();
                 String playerUUID = player.getUniqueId().toString();
                 String columnName = storageType.getKey();
 
                 String updateSql = "INSERT INTO `" +
                         tableName +
-                        "` (uuid," +
+                        "` (uuid,username," +
                         columnName +
-                        ") VALUES (?,?) ON DUPLICATE KEY ";
+                        ") VALUES (?,?,?) ON DUPLICATE KEY ";
 
                 updateSql += (replace) ? "SET " + columnName + " = ?;"
                         : "UPDATE " + columnName + " = " + columnName + " + ?;";
@@ -136,8 +138,9 @@ public class StorageManager {
                 try (Connection con = getConnection();
                      PreparedStatement updateQuery = con.prepareStatement(updateSql)) {
                     updateQuery.setString(1, playerUUID);
-                    updateQuery.setObject(2, updated, storageType.getDataType());
+                    updateQuery.setString(2, playerName);
                     updateQuery.setObject(3, updated, storageType.getDataType());
+                    updateQuery.setObject(4, updated, storageType.getDataType());
 
                     updateQuery.execute();
                 }
