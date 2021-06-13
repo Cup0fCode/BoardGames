@@ -22,6 +22,7 @@ public class Uno extends Game {
 	private HashMap<GamePlayer, Integer> playerBoardPosition; // [0,7]
 	private HashMap<GamePlayer, UnoHand> playerHands;
 	private HashMap<GamePlayer, ArrayList<Button>> playerCardButtons;
+	private HashMap<GamePlayer, Button> handButtons;
 
 	private ArrayList<Button> colorButtons;
 
@@ -43,6 +44,7 @@ public class Uno extends Game {
 		deck = new UnoDeck();
 		playerBoardPosition = new HashMap<GamePlayer, Integer>();
 		playerCardButtons = new HashMap<GamePlayer, ArrayList<Button>>();
+		handButtons = new HashMap<GamePlayer, Button>();
 		createPlayerHands();
 
 		// set current card
@@ -67,7 +69,8 @@ public class Uno extends Game {
 			toggleColorButtons();
 			i++;
 		}
-
+		
+		toggleHandButtons();
 		mapManager.renderBoard();
 		super.setInGame();
 	}
@@ -77,6 +80,13 @@ public class Uno extends Game {
 			b.setVisibleForAll(isWild);
 			b.setClickable(isWild);
 		}
+	}
+	
+	private void toggleHandButtons() {
+		for (Button b : handButtons.values()) {
+			b.setImage("UNO_DECK");
+		}
+		handButtons.get(teamManager.getTurnPlayer()).setImage("UNO_DECK_TURN");
 	}
 
 	private void createPlayerHands() {
@@ -101,6 +111,7 @@ public class Uno extends Game {
 
 			// create position image
 			Button b = new Button(this, "UNO_DECK", loc, (4 - rotation) % 4, "deck");
+			handButtons.put(player,  b);
 			buttons.add(b);
 
 			
@@ -284,6 +295,7 @@ public class Uno extends Game {
 				toggleColorButtons();
 				currentCard.setColor(b.getName());
 				doCardActions(currentCard);
+				toggleHandButtons();
 				mapManager.renderBoard();
 				this.getGamePlayers().forEach((p) -> p.getPlayer()
 						.sendMessage(player.getPlayer().getDisplayName() + ": " + b.getName() + "!"));
@@ -307,6 +319,7 @@ public class Uno extends Game {
 
 		if (playCard(gamePlayer, card)) {
 			player.sendMessage("played card");
+			toggleHandButtons();
 			mapManager.renderBoard();
 		} else {
 			player.sendMessage("You can not play that card.");
