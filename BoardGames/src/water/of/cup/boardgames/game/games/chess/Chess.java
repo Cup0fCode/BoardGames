@@ -210,6 +210,13 @@ public class Chess extends Game {
 				return;
 			}
 
+		} else {
+			ChessPiece piece = board.getStructure()[position[1]][position[0]];
+			if (piece != null && piece.getColor().equals(teamTurn)) {
+				selected = position;
+				paintBoard();
+				return;
+			}
 		}
 
 	}
