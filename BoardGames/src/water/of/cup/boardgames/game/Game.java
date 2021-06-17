@@ -30,7 +30,7 @@ public abstract class Game {
 	protected MapManager mapManager;
 	protected ArrayList<Screen> screens;
 //	protected HashMap<Player, GamePlayer> players;
-	private int turn;
+//	private int turn;
 	private boolean ingame;
 	protected GameImage gameImage;
 	protected ArrayList<Button> buttons;
@@ -74,7 +74,7 @@ public abstract class Game {
 		setBoardImage();
 		// assert boardImage != null;
 		wagerManager = new WagerManager();
-		turn = 0;
+		// turn = 0;
 		buttons = new ArrayList<Button>();
 		teamManager = new TeamManager(this);
 
@@ -125,6 +125,10 @@ public abstract class Game {
 	}
 
 	public void placeBoard(Location loc, int rotation) {
+		placeBoard(loc, rotation, placedMapVal);
+	}
+
+	public void placeBoard(Location loc, int rotation, int placedMapVal) {
 		// can place board should always be called first
 
 		World world = loc.getWorld();
@@ -152,13 +156,13 @@ public abstract class Game {
 		int maxZ = Math.max(t1Z, t2Z);
 		int minZ = Math.min(t1Z, t2Z);
 
-//		// place barriers:
+////		// remove frames:
 //		for (int x = minX; x <= maxX; x++)
 //			for (int y = minY; y <= maxY; y++)
 //				for (int z = minZ; z <= maxZ; z++) {
 //					Location barrierLoc = new Location(loc.getWorld(), loc.getBlockX() + x, loc.getBlockY() + y,
 //							loc.getBlockZ() + z);
-//					barrierLoc.getBlock().setType(Material.BARRIER);
+//					//for (Entity e : barrierLoc.get)
 //				}
 
 		// spawn ItemFrames
@@ -193,14 +197,14 @@ public abstract class Game {
 						Block placedOn = frameLoc.getBlock().getRelative(mapData.getBlockFace().getOppositeFace());
 						if (placedOn.getType() == Material.AIR)
 							placedOn.setType(Material.BARRIER);
-						
+
 						ItemFrame frame = world.spawn(frameLoc, ItemFrame.class);
 						frame.setItem(map);
 						frame.setFacingDirection(mapData.getBlockFace(), true);
 						frame.setInvulnerable(true);
 						frame.setFixed(true);
 						frame.setVisible(true);
-						
+
 						frameLoc.getBlock().setType(Material.BARRIER);
 					}
 
@@ -209,7 +213,7 @@ public abstract class Game {
 		}
 
 		// Debug
-		if(!hasGameInventory()) {
+		if (!hasGameInventory()) {
 			startGame();
 		} else {
 			renderInitial();
@@ -244,7 +248,7 @@ public abstract class Game {
 		}
 		return null;
 	}
-	
+
 	public boolean hasPlayer(Player player) {
 		return teamManager.getGamePlayer(player) != null;
 	}
@@ -270,12 +274,12 @@ public abstract class Game {
 	}
 
 	public GamePlayer addPlayer(Player player, String team) {
-		if(teamManager.getGamePlayer(player) != null) {
+		if (teamManager.getGamePlayer(player) != null) {
 			return teamManager.getGamePlayer(player);
 		}
 
 		GamePlayer newPlayer = new GamePlayer(player);
-		if(team == null) {
+		if (team == null) {
 			teamManager.addTeam(newPlayer);
 		} else {
 			teamManager.addTeam(newPlayer, team);
@@ -357,20 +361,14 @@ public abstract class Game {
 				for (int z = minZ; z <= maxZ; z++) {
 					Block block = loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY() + y,
 							loc.getBlockZ() + z);
-
+					for (Entity entity : loc.getWorld().getNearbyEntities(block.getBoundingBox())) {
+						if (entity instanceof ItemFrame && GameMap.isGameMap(((ItemFrame) entity).getItem())) {
+							ItemFrame frame = (ItemFrame) entity;
+							frame.remove();
+						}
+					}
 					block.setType(Material.AIR);
 				}
-			}
-		}
-		int maxD = Math.max(Math.max(maxX - minX, maxY - minY), maxZ - minZ);
-
-		// destroy item frames
-		for (Entity entity : loc.getWorld().getNearbyEntities(loc, maxD, maxD, maxD)) {
-			if (entity instanceof ItemFrame && GameMap.isGameMap(((ItemFrame) entity).getItem())) {
-				ItemFrame frame = (ItemFrame) entity;
-				if ((new GameMap(frame.getItem())).getGameId() != gameId)
-					continue;
-				frame.remove();
 			}
 		}
 	}
@@ -436,12 +434,29 @@ public abstract class Game {
 	}
 
 	public void displayGameInventory(Player player) {
-		if(gameInventory != null) {
+		if (gameInventory != null) {
 			gameInventory.build(player);
 		}
 	}
 
 	public boolean hasGameInventory() {
 		return gameInventory != null;
+	}
+
+	public int getPlacedMapVal() {
+		return placedMapVal;
+	}
+
+	public void replace(Location location, int rotation, int mapVal) { // location must be same as placedMapVal
+		this.destroyBoard(location, mapVal);
+		final Location loc = location;
+		final int frotation = rotation;
+		final int fmapVal = mapVal;
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(BoardGames.getInstance(), new Runnable() {
+			@Override
+			public void run() {
+				placeBoard(loc, frotation, fmapVal);
+			}
+		}, 20);
 	}
 }

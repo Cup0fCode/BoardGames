@@ -39,6 +39,7 @@ import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.listeners.BlockBreak;
 import water.of.cup.boardgames.listeners.BlockPlace;
 import water.of.cup.boardgames.listeners.BoardInteract;
+import water.of.cup.boardgames.listeners.ChunkLoad;
 import water.of.cup.boardgames.metrics.Metrics;
 
 public class BoardGames extends JavaPlugin {
@@ -60,6 +61,8 @@ public class BoardGames extends JavaPlugin {
 		Game.setGameIdKey(new NamespacedKey(this, "game_id_key"));
 		Game.setGameNameKey(new NamespacedKey(this, "game_name_key"));
 		MapManager.setMapValsKey(new NamespacedKey(this, "map_vals_key"));
+		MapManager.setRotationKey(new NamespacedKey(this, "rotation_key"));
+		
 		loadConfig();
 
 		Bukkit.getLogger().info("[BoardGames] Successfully loaded piece images");
@@ -77,7 +80,7 @@ public class BoardGames extends JavaPlugin {
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());
 
 //		registerListeners(new BoardInteract(), new BlockPlace(), new InventoryClose(), new InventoryClick(), new HangingBreakByEntity(), new EntityDamageByEntity(), new HangingBreak(), new ChessPlayerJoin(), new BlockBreak());
-		registerListeners(new BlockPlace(), new BoardInteract(), new BlockBreak());
+		registerListeners(new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak());
 		
 //		if(config.getBoolean("settings.chessboard.recipe.enabled"))
 //			addGameRecipes();

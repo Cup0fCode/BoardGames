@@ -19,6 +19,7 @@ import water.of.cup.boardgames.game.MathUtils;
 public class MapManager {
 	// handles map click maths & map images
 	private static NamespacedKey mapValsKey;
+	private static NamespacedKey rotationKey;
 
 	private int[][] mapStructure; // the structure of mapVals (0 will be used to mark missing maps)
 	private int[][] rotatedMapStructure; // the structure of mapVals with rotation added
@@ -223,5 +224,13 @@ public class MapManager {
 				return screen;
 		}
 		return null;
+	}
+
+	public static NamespacedKey getRotationKey() {
+		return rotationKey;
+	}
+
+	public static void setRotationKey(NamespacedKey rotationKey) {
+		MapManager.rotationKey = rotationKey;
 	}
 }

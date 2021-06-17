@@ -13,6 +13,8 @@ public class GameMap extends ItemStack {
 	private int gameId;
 	private int mapVal;
 	private Game game;
+	private int rotation;
+	private String gameName;
 
 	public GameMap(ItemStack itemStack) {
 		super(itemStack);
@@ -21,6 +23,8 @@ public class GameMap extends ItemStack {
 		gameId = persistentDataContainer.get(Game.getGameIdKey(), PersistentDataType.INTEGER);
 		mapVal = persistentDataContainer.get(MapManager.getMapValsKey(), PersistentDataType.INTEGER);
 		game = BoardGames.getInstance().getGameManager().getGameByGameId(gameId);
+		rotation = persistentDataContainer.get(MapManager.getRotationKey(), PersistentDataType.INTEGER);
+		gameName = persistentDataContainer.get(Game.getGameNameKey(), PersistentDataType.STRING);
 	}
 
 	public GameMap(Game game, int mapVal, ItemStack itemStack) {
@@ -30,9 +34,13 @@ public class GameMap extends ItemStack {
 		this.game = game;
 		this.mapVal = mapVal;
 		this.gameId = game.getGameId();
+		this.rotation = game.getRotation();
+		gameName = game.getGameName();
 
 		persistentDataContainer.set(Game.getGameIdKey(), PersistentDataType.INTEGER, gameId);
 		persistentDataContainer.set(MapManager.getMapValsKey(), PersistentDataType.INTEGER, mapVal);
+		persistentDataContainer.set(MapManager.getRotationKey(), PersistentDataType.INTEGER, rotation);
+		persistentDataContainer.set(Game.getGameNameKey(), PersistentDataType.STRING, gameName);
 		this.setItemMeta(itemMeta);
 	}
 
@@ -46,6 +54,10 @@ public class GameMap extends ItemStack {
 		if (!persistentDataContainer.has(Game.getGameIdKey(), PersistentDataType.INTEGER))
 			return false;
 		if (!persistentDataContainer.has(MapManager.getMapValsKey(), PersistentDataType.INTEGER))
+			return false;
+		if (!persistentDataContainer.has(MapManager.getRotationKey(), PersistentDataType.INTEGER))
+			return false;
+		if (!persistentDataContainer.has(Game.getGameNameKey(), PersistentDataType.STRING))
 			return false;
 
 		return true;
@@ -65,5 +77,13 @@ public class GameMap extends ItemStack {
 
 	public Game getGame() {
 		return game;
+	}
+	
+	public int getRotation() {
+		return rotation;
+	}
+	
+	public String getGameName() {
+		return gameName;
 	}
 }

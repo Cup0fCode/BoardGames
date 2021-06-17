@@ -1,6 +1,5 @@
 package water.of.cup.boardgames.game;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.nio.file.Files;
@@ -29,7 +28,7 @@ public class GameManager {
 	private int lastGameId;
 
 	public GameManager() {
-		lastGameId = 0;
+		lastGameId = (int) (Math.random() * Integer.MAX_VALUE);
 		nameToGameTypes = new HashMap<String, Class<? extends Game>>();
 	}
 
@@ -182,36 +181,36 @@ public class GameManager {
 		return games;
 	}
 
-	public void saveGames() {
-		for (Game game : this.games) {
-			Bukkit.getLogger().info("[BoardGames] storing game: " + game.getName());
-			this.storeGame(game);
-		}
-	}
-
-	private void storeGame(Game game) {
-		String gameData = game.toString();
-		String gameId = game.getGameId() + "";
-		File file = new File(instance.getDataFolder(), "saved_games/game_" + gameId + ".txt");
-
-		if (!file.exists()) {
-			try {
-				file.createNewFile();
-				Bukkit.getLogger().severe("[BoardGames] Created game file for gameId: " + gameId);
-			} catch (IOException e1) {
-				Bukkit.getLogger().severe("[BoardGames] Error creating game file for gameId: " + gameId);
-				e1.printStackTrace();
-			}
-		}
-
-		try {
-			Bukkit.getLogger().severe("[BoardGames] Writing game data to gameId: " + gameId);
-			Files.write(Paths.get(file.getPath()), gameData.getBytes());
-		} catch (IOException e) {
-			Bukkit.getLogger().severe("[BoardGames] Error writing to gameId: " + gameId);
-			e.printStackTrace();
-		}
-	}
+//	public void saveGames() {
+//		for (Game game : this.games) {
+//			Bukkit.getLogger().info("[BoardGames] storing game: " + game.getName());
+//			this.storeGame(game);
+//		}
+//	}
+//
+//	private void storeGame(Game game) {
+//		String gameData = game.toString();
+//		String gameId = game.getGameId() + "";
+//		File file = new File(instance.getDataFolder(), "saved_games/game_" + gameId + ".txt");
+//
+//		if (!file.exists()) {
+//			try {
+//				file.createNewFile();
+//				Bukkit.getLogger().severe("[BoardGames] Created game file for gameId: " + gameId);
+//			} catch (IOException e1) {
+//				Bukkit.getLogger().severe("[BoardGames] Error creating game file for gameId: " + gameId);
+//				e1.printStackTrace();
+//			}
+//		}
+//
+//		try {
+//			Bukkit.getLogger().severe("[BoardGames] Writing game data to gameId: " + gameId);
+//			Files.write(Paths.get(file.getPath()), gameData.getBytes());
+//		} catch (IOException e) {
+//			Bukkit.getLogger().severe("[BoardGames] Error writing to gameId: " + gameId);
+//			e.printStackTrace();
+//		}
+//	}
 
 	protected int nextGameId() {
 		// TODO Auto-generated method stub
