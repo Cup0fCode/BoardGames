@@ -5,13 +5,15 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 
@@ -30,10 +32,14 @@ public class StorageManager {
     }
 
     public void addGameStorage(GameStorage gameStorage) {
-        this.gameStores.add(gameStorage);
+        if(!hasGameStore(gameStorage)) {
+            this.gameStores.add(gameStorage);
 
-        // init table
-        initializeGameStorage(gameStorage);
+            gameStorage.initializeConfig();
+
+            // init table
+            initializeGameStorage(gameStorage);
+        }
     }
 
     private void initializeGameStorage(GameStorage gameStorage) {
@@ -72,11 +78,11 @@ public class StorageManager {
 
     private void initialize() {
         if(ds == null) {
-            String host = instance.getConfig().getString("settings.database.host");
-            String port = instance.getConfig().getString("settings.database.port");
-            String database = instance.getConfig().getString("settings.database.database");
-            String username = instance.getConfig().getString("settings.database.username");
-            String password = instance.getConfig().getString("settings.database.password");
+            String host = ConfigUtil.DB_HOST.toRawString();
+            String port = ConfigUtil.DB_PORT.toRawString();
+            String database = ConfigUtil.DB_NAME.toRawString();
+            String username = ConfigUtil.DB_USERNAME.toRawString();
+            String password = ConfigUtil.DB_PASS.toRawString();
 
             String connectionString = "jdbc:mysql://"
                     + host + ":" + port + "/";
@@ -148,6 +154,99 @@ public class StorageManager {
                 throwables.printStackTrace();
             }
         });
+    }
+
+    public LinkedHashMap<StorageType, Object> fetchPlayerStats(Player player, GameStorage storage) {
+        CompletableFuture<LinkedHashMap<StorageType, Object>> future = new CompletableFuture<>();
+
+        String tableName = storage.getTableName();
+        String playerUUID = player.getUniqueId().toString();
+
+        String sql = "SELECT * FROM `" + tableName + "` WHERE uuid=?";
+
+        executorService.submit(() -> {
+            try {
+                try (Connection con = getConnection();
+                     PreparedStatement updateQuery = con.prepareStatement(sql)) {
+                    updateQuery.setString(1, playerUUID);
+
+                    try(ResultSet resultSet = updateQuery.executeQuery()) {
+                        if(resultSet.next()) {
+                            LinkedHashMap<StorageType, Object> playerStats = this.getStatsFromResult(storage, resultSet);
+
+                            future.complete(playerStats);
+                            return;
+                        }
+                    }
+                }
+
+                future.complete(null);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                future.complete(null);
+            }
+        });
+
+        return future.join();
+    }
+
+    public LinkedHashMap<Player, LinkedHashMap<StorageType, Object>> fetchTopPlayers(GameStorage gameStorage, StorageType orderBy, int page) {
+        CompletableFuture<LinkedHashMap<Player, LinkedHashMap<StorageType, Object>>> future = new CompletableFuture<>();
+        LinkedHashMap<Player, LinkedHashMap<StorageType, Object>> topPlayers = new LinkedHashMap<>();
+
+        String tableName = gameStorage.getTableName();
+        String sql = "SELECT * FROM `" + tableName + "` ORDER BY `" + orderBy.getKey() + "` DESC LIMIT " + (page * 10) + ", 10";
+
+        executorService.submit(() -> {
+            try {
+                try (Connection con = getConnection();
+                     PreparedStatement fetchQuery = con.prepareStatement(sql);
+                     ResultSet resultSet = fetchQuery.executeQuery()) {
+                        while (resultSet.next()) {
+                            String playerUUID = resultSet.getString("uuid");
+                            if(playerUUID == null) continue;
+
+                            Player player = Bukkit.getPlayer(UUID.fromString(playerUUID));
+                            if(player == null) continue;
+
+                            LinkedHashMap<StorageType, Object> playerStats = this.getStatsFromResult(gameStorage, resultSet);
+
+                            topPlayers.put(player, playerStats);
+                        }
+
+                    future.complete(topPlayers);
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                future.complete(null);
+            }
+        });
+
+        return future.join();
+    }
+
+    private LinkedHashMap<StorageType, Object> getStatsFromResult(GameStorage storage, ResultSet resultSet) throws SQLException {
+        LinkedHashMap<StorageType, Object> playerStats = new LinkedHashMap<>();
+
+        for(StorageType storageType : storage.getGameStores()) {
+            if(!storage.canExecute(storageType)) continue;
+
+            Object result = resultSet.getObject(storageType.getKey());
+
+            if(result != null)
+                playerStats.put(storageType, result);
+        }
+
+        return playerStats;
+    }
+
+    private boolean hasGameStore(GameStorage gameStorage) {
+        for(GameStorage storage : this.gameStores) {
+            if(storage.getTableName().equals(gameStorage.getTableName()))
+                return true;
+        }
+
+        return false;
     }
 
     public Connection getConnection() throws SQLException {

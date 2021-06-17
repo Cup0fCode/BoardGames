@@ -469,4 +469,8 @@ public abstract class Game {
 	public Object getGameData(String key) {
 		return this.gameData.get(key);
 	}
+
+	public GameStorage getGameStore() {
+		return this.gameStorage;
+	}
 }

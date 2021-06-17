@@ -1,10 +1,13 @@
 package water.of.cup.boardgames.game.storage;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class GameStorage {
 
@@ -14,9 +17,11 @@ public abstract class GameStorage {
     protected abstract String getTableName();
     protected abstract StorageType[] getGameStores();
 
-    //TODO: leaderboard commands
+    private final StorageType[] storageTypes;
+
     public GameStorage(Game game) {
         this.game = game;
+        this.storageTypes = getGameStores();
 
         StorageManager storageManager = instance.getStorageManager();
         if(storageManager != null) {
@@ -38,16 +43,19 @@ public abstract class GameStorage {
         instance.getStorageManager().updateColumn(player, getTableName(), storageType, newValue, true);
     }
 
-    private boolean canExecute(StorageType storageType) {
+    public boolean canExecute(StorageType storageType) {
         // Checks to make sure database is initialized and enabled
         if(!game.hasGameStorage()) return false;
 
         // Checks to make sure the game storage has the storage type
         if(!hasStorageType(storageType)) return false;
 
-        // TODO: Check if tracking is enabled for this storageType in config
+        // Check if tracking is enabled for this storageType in config
+        String enabledPath = "settings.database." + getTableName() + ".enabled";
+        if(!ConfigUtil.getBoolean(enabledPath)) return false;
 
-        return true;
+        String storagePath = "settings.database." + getTableName() + "." + storageType.getKey();
+        return ConfigUtil.getBoolean(storagePath);
     }
 
     private boolean hasStorageType(StorageType storageType) {
@@ -58,6 +66,36 @@ public abstract class GameStorage {
         }
 
         return false;
+    }
+
+    protected void initializeConfig() {
+        FileConfiguration config = instance.getConfig();
+
+        HashMap<String, Object> gameConfig = new HashMap<>();
+        String path = "settings.database." + getTableName();
+
+        for(StorageType type : getGameStores()) {
+            gameConfig.put(path + "." + type.getKey(), "true");
+        }
+
+        gameConfig.put(path + ".enabled", "true");
+
+        for (String key : gameConfig.keySet()) {
+            if(!config.contains(key)) {
+                config.set(key, gameConfig.get(key));
+            }
+        }
+
+        instance.saveConfig();
+    }
+
+    public ArrayList<StorageType> getStorageTypes() {
+        ArrayList<StorageType> storageTypes = new ArrayList<>();
+        for(StorageType storageType : getGameStores()) {
+            if(canExecute(storageType)) storageTypes.add(storageType);
+        }
+
+        return storageTypes;
     }
 
 }
