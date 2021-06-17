@@ -41,7 +41,7 @@ public class bgCommands implements CommandExecutor {
 			}
 
 			if (args[0].equalsIgnoreCase("games")) {
-				p.sendMessage("Game names: ");
+				p.sendMessage(ConfigUtil.CHAT_GAME_NAMES.toString());
 				for (String name : gameManager.getGameNames()) 
 					p.sendMessage(name);
 				
@@ -92,7 +92,7 @@ public class bgCommands implements CommandExecutor {
 					return false;
 				}
 
-				p.sendMessage(player.getName() + "'s " + tempGame.getName() + " stats");
+				p.sendMessage(ConfigUtil.CHAT_STATS_HEADER.buildString(player));
 				for(StorageType storageType : playerStats.keySet()) {
 					p.sendMessage(storageType.getKey() + " : " + playerStats.get(storageType));
 				}
@@ -138,7 +138,7 @@ public class bgCommands implements CommandExecutor {
 				LinkedHashMap<Player, LinkedHashMap<StorageType, Object>> topPlayers = instance.getStorageManager().fetchTopPlayers(gameStorage, orderBy, 0);
 				int count = 1;
 
-				p.sendMessage(tempGame.getName() + " leaderboard sorting by " + orderBy.getKey());
+				p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_HEADER.buildString(tempGame.getName(), orderBy.getKey()));
 				for(Player player : topPlayers.keySet()) {
 					p.sendMessage("#" + count + ". " + player.getName() + " - " + topPlayers.get(player).get(orderBy));
 					count++;
@@ -151,11 +151,7 @@ public class bgCommands implements CommandExecutor {
 	}
 
 	private void sendHelpMessage(Player p) {
-		p.sendMessage("Available commands");
-		p.sendMessage("/bg games - lists games");
-		p.sendMessage("/bg board [game name] - gives you the game's item");
-		p.sendMessage("/bg stats [game name] [player name]");
-		p.sendMessage("/bg leaderboard [game name] [order by]");
+		p.sendMessage(ConfigUtil.CHAT_AVAIL_COMMANDS.toString());
 	}
 
 }

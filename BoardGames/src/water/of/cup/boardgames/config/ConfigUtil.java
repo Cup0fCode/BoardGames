@@ -1,6 +1,7 @@
 package water.of.cup.boardgames.config;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import water.of.cup.boardgames.BoardGames;
 
 public enum ConfigUtil {
@@ -18,7 +19,11 @@ public enum ConfigUtil {
     CHAT_NO_DB("settings.messages.chat.nodb", "Database must be enabled to view stats."),
     CHAT_NO_GAME("settings.messages.chat.nogame", "No game found with that name."),
     CHAT_NO_PLAYER("settings.messages.chat.noplayer", "No player found with that name."),
-    CHAT_DB_ERROR("settings.messages.chat.dberror", "Error calling to database.");
+    CHAT_DB_ERROR("settings.messages.chat.dberror", "Error calling to database."),
+    CHAT_GAME_NAMES("settings.messages.chat.gamenames", "Game Names: "),
+    CHAT_STATS_HEADER("settings.messages.chat.statsheader", "%player%'s stats"),
+    CHAT_LEADERBOARD_HEADER("settings.messages.chat.leaderboardheader", "%game% leaderboard sorting by %sort%"),
+    CHAT_AVAIL_COMMANDS("settings.messages.chat.availcommands", "Available commands\n/bg games - lists games\n/bg board [game name] - gives you the game's item\n/bg stats [game name] [player name]\n/bg leaderboard [game name] [order by]");
 
     private final String path;
     private final String defaultValue;
@@ -60,5 +65,21 @@ public enum ConfigUtil {
         if(configString == null) return false;
 
         return configString.equals("true");
+    }
+
+    public String buildString(Player player) {
+        String formatted = this.toString();
+
+        formatted = formatted.replace("%player%", player.getDisplayName());
+
+        return formatted;
+    }
+
+    public String buildString(String game, String sort) {
+        String formatted = this.toString();
+
+        formatted = formatted.replace("%game%", game).replace("%sort%", sort);
+
+        return formatted;
     }
 }
