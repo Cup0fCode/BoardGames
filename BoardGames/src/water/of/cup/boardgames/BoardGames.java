@@ -192,8 +192,10 @@ public class BoardGames extends JavaPlugin {
 		boardgames.place - place board
 		boardgames.destroy - break board
 		boardgames.command - use board command
-			- boardgames.command.give - use give command
-			- boardgames.command.leaderboard - use leaderboard command
+			- boardgames.command.games
+			- boardgames.command.board
+			- boardgames.command.stats
+			- boardgames.command.leaderboard
 		 */
 
 		// Load in defaults from ConfigUtil

@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.BoardItem;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
@@ -44,6 +45,10 @@ public class BlockPlace implements Listener {
 		
 		// make sure game exists
 		if (game == null)
+			return;
+
+		if(ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
+				&& !player.hasPermission("boardgames.place"))
 			return;
 		
 		final Game finalGame = game;

@@ -30,11 +30,11 @@ public class bgCommands implements CommandExecutor {
 		}
 
 		Player p = (Player) sender;
+		boolean permissions = ConfigUtil.PERMISSIONS_ENABLED.toBoolean();
 
 		if (cmd.getName().equalsIgnoreCase("bg")) {
-
-//			if (!p.isOp())
-//				return false;
+			if(permissions && !p.hasPermission("boardgames.command"))
+				return false;
 
 			if (args.length == 0) {
 				sendHelpMessage(p);
@@ -42,11 +42,17 @@ public class bgCommands implements CommandExecutor {
 			}
 
 			if (args[0].equalsIgnoreCase("games")) {
+				if(permissions && !p.hasPermission("boardgames.command.games"))
+					return false;
+
 				p.sendMessage(ConfigUtil.CHAT_GAME_NAMES.toString());
 				for (String name : gameManager.getGameNames()) 
 					p.sendMessage(name);
 				
 			} else if (args[0].equalsIgnoreCase("board")) {
+				if(permissions && !p.hasPermission("boardgames.command.board"))
+					return false;
+
 				if (args.length == 2) {
 					Game game = gameManager.newGame(args[1], 0);
 					if (game != null) {
@@ -56,6 +62,9 @@ public class bgCommands implements CommandExecutor {
 				//instance.getDataStore().getCasinoPlayers().get(p).setBloodAlcoholContent(0);
 
 			} else if (args[0].equalsIgnoreCase("stats")) {
+				if(permissions && !p.hasPermission("boardgames.command.stats"))
+					return false;
+
 				if(args.length != 3) {
 					sendHelpMessage(p);
 					return false;
@@ -100,6 +109,9 @@ public class bgCommands implements CommandExecutor {
 
 				return true;
 			} else if (args[0].equalsIgnoreCase("leaderboard")) {
+				if(permissions && !p.hasPermission("boardgames.command.leaderboard"))
+					return false;
+
 				if(args.length < 2) {
 					sendHelpMessage(p);
 					return false;

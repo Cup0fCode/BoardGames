@@ -23,6 +23,7 @@ import org.bukkit.util.Vector;
 import org.w3c.dom.events.Event;
 
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.maps.GameMap;
@@ -109,7 +110,9 @@ public class BoardInteract implements Listener {
 		if (gameFrame.getAttachedFace().getOppositeFace() != result.getHitBlockFace()) // check that the top of the																				// board was hit
 			return;
 
-		// TODO: check for permissions
+		if(ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
+				&& !player.hasPermission("boardgames.interact"))
+			return;
 
 		if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
 			e.setCancelled(true);
@@ -120,7 +123,9 @@ public class BoardInteract implements Listener {
 				return;
 			}
 
-			// TODO: check if player has permission to delete game
+			if(ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
+					&& !player.hasPermission("boardgames.destroy"))
+				return;
 
 			if (!game.isIngame() && game.destroy(gameFrame)) {
 
