@@ -13,6 +13,8 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.GameRecipe;
+import water.of.cup.boardgames.config.GameSound;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.MapData;
@@ -67,6 +69,8 @@ public abstract class Game {
 	protected abstract GameStorage getGameStorage();
 
 	public abstract ArrayList<String> getTeamNames();
+
+	protected abstract GameConfig getGameConfig();
 
 	public Game(int rotation) {
 		screens = new ArrayList<Screen>();
@@ -472,5 +476,26 @@ public abstract class Game {
 
 	public GameStorage getGameStore() {
 		return this.gameStorage;
+	}
+
+	public boolean hasGameConfig() {
+		return getGameConfig() != null;
+	}
+
+	public GameRecipe getGameRecipe() {
+		if(!hasGameConfig()) return null;
+
+		return getGameConfig().getGameRecipe();
+	}
+
+	public ArrayList<GameSound> getGameSounds() {
+		if(!hasGameConfig()) return null;
+
+		return getGameConfig().getGameSounds();
+	}
+
+	// TODO: Get game sound from config, check if enabled
+	public Sound getGameSound(String name) {
+		return null;
 	}
 }

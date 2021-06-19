@@ -5,17 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,13 +19,11 @@ import net.milkbowl.vault.economy.Economy;
 import water.of.cup.boardgames.commands.DebugCommand;
 import water.of.cup.boardgames.commands.bgCommandsTabCompleter;
 import water.of.cup.boardgames.config.ConfigUtil;
+import water.of.cup.boardgames.config.GameConfigLoader;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
-import water.of.cup.boardgames.game.games.tictactoe.TicTacToeInventory;
 import water.of.cup.boardgames.game.games.uno.Uno;
 import water.of.cup.boardgames.commands.bgCommands;
-import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.games.battleship.Battleship;
 import water.of.cup.boardgames.game.games.checkers.Checkers;
 import water.of.cup.boardgames.game.games.connectfour.ConnectFour;
@@ -41,6 +35,7 @@ import water.of.cup.boardgames.game.storage.StorageManager;
 import water.of.cup.boardgames.listeners.BlockBreak;
 import water.of.cup.boardgames.listeners.BlockPlace;
 import water.of.cup.boardgames.listeners.BoardInteract;
+import water.of.cup.boardgames.listeners.PlayerJoin;
 import water.of.cup.boardgames.metrics.Metrics;
 
 public class BoardGames extends JavaPlugin {
@@ -88,19 +83,11 @@ public class BoardGames extends JavaPlugin {
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());
 
 //		registerListeners(new BoardInteract(), new BlockPlace(), new InventoryClose(), new InventoryClick(), new HangingBreakByEntity(), new EntityDamageByEntity(), new HangingBreak(), new ChessPlayerJoin(), new BlockBreak());
-		registerListeners(new BlockPlace(), new BoardInteract(), new BlockBreak());
-		
-//		if(config.getBoolean("settings.chessboard.recipe.enabled"))
-//			addGameRecipes();
+		registerListeners(new BlockPlace(), new BoardInteract(), new BlockBreak(), new PlayerJoin());
 
-//		if(config.getBoolean("settings.database.enabled")) {
-//			this.dataStore = new DataSource();;
-//			this.dataStore.initialize();
-//
-//			for(Player player : Bukkit.getOnlinePlayers()) {
-//				this.dataStore.addChessPlayer(player);
-//			}
-//		}
+		// Load recipes after config and games are initialized
+		GameConfigLoader.loadRecipes();
+		GameConfigLoader.loadGameSounds();
 
 		if(ConfigUtil.WAGERS_ENABLED.toBoolean()) {
 			boolean hasEconomy = setupEconomy();

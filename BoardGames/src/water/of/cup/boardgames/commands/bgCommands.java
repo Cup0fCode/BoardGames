@@ -59,8 +59,6 @@ public class bgCommands implements CommandExecutor {
 						p.getWorld().dropItem(p.getLocation(), game.getBoardItem());
 					}
 				}
-				//instance.getDataStore().getCasinoPlayers().get(p).setBloodAlcoholContent(0);
-
 			} else if (args[0].equalsIgnoreCase("stats")) {
 				if(permissions && !p.hasPermission("boardgames.command.stats"))
 					return false;

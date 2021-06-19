@@ -9,6 +9,7 @@ public enum ConfigUtil {
     // PLUGIN SETTINGS
     PERMISSIONS_ENABLED("settings.permissions", "true"),
     WAGERS_ENABLED("settings.wagers", "true"),
+    RECIPE_ENABLED("settings.recipe.enabled", "true"),
     DB_HOST("settings.database.host", "localhost"),
     DB_PORT("settings.database.port", "3306"),
     DB_NAME("settings.database.database", "boardgames"),

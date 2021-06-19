@@ -5,17 +5,15 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import water.of.cup.boardgames.game.BoardItem;
-import water.of.cup.boardgames.game.Button;
-import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.GameImage;
-import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.config.GameRecipe;
+import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.storage.StorageType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TicTacToe extends Game {
 	private Button[][] board;
@@ -83,6 +81,11 @@ public class TicTacToe extends Game {
 			add("x");
 			add("o");
 		}};
+	}
+
+	@Override
+	protected GameConfig getGameConfig() {
+		return new TicTacToeConfig(this);
 	}
 
 	@Override

@@ -71,6 +71,14 @@ public class GameManager {
 		return nameToGameTypes.keySet().toArray(new String[nameToGameTypes.keySet().size()]);
 	}
 
+	public boolean isValidGame(String name) {
+		for(String gameName : getGameNames()) {
+			if(gameName.equals(name)) return true;
+		}
+
+		return false;
+	}
+
 	public void addGame(Game game) {
 		if (!games.contains(game)) {
 			games.add(game);
