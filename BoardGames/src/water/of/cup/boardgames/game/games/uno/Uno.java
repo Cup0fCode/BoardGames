@@ -94,7 +94,7 @@ public class Uno extends Game {
 		int posCounter = 0;
 		playerHands = new HashMap<GamePlayer, UnoHand>();
 		for (GamePlayer player : super.getGamePlayers()) {
-			player.getPlayer().sendMessage("set");
+			//player.getPlayer().sendMessage("set");
 
 			playerBoardPosition.put(player, posCounter);
 			playerHands.put(player, new UnoHand());
@@ -156,7 +156,7 @@ public class Uno extends Game {
 
 			int[] loc = new int[] { iLoc[0] + cLoc[0], iLoc[1] + cLoc[1] };
 
-			player.getPlayer().sendMessage(loc[0] + "," + loc[1]);
+			//player.getPlayer().sendMessage(loc[0] + "," + loc[1]);
 			Button cardButton = new Button(this, card.getGameImage(), loc, (4 - rotation) % 4, "" + handPos);
 			cardButton.changeLocationByRotation();
 			cardButton.setVisibleForAll(false);
