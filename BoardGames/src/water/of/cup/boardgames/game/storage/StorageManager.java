@@ -3,6 +3,7 @@ package water.of.cup.boardgames.game.storage;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.config.ConfigUtil;
@@ -156,7 +157,7 @@ public class StorageManager {
         });
     }
 
-    public LinkedHashMap<StorageType, Object> fetchPlayerStats(Player player, GameStorage storage) {
+    public LinkedHashMap<StorageType, Object> fetchPlayerStats(OfflinePlayer player, GameStorage storage) {
         CompletableFuture<LinkedHashMap<StorageType, Object>> future = new CompletableFuture<>();
 
         String tableName = storage.getTableName();
@@ -190,9 +191,9 @@ public class StorageManager {
         return future.join();
     }
 
-    public LinkedHashMap<Player, LinkedHashMap<StorageType, Object>> fetchTopPlayers(GameStorage gameStorage, StorageType orderBy, int page) {
-        CompletableFuture<LinkedHashMap<Player, LinkedHashMap<StorageType, Object>>> future = new CompletableFuture<>();
-        LinkedHashMap<Player, LinkedHashMap<StorageType, Object>> topPlayers = new LinkedHashMap<>();
+    public LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>> fetchTopPlayers(GameStorage gameStorage, StorageType orderBy, int page) {
+        CompletableFuture<LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>>> future = new CompletableFuture<>();
+        LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>> topPlayers = new LinkedHashMap<>();
 
         String tableName = gameStorage.getTableName();
         String sql = "SELECT * FROM `" + tableName + "` ORDER BY `" + orderBy.getKey() + "` DESC LIMIT " + (page * 10) + ", 10";
@@ -206,8 +207,8 @@ public class StorageManager {
                             String playerUUID = resultSet.getString("uuid");
                             if(playerUUID == null) continue;
 
-                            Player player = Bukkit.getPlayer(UUID.fromString(playerUUID));
-                            if(player == null) continue;
+                            OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID));
+                            if(!player.hasPlayedBefore()) continue;
 
                             LinkedHashMap<StorageType, Object> playerStats = this.getStatsFromResult(gameStorage, resultSet);
 

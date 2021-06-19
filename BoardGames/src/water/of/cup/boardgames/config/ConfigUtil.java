@@ -67,10 +67,10 @@ public enum ConfigUtil {
         return configString.equals("true");
     }
 
-    public String buildString(Player player) {
+    public String buildString(String playerName) {
         String formatted = this.toString();
 
-        formatted = formatted.replace("%player%", player.getDisplayName());
+        formatted = formatted.replace("%player%", playerName);
 
         return formatted;
     }

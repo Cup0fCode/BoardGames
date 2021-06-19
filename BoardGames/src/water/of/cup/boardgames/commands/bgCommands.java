@@ -1,6 +1,7 @@
 package water.of.cup.boardgames.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -69,9 +70,9 @@ public class bgCommands implements CommandExecutor {
 				String playerName = args[2];
 
 				Game tempGame = gameManager.newGame(gameName, 0);
-				Player player = Bukkit.getPlayer(playerName);
+				OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
 
-				if(player == null) {
+				if(!player.hasPlayedBefore()) {
 					p.sendMessage(ConfigUtil.CHAT_NO_PLAYER.toString());
 					return false;
 				}
@@ -88,11 +89,11 @@ public class bgCommands implements CommandExecutor {
 
 				LinkedHashMap<StorageType, Object> playerStats = instance.getStorageManager().fetchPlayerStats(player, tempGame.getGameStore());
 				if(playerStats == null) {
-					p.sendMessage(ConfigUtil.CHAT_DB_ERROR.toString());
+					p.sendMessage(ConfigUtil.CHAT_NO_PLAYER.toString());
 					return false;
 				}
 
-				p.sendMessage(ConfigUtil.CHAT_STATS_HEADER.buildString(player));
+				p.sendMessage(ConfigUtil.CHAT_STATS_HEADER.buildString(player.getName()));
 				for(StorageType storageType : playerStats.keySet()) {
 					p.sendMessage(storageType.getKey() + " : " + playerStats.get(storageType));
 				}
@@ -135,11 +136,17 @@ public class bgCommands implements CommandExecutor {
 					}
 				}
 
-				LinkedHashMap<Player, LinkedHashMap<StorageType, Object>> topPlayers = instance.getStorageManager().fetchTopPlayers(gameStorage, orderBy, 0);
+				LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>> topPlayers = instance.getStorageManager().fetchTopPlayers(gameStorage, orderBy, 0);
+
+				if(topPlayers == null) {
+					p.sendMessage(ConfigUtil.CHAT_DB_ERROR.toString());
+					return false;
+				}
+
 				int count = 1;
 
 				p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_HEADER.buildString(tempGame.getName(), orderBy.getKey()));
-				for(Player player : topPlayers.keySet()) {
+				for(OfflinePlayer player : topPlayers.keySet()) {
 					p.sendMessage("#" + count + ". " + player.getName() + " - " + topPlayers.get(player).get(orderBy));
 					count++;
 				}
