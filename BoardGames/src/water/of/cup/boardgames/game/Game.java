@@ -120,6 +120,14 @@ public abstract class Game {
 				}
 			}
 		}
+		
+		// check that bottom blocks are not empty
+		for (int x = minX; x <= maxX; x++) 
+			for (int z = minZ; z <= maxZ; z++) {
+				if (loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY() - 1, loc.getBlockZ() + z)
+						.isEmpty())
+					return false;
+			}
 
 		return true;
 	}
