@@ -26,9 +26,6 @@ import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToeInventory;
 import water.of.cup.boardgames.game.games.uno.Uno;
 import water.of.cup.boardgames.commands.bgCommands;
-import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.GameManager;
-import water.of.cup.boardgames.game.games.battleship.Battleship;
 import water.of.cup.boardgames.game.games.checkers.Checkers;
 import water.of.cup.boardgames.game.games.chess.Chess;
 import water.of.cup.boardgames.game.games.connectfour.ConnectFour;
@@ -74,7 +71,7 @@ public class BoardGames extends JavaPlugin {
 		getCommand("debug").setExecutor(new DebugCommand());
 		//Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
 		
-		gameManager.registerGames(Chess.class, ConwaysGameOfLife.class, TicTacToe.class, Battleship.class, ConnectFour.class, Checkers.class, MineSweeper.class, Uno.class);
+		gameManager.registerGames(Chess.class, ConwaysGameOfLife.class, TicTacToe.class, ConnectFour.class, Checkers.class, MineSweeper.class, Uno.class);
 		
 		getCommand("bg").setExecutor(new bgCommands());
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());

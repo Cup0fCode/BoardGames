@@ -13,8 +13,6 @@ import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.BoardItem;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
-import water.of.cup.boardgames.game.games.battleship.Battleship;
-import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
 
 public class BlockPlace implements Listener {
 
