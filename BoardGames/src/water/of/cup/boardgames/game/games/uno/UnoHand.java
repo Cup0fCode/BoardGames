@@ -14,7 +14,22 @@ public class UnoHand {
 	}
 	
 	public ArrayList<UnoCard> getCards() {
-		return cards;
+		return new ArrayList<UnoCard>(cards);
+	}
+	
+	public ArrayList<UnoCard> getCards(UnoCard matcher) { //returns with playable cards first
+		if (matcher == null)
+			return getCards();
+		
+		ArrayList<UnoCard> hand = new ArrayList<UnoCard>();
+		for (UnoCard card : cards) {
+			if (card.matches(matcher)) {
+				hand.add(0, card);
+			} else {
+				hand.add(card);
+			}
+		}
+		return hand;
 	}
 	
 	public void removeCard(UnoCard card) {

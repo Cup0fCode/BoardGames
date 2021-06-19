@@ -42,15 +42,16 @@ public class Uno extends Game {
 	@Override
 	protected void startGame() {
 		deck = new UnoDeck();
-		playerBoardPosition = new HashMap<GamePlayer, Integer>();
-		playerCardButtons = new HashMap<GamePlayer, ArrayList<Button>>();
-		handButtons = new HashMap<GamePlayer, Button>();
-		createPlayerHands();
-
+		
 		// set current card
 		currentCard = deck.drawCards(1).get(0);
 		while (currentCard.getColor().equals("ALL"))
 			currentCard = deck.drawCards(1).get(0);
+
+		playerBoardPosition = new HashMap<GamePlayer, Integer>();
+		playerCardButtons = new HashMap<GamePlayer, ArrayList<Button>>();
+		handButtons = new HashMap<GamePlayer, Button>();
+		createPlayerHands();
 
 		currentCardButton = new Button(this, currentCard.getGameImage(), new int[] { 124, 121 }, 0,
 				"currentCardButton");
@@ -69,7 +70,7 @@ public class Uno extends Game {
 			toggleColorButtons();
 			i++;
 		}
-		
+
 		toggleHandButtons();
 		mapManager.renderBoard();
 		super.setInGame();
@@ -81,7 +82,7 @@ public class Uno extends Game {
 			b.setClickable(isWild);
 		}
 	}
-	
+
 	private void toggleHandButtons() {
 		for (Button b : handButtons.values()) {
 			b.setImage("UNO_DECK");
@@ -111,10 +112,9 @@ public class Uno extends Game {
 
 			// create position image
 			Button b = new Button(this, "UNO_DECK", loc, (4 - rotation) % 4, "deck");
-			handButtons.put(player,  b);
+			handButtons.put(player, b);
 			buttons.add(b);
 
-			
 			setCardButtons(player);
 			posCounter++;
 		}
@@ -147,7 +147,7 @@ public class Uno extends Game {
 		iLoc[0] += (1 - (boardPos) / 4) * 128; // set X cords
 
 		int handPos = 0;
-		for (UnoCard card : hand.getCards()) {
+		for (UnoCard card : hand.getCards(currentCard)) {
 			int[] cLoc = new int[] { (handPos % 7) * 9, (handPos / 7) * 15 };
 
 			for (int i = 4; i > rotation; i--) { // rotate change cords
@@ -175,7 +175,7 @@ public class Uno extends Game {
 		if (index == -1)
 			return null;
 		UnoHand hand = playerHands.get(player);
-		return hand.getCards().get(index);
+		return hand.getCards(currentCard).get(index);
 	}
 
 	private boolean playCard(GamePlayer player, UnoCard card) {
@@ -238,7 +238,6 @@ public class Uno extends Game {
 				continue;
 			}
 		}
-
 	}
 
 	@Override
@@ -296,6 +295,7 @@ public class Uno extends Game {
 				currentCard.setColor(b.getName());
 				doCardActions(currentCard);
 				toggleHandButtons();
+				setCardButtons(teamManager.getTurnPlayer());
 				mapManager.renderBoard();
 				this.getGamePlayers().forEach((p) -> p.getPlayer()
 						.sendMessage(player.getPlayer().getDisplayName() + ": " + b.getName() + "!"));
@@ -320,6 +320,7 @@ public class Uno extends Game {
 		if (playCard(gamePlayer, card)) {
 			player.sendMessage("played card");
 			toggleHandButtons();
+			setCardButtons(teamManager.getTurnPlayer());
 			mapManager.renderBoard();
 		} else {
 			player.sendMessage("You can not play that card.");
