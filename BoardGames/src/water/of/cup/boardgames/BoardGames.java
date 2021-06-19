@@ -101,10 +101,12 @@ public class BoardGames extends JavaPlugin {
 //				this.dataStore.addChessPlayer(player);
 //			}
 //		}
-		
-		boolean hasEconomy = setupEconomy();
-		if (!hasEconomy) {
-			Bukkit.getLogger().info("Server must have Vault in order to place wagers on games.");
+
+		if(ConfigUtil.WAGERS_ENABLED.toBoolean()) {
+			boolean hasEconomy = setupEconomy();
+			if (!hasEconomy) {
+				Bukkit.getLogger().info("Server must have Vault in order to place wagers on games.");
+			}
 		}
 
 		//GameManager.loadGames();
