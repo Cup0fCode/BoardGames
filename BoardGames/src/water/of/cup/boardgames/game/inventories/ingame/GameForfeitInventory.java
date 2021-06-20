@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
@@ -46,7 +47,7 @@ public class GameForfeitInventory extends InventoryScreen {
                     callback.onForfeit(player);
                     return true;
                 },
-                        ChatColor.RED + "Forfeit Game"
+                ConfigUtil.GUI_FORFEIT_GAME.toString()
                 )
         );
 

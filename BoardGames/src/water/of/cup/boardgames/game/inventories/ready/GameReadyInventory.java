@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.InventoryScreen;
@@ -44,8 +45,8 @@ public class GameReadyInventory extends InventoryScreen {
             boolean isReady = gameInventory.getReadyStatus(readyPlayer);
             ItemStack playerHead = InventoryUtils.getPlayerHead(readyPlayer, isReady);
             String readyText = isReady
-                    ? ChatColor.GREEN + "" + ChatColor.BOLD + "READY"
-                    : ChatColor.RED + "" + ChatColor.BOLD + "NOT READY";
+                    ? ConfigUtil.GUI_READY_TEXT.toString()
+                    : ConfigUtil.GUI_UNREADY_TEXT.toString();
 
             playerReadyGroup.addElement((new StaticGuiElement('g',
                     playerHead,
@@ -68,8 +69,8 @@ public class GameReadyInventory extends InventoryScreen {
         boolean isReady = gameInventory.getReadyStatus(player);
         Material readyMat = isReady ? Material.LIME_STAINED_GLASS_PANE : Material.YELLOW_STAINED_GLASS_PANE;
         String readyText = isReady
-                ? ChatColor.GREEN + "" + ChatColor.BOLD + "READY"
-                : ChatColor.RED + "" + ChatColor.BOLD + "CLICK TO READY";
+                ? ConfigUtil.GUI_READY_TEXT.toString()
+                : ConfigUtil.GUI_UNREADY_TEXT.toString();
         gui.addElement(new StaticGuiElement('r', new ItemStack(readyMat), click -> {
                     if(!isReady) {
                         callback.onReady(player);
@@ -86,7 +87,7 @@ public class GameReadyInventory extends InventoryScreen {
                     callback.onLeave(player);
                     return true;
                 },
-                        ChatColor.RED + "Leave Game"
+                ConfigUtil.GUI_LEAVE_GAME.toString()
                 )
         );
 

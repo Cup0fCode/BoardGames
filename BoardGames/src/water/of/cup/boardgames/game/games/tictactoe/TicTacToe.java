@@ -6,6 +6,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameRecipe;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
@@ -141,7 +142,7 @@ public class TicTacToe extends Game {
 
 		// Check if game is "ranked"
 		if(hasGameData("ranked")
-				&& (getGameData("ranked") + "").equals("unranked")) return;
+				&& (getGameData("ranked") + "").equals(ConfigUtil.GUI_UNRANKED_OPTION_TEXT.toRawString())) return;
 
 		if(gamePlayerWinner == null) {
 			for(GamePlayer player : teamManager.getGamePlayers()) {

@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
@@ -82,8 +83,8 @@ public class GameWagerInventory extends InventoryScreen {
                 click -> true, ChatColor.GREEN + wagerOption.getGamePlayer().getPlayer().getDisplayName())));
 
 
-        renderBetOptionButton(player, gui, 'd', rightArrow, "Next");
-        renderBetOptionButton(player, gui, 'c', leftArrow, "Back");
+        renderBetOptionButton(player, gui, 'd', rightArrow, ConfigUtil.GUI_WAGER_NEXT.toString());
+        renderBetOptionButton(player, gui, 'c', leftArrow, ConfigUtil.GUI_WAGER_BACK.toString());
 
         gui.addElement(new DynamicGuiElement('e', (viewer) ->
                 new StaticGuiElement('e', new ItemStack(Material.GOLD_INGOT),
@@ -98,7 +99,7 @@ public class GameWagerInventory extends InventoryScreen {
                         callback.onCancel(requestWager);
                         return true;
                     },
-                            ChatColor.RED + "Cancel Wager"
+                            ConfigUtil.GUI_WAGER_CANCEL.toString()
                     )
             );
         } else {
@@ -107,12 +108,12 @@ public class GameWagerInventory extends InventoryScreen {
                         if(requestWager.canCreate()) {
                             callback.onCreate(requestWager);
                         } else {
-                            player.sendMessage(ChatColor.RED + "Not enough money to create wager");
+                            player.sendMessage(ConfigUtil.GUI_WAGER_NO_MONEY_CREATE.toString());
                         }
 
                         return true;
                     },
-                            ChatColor.GREEN + "Create Wager"
+                            ConfigUtil.GUI_WAGER_CREATE.toString()
                     )
             );
         }
@@ -164,11 +165,11 @@ public class GameWagerInventory extends InventoryScreen {
 
                         callback.onAccept(player, selectedWager);
                     } else {
-                        player.sendMessage(ChatColor.RED + "Not enough money to accept wager");
+                        player.sendMessage(ConfigUtil.GUI_WAGER_NO_MONEY_ACCEPT.toString());
                     }
                     return true;
                 },
-                        ChatColor.GREEN + "Accept Wager"
+                        ConfigUtil.GUI_WAGER_ACCEPT.toString()
                 )
         );
 
@@ -179,7 +180,7 @@ public class GameWagerInventory extends InventoryScreen {
                     this.build(player, callback);
                     return true;
                 },
-                        ChatColor.RED + "Decline Wager"
+                        ConfigUtil.GUI_WAGER_DECLINE.toString()
                 )
         );
 
@@ -215,7 +216,7 @@ public class GameWagerInventory extends InventoryScreen {
     private void renderWagerButton(Player player, InventoryGui gui, char slot, ItemStack itemStack, boolean increase) {
         WagerOption wagerOption = gameInventory.getWagerOption(player);
         boolean hasWager = wagerManager.hasRequestWager(player);
-        String text = increase ? "Increase Wager" : "Decrease Wager";
+        String text = increase ? ConfigUtil.GUI_WAGER_INCREASE.toString() : ConfigUtil.GUI_WAGER_DECREASE.toString();
         gui.addElement(new StaticGuiElement(slot, itemStack, click -> {
                     // If they have an open wager, don't let change wager options
                     if(hasWager) return true;
@@ -234,7 +235,7 @@ public class GameWagerInventory extends InventoryScreen {
                     click.getGui().draw();
                     return true;
                 },
-                        ChatColor.GREEN + text
+                        text
                 )
         );
     }
@@ -266,7 +267,7 @@ public class GameWagerInventory extends InventoryScreen {
                         return true;
                     },
                     ChatColor.GREEN + requestWager.getOwner().getDisplayName(),
-                    ChatColor.GREEN + "Betting on " + requestWager.getOwnerBet().getPlayer().getDisplayName()
+                    ConfigUtil.GUI_WAGER_BETTINGON.buildString(requestWager.getOwnerBet().getPlayer().getDisplayName())
             )));
         }
 
@@ -289,7 +290,7 @@ public class GameWagerInventory extends InventoryScreen {
                     this.build(player, callback);
                     return true;
                 },
-                        ChatColor.GREEN + "Wagers"
+                        ConfigUtil.GUI_WAGER_TEXT.toString()
                 )
         );
 

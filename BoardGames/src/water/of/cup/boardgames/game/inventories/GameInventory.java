@@ -4,6 +4,7 @@ import de.themoep.inventorygui.InventoryGui;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.MathUtils;
@@ -141,7 +142,7 @@ public abstract class GameInventory {
             public void onCreateGame(HashMap<String, Object> gameDataResult) {
                 // check if gameData has been set, if it has, don't overwrite.
                 if(gameData != null || game.isIngame()) {
-                    player.sendMessage("Game has already been created.");
+                    player.sendMessage(ConfigUtil.CHAT_GUI_GAME_ALREADY_CREATED.toString());
                     return;
                 }
 
@@ -160,7 +161,7 @@ public abstract class GameInventory {
                 if(hasWagers) {
                     double wagerAmount = Double.parseDouble(gameDataResult.get("wager") + "");
                     if(instance.getEconomy().getBalance(player) < wagerAmount) {
-                        player.sendMessage(ChatColor.RED + "Not enough money to create game.");
+                        player.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_CREATE.toString());
                         return;
                     }
 
@@ -196,8 +197,8 @@ public abstract class GameInventory {
             public void onAccept(Player player) {
                 // Check if they have enough money
                 if(hasWagers && (instance.getEconomy().getBalance(player) < getGameWagerAmount())) {
-                    gameCreator.sendMessage(ChatColor.RED + "Player no longer has enough money.");
-                    player.sendMessage(ChatColor.RED + "You do not have enough money!");
+                    gameCreator.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_ACCEPT.toString());
+                    player.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_JOIN.toString());
 
                     joinPlayerQueue.remove(player);
                     closeInventory(player);
@@ -206,7 +207,7 @@ public abstract class GameInventory {
                     return;
                 }
 
-                gameCreator.sendMessage("Accepting " + player.getDisplayName());
+                gameCreator.sendMessage(ConfigUtil.CHAT_GUI_GAME_ACCEPT.buildString(player.getDisplayName()));
 
                 joinPlayerQueue.remove(player);
                 acceptedPlayers.add(player);
@@ -230,7 +231,7 @@ public abstract class GameInventory {
 
             @Override
             public void onDecline(Player player) {
-                gameCreator.sendMessage("Declining " + player.getDisplayName());
+                gameCreator.sendMessage(ConfigUtil.CHAT_GUI_GAME_DECLINE.buildString(player.getDisplayName()));
 
                 joinPlayerQueue.remove(player);
 
@@ -247,7 +248,7 @@ public abstract class GameInventory {
 
             @Override
             public void onLeave() {
-                resetGameInventory("Game owner has left", true);
+                resetGameInventory(ConfigUtil.CHAT_GUI_GAME_OWNER_LEFT.toString(), true);
             }
         };
     }
@@ -259,13 +260,13 @@ public abstract class GameInventory {
                 // If game already started etc, don't let them join
                 if(gameData == null || playerReadyMap.size() > 0) {
                     closeInventory(player);
-                    player.sendMessage("No available game to join.");
+                    player.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_AVAIL_GAME.toString());
                     return;
                 }
 
                 // Check if they have enough money
                 if(hasWagers && (instance.getEconomy().getBalance(player) < getGameWagerAmount())) {
-                    player.sendMessage(ChatColor.RED + "Not enough money to join game.");
+                    player.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_ACCEPT.toString());
                     return;
                 }
 
@@ -277,7 +278,7 @@ public abstract class GameInventory {
                     updateJoinGameInventory(player);
                 } else {
                     closeInventory(player);
-                    player.sendMessage("Too many players are queuing!");
+                    player.sendMessage(ConfigUtil.CHAT_GUI_GAME_FULL_QUEUE.toString());
                 }
 
             }
@@ -327,7 +328,7 @@ public abstract class GameInventory {
 
             @Override
             public void onLeave(Player player) {
-                resetGameInventory("Player left ready screen. Game cancelled.", true);
+                resetGameInventory(ConfigUtil.CHAT_GUI_GAME_PLAYER_LEFT.toString(), true);
             }
         };
     }
@@ -354,8 +355,8 @@ public abstract class GameInventory {
 
                 Player wagerOwner = requestWager.getOwner();
 
-                wagerOwner.sendMessage(wagerOpponent.getDisplayName() + " has accepted your wager!");
-                wagerOpponent.sendMessage("You have accepted " + wagerOwner.getDisplayName() + "'s wager!");
+                wagerOwner.sendMessage(ConfigUtil.CHAT_GUI_WAGER_ACCEPT.buildString(wagerOpponent.getDisplayName()));
+                wagerOpponent.sendMessage(ConfigUtil.CHAT_GUI_WAGER_ACCEPTED.buildString(wagerOwner.getDisplayName()));
 
                 updateWagerViewInventories();
             }
@@ -409,7 +410,7 @@ public abstract class GameInventory {
 
     private void moveToReady() {
         // Kick players still in queue
-        closePlayers(joinPlayerQueue, "Game has started, you have been kicked.");
+        closePlayers(joinPlayerQueue, ConfigUtil.CHAT_GUI_GAME_ALREADY_CREATED.toString());
 
         // Init all player ready
         playerReadyMap.put(gameCreator, false);

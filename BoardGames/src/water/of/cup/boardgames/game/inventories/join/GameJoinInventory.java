@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
@@ -42,9 +43,9 @@ public class GameJoinInventory extends InventoryScreen {
 
         // Depending on if they've been accepted/waiting render different
         if(gameInventory.getJoinPlayerQueue().contains(player)) {
-            renderJoinStatus(gui, Material.CLOCK, "Waiting for game creator");
+            renderJoinStatus(gui, Material.CLOCK, ConfigUtil.GUI_WAIT_CREATOR.toString());
         } else if(gameInventory.getAcceptedPlayers().contains(player)) {
-            renderJoinStatus(gui, Material.LIME_WOOL, "Waiting for more players");
+            renderJoinStatus(gui, Material.LIME_WOOL, ConfigUtil.GUI_WAIT_PLAYERS.toString());
         } else {
             gui.addElement(new StaticGuiElement('z', InventoryUtils.getPlayerHead(player), ChatColor.GREEN + player.getDisplayName()));
 
@@ -52,7 +53,7 @@ public class GameJoinInventory extends InventoryScreen {
                         callback.onJoin(player);
                         return true;
                     },
-                            ChatColor.GREEN + "Join Game"
+                            ConfigUtil.GUI_JOIN_GAME.toString()
                     )
             );
 
@@ -61,7 +62,7 @@ public class GameJoinInventory extends InventoryScreen {
                         callback.onLeave(player);
                         return true;
                     },
-                            ChatColor.RED + "Leave Game"
+                            ConfigUtil.GUI_LEAVE_GAME.toString()
                     )
             );
         }

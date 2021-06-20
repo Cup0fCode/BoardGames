@@ -2,6 +2,7 @@ package water.of.cup.boardgames.game.inventories;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import water.of.cup.boardgames.config.ConfigUtil;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -60,10 +61,10 @@ public class GameOption {
     }
 
     public static GameOption getWagerGameOption() {
-        return new GameOption("wager", Material.GOLD_INGOT, GameOptionType.COUNT, ChatColor.DARK_GREEN + "Wager: ", "0");
+        return new GameOption("wager", Material.GOLD_INGOT, GameOptionType.COUNT, ConfigUtil.GUI_WAGER_LABEL.toString(), "0");
     }
 
     public static GameOption getTeamSelectGameOption(ArrayList<String> teams) {
-        return new GameOption("team", Material.PAPER, GameOptionType.COUNT, ChatColor.DARK_GREEN + "Team: ", teams.get(0), teams);
+        return new GameOption("team", Material.PAPER, GameOptionType.COUNT, ConfigUtil.GUI_TEAM_LABEL.toString(), teams.get(0), teams);
     }
 }

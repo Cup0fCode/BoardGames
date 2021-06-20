@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.MathUtils;
 import water.of.cup.boardgames.game.inventories.*;
@@ -89,7 +90,7 @@ public class GameCreateInventory extends InventoryScreen {
                     this.build(player, newPage, gameData, callback);
                     return true;
                 },
-                        ChatColor.GREEN + "Next Page"
+                ConfigUtil.GUI_NEXT_PAGE.toString()
                 )
         );
 
@@ -98,7 +99,7 @@ public class GameCreateInventory extends InventoryScreen {
                     callback.onCreateGame(gameData);
                     return true;
                 },
-                        ChatColor.GREEN + "Create Game"
+                ConfigUtil.GUI_CREATE_GAME.toString()
                 )
         );
 

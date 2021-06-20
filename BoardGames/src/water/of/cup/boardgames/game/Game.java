@@ -479,6 +479,9 @@ public abstract class Game {
 	}
 
 	public Object getGameData(String key) {
+		if(this.gameData.get(key) instanceof String)
+			return ChatColor.stripColor((String) this.gameData.get(key));
+
 		return this.gameData.get(key);
 	}
 
@@ -499,13 +502,13 @@ public abstract class Game {
 	public ArrayList<GameSound> getGameSounds() {
 		if(!hasGameConfig()) return null;
 
-		return new ArrayList<>(gameConfig.getGameSounds());
+		return gameConfig.getGameSounds();
 	}
 
 	public HashMap<String, Object> getCustomValues() {
 		if(!hasGameConfig()) return null;
 
-		return new HashMap<>(gameConfig.getCustomValues());
+		return gameConfig.getCustomValues();
 	}
 
 	@Nullable
