@@ -72,7 +72,7 @@ public abstract class GameStorage {
         FileConfiguration config = instance.getConfig();
 
         HashMap<String, Object> gameConfig = new HashMap<>();
-        String path = "settings.database." + getTableName();
+        String path = "settings.games." + game.getName() + ".database";
 
         for(StorageType type : getGameStores()) {
             gameConfig.put(path + "." + type.getKey(), "true");

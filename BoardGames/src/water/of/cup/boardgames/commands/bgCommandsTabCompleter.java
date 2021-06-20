@@ -28,6 +28,7 @@ public class bgCommandsTabCompleter implements TabCompleter {
             args.add("board");
             args.add("stats");
             args.add("leaderboard");
+            args.add("reload");
         } else if(strings.length == 2) {
             if (strings[0].equalsIgnoreCase("leaderboard")
                     || strings[0].equalsIgnoreCase("stats")

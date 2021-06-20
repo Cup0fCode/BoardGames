@@ -13,8 +13,8 @@ public class GameRecipe {
     private final ArrayList<String> shape;
     private final String name;
 
-    public GameRecipe(String name, HashMap<String, String> recipe, ArrayList<String> shape) {
-        this.name = name;
+    public GameRecipe(String gameName, HashMap<String, String> recipe, ArrayList<String> shape) {
+        this.name = gameName;
         this.recipe = recipe;
         this.shape = shape;
     }
@@ -23,8 +23,7 @@ public class GameRecipe {
         HashMap<String, Object> defaultConfig = new HashMap<>();
         FileConfiguration config = instance.getConfig();
 
-
-        String configLoc = "settings.recipe." + this.name;
+        String configLoc = "settings.games." + this.name + ".recipe";
 
         defaultConfig.put(configLoc + ".shape", shape);
 

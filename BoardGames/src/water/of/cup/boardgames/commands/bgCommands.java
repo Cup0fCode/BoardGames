@@ -160,6 +160,13 @@ public class bgCommands implements CommandExecutor {
 					p.sendMessage("#" + count + ". " + player.getName() + " - " + topPlayers.get(player).get(orderBy));
 					count++;
 				}
+			} else if (args[0].equalsIgnoreCase("reload")) {
+				if(permissions && !p.hasPermission("boardgames.command.reload"))
+					return false;
+
+				p.sendMessage(ConfigUtil.CHAT_RELOAD.toString());
+
+				instance.loadConfig();
 			}
 			return true;
 		}

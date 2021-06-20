@@ -18,22 +18,25 @@ public class GameConfigLoader {
     private static final BoardGames instance = BoardGames.getInstance();
     private static final GameManager gameManager = instance.getGameManager();
     private static final ArrayList<GameRecipe> GAME_RECIPES = new ArrayList<>();
+    private static final HashMap<String, Game> GAMES = new HashMap<>();
 
     static {
         for (String name : gameManager.getGameNames()) {
             Game temp = gameManager.newGame(name, 0);
 
             if(temp != null) {
-                GameRecipe gameRecipe = temp.getGameRecipe();
-                if(gameRecipe != null)
-                    GAME_RECIPES.add(gameRecipe);
+                GAMES.put(temp.getName(), temp);
             }
         }
     }
 
     public static void loadRecipes() {
-        for(GameRecipe gameRecipe : GAME_RECIPES) {
-            gameRecipe.addToConfig();
+        for(String gameName : GAMES.keySet()) {
+            Game game = GAMES.get(gameName);
+
+            GameRecipe gameRecipe = game.getGameRecipe();
+            if(gameRecipe != null)
+                gameRecipe.addToConfig();
         }
 
         if(ConfigUtil.RECIPE_ENABLED.toBoolean())
@@ -42,15 +45,14 @@ public class GameConfigLoader {
 
     public static void loadGameSounds() {
         HashMap<String, Object> defaultConfig = new HashMap<>();
-        FileConfiguration config = instance.getConfig();
 
-        for (String name : gameManager.getGameNames()) {
-            Game temp = gameManager.newGame(name, 0);
+        for (String gameName : GAMES.keySet()) {
+            Game temp = GAMES.get(gameName);
 
             if (temp != null) {
                 ArrayList<GameSound> gameSounds = temp.getGameSounds();
-                if(gameSounds != null) {
-                    String configLoc = "settings.sounds." + temp.getName();
+                if(gameSounds != null) { ;
+                    String configLoc = "settings.games." + temp.getName() + ".sounds";
                     for(GameSound gameSound : gameSounds) {
                         defaultConfig.put(configLoc + "." + gameSound.getName(), gameSound.getSound().toString());
                     }
@@ -60,22 +62,33 @@ public class GameConfigLoader {
             }
         }
 
-        for (String key : defaultConfig.keySet()) {
-            if(!config.contains(key)) {
-                config.set(key, defaultConfig.get(key));
+        instance.addToConfig(defaultConfig);
+    }
+
+    public static void loadCustomConfigValues() {
+        HashMap<String, Object> defaultConfig = new HashMap<>();
+
+        for (String gameName : GAMES.keySet()) {
+            Game temp = GAMES.get(gameName);
+
+            if (temp != null) {
+                HashMap<String, Object> customValues = temp.getCustomValues();
+                if(customValues != null) {
+                    String configLoc = "settings.games." + temp.getName() + ".misc";
+                    for(String key : customValues.keySet()) {
+                        defaultConfig.put(configLoc + "." + key, customValues.get(key));
+                    }
+                }
             }
         }
 
-        instance.saveConfig();
+        instance.addToConfig(defaultConfig);
     }
 
     private static void addBukkitRecipes() {
         FileConfiguration config = instance.getConfig();
 
-        for (String recipeKey : config.getConfigurationSection("settings.recipe").getKeys(false)) {
-            if (recipeKey.equals("enabled"))
-                continue;
-
+        for (String recipeKey : config.getConfigurationSection("settings.games").getKeys(false)) {
             if(!gameManager.isValidGame(recipeKey)) continue;
 
             Game temp = gameManager.newGame(recipeKey, 0);
@@ -84,7 +97,7 @@ public class GameConfigLoader {
             NamespacedKey key = new NamespacedKey(instance, recipeKey);
             ShapedRecipe recipe = new ShapedRecipe(key, boardItemStack);
 
-            String configPath = "settings.recipe." + recipeKey;
+            String configPath = "settings.games." + recipeKey + ".recipe";
 
             ArrayList<String> shapeArr = (ArrayList<String>) config.get(configPath + ".shape");
             recipe.shape(shapeArr.toArray(new String[shapeArr.size()]));

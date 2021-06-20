@@ -2,6 +2,7 @@ package water.of.cup.boardgames.game.games.tictactoe;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -102,8 +103,9 @@ public class TicTacToe extends Game {
 		Button b = getClickedButton(gamePlayer, clickLoc);
 
 		if (b != null) {
-			player.sendMessage("you clicked button " + b.getName());
 			if(!b.getName().equals("empty")) return;
+
+			this.playGameSound();
 
 			if (teamManager.getTurnTeam().equals("x")) {
 				b.getImage().setImage("TICTACTOE_X");
@@ -123,9 +125,8 @@ public class TicTacToe extends Game {
 			}
 
 		}
-		player.sendMessage("you clicked: " + clickLoc[0] + "," + clickLoc[1]);
-		mapManager.renderBoard();
 
+		mapManager.renderBoard();
 	}
 
 	@Override
@@ -153,6 +154,15 @@ public class TicTacToe extends Game {
 
 			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
 			gameStorage.updateData(gamePlayerLoser.getPlayer(), StorageType.LOSSES, 1);
+		}
+	}
+
+	private void playGameSound() {
+		Sound sound = getGameSound("click");
+		if(sound == null) return;
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().playSound(player.getPlayer().getLocation(), sound, (float) 5.0, (float) 1.0);
 		}
 	}
 

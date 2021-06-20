@@ -22,10 +22,11 @@ public enum ConfigUtil {
     CHAT_NO_GAME("settings.messages.chat.nogame", "No game found with that name."),
     CHAT_NO_PLAYER("settings.messages.chat.noplayer", "No player found with that name."),
     CHAT_DB_ERROR("settings.messages.chat.dberror", "Error calling to database."),
+    CHAT_RELOAD("settings.messages.chat.reload", "Reloaded board games config."),
     CHAT_GAME_NAMES("settings.messages.chat.gamenames", "Game Names: "),
     CHAT_STATS_HEADER("settings.messages.chat.statsheader", "%player%'s stats"),
     CHAT_LEADERBOARD_HEADER("settings.messages.chat.leaderboardheader", "%game% leaderboard sorting by %sort%"),
-    CHAT_AVAIL_COMMANDS("settings.messages.chat.availcommands", "Available commands\n/bg games - lists games\n/bg board [game name] - gives you the game's item\n/bg stats [game name] [player name]\n/bg leaderboard [game name] [order by]");
+    CHAT_AVAIL_COMMANDS("settings.messages.chat.availcommands", "Available commands\n/bg games - lists games\n/bg board [game name] - gives you the game's item\n/bg stats [game name] [player name]\n/bg leaderboard [game name] [order by]\n/bg reload");
 
     private final String path;
     private final String defaultValue;

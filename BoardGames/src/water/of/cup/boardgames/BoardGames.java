@@ -88,6 +88,7 @@ public class BoardGames extends JavaPlugin {
 		// Load recipes after config and games are initialized
 		GameConfigLoader.loadRecipes();
 		GameConfigLoader.loadGameSounds();
+		GameConfigLoader.loadCustomConfigValues();
 
 		if(ConfigUtil.WAGERS_ENABLED.toBoolean()) {
 			boolean hasEconomy = setupEconomy();
@@ -158,7 +159,7 @@ public class BoardGames extends JavaPlugin {
 //		Bukkit.addRecipe(recipe);
 	}
 
-	private void loadConfig() {
+	public void loadConfig() {
 		if (!getDataFolder().exists()) {
 			getDataFolder().mkdir();
 		}
@@ -185,6 +186,7 @@ public class BoardGames extends JavaPlugin {
 			- boardgames.command.board
 			- boardgames.command.stats
 			- boardgames.command.leaderboard
+			- boardgames.command.reload
 		 */
 
 		// Load in defaults from ConfigUtil
@@ -192,26 +194,9 @@ public class BoardGames extends JavaPlugin {
 			defaultConfig.put(configUtil.getPath(), configUtil.getDefaultValue());
 		}
 
-		HashMap<String, String> defaultRecipe = new HashMap<>();
-		defaultRecipe.put("B", Material.BLACK_DYE.toString());
-		defaultRecipe.put("W", Material.WHITE_DYE.toString());
-		defaultRecipe.put("L", Material.LEATHER.toString());
-		defaultRecipe.put("Q", Material.QUARTZ.toString());
-
-		defaultConfig.put("settings.recipe.enabled", true);
-		defaultConfig.put("settings.recipe.shape", new ArrayList<String>() {
-			{
-				add("BW");
-				add("QQ");
-				add("LL");
-			}
-		});
-
-		if(!config.contains("settings.recipe.ingredients")) {
-			for (String key : defaultRecipe.keySet()) {
-				defaultConfig.put("settings.recipe.ingredients." + key, defaultRecipe.get(key));
-			}
-		}
+		// settings.games.GAMENAME.database
+		// settings.games.GAMENAME.recipe
+		// settings.games.GAMENAME.sounds
 
 		for (String key : defaultConfig.keySet()) {
 			if(!config.contains(key)) {
@@ -234,6 +219,16 @@ public class BoardGames extends JavaPlugin {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void addToConfig(HashMap<String, Object> defaultConfig) {
+		for (String key : defaultConfig.keySet()) {
+			if(!config.contains(key)) {
+				config.set(key, defaultConfig.get(key));
+			}
+		}
+
+		saveConfig();
 	}
 
 	@Override

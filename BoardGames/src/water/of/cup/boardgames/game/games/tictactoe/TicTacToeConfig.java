@@ -37,7 +37,16 @@ public class TicTacToeConfig extends GameConfig {
     @Override
     protected ArrayList<GameSound> getGameSounds() {
         ArrayList<GameSound> gameSounds = new ArrayList<>();
-        gameSounds.add(new GameSound("click", Sound.BLOCK_WOOD_HIT));
+        gameSounds.add(new GameSound("click", Sound.BLOCK_WOOD_PLACE));
         return gameSounds;
+    }
+
+    @Override
+    protected HashMap<String, Object> getCustomValues() {
+//        HashMap<String, Object> customValues = new HashMap<>();
+//        customValues.put("testoption", 123);
+//        customValues.put("anotheroption", "test");
+//        return customValues;
+        return null;
     }
 }

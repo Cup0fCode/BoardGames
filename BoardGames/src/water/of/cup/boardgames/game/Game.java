@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.Hash;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.EnumUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -13,6 +15,7 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameRecipe;
 import water.of.cup.boardgames.config.GameSound;
 import water.of.cup.boardgames.game.inventories.GameInventory;
@@ -23,6 +26,8 @@ import water.of.cup.boardgames.game.maps.Screen;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.teams.TeamManager;
 import water.of.cup.boardgames.game.wagers.WagerManager;
+
+import javax.annotation.Nullable;
 
 public abstract class Game {
 	private static NamespacedKey gameIdKey;
@@ -49,6 +54,8 @@ public abstract class Game {
 	protected int placedMapVal; // the value of the map at the placed board location
 
 	private HashMap<String, Object> gameData;
+
+	private final GameConfig gameConfig;
 
 	protected abstract void setMapInformation(int rotation); // set mapStructure and placedMapVal
 
@@ -93,6 +100,7 @@ public abstract class Game {
 
 		gameInventory = getGameInventory();
 		gameStorage = getGameStorage();
+		gameConfig = getGameConfig();
 
 		gameData = new HashMap<>();
 	}
@@ -479,23 +487,46 @@ public abstract class Game {
 	}
 
 	public boolean hasGameConfig() {
-		return getGameConfig() != null;
+		return gameConfig != null;
 	}
 
 	public GameRecipe getGameRecipe() {
 		if(!hasGameConfig()) return null;
 
-		return getGameConfig().getGameRecipe();
+		return gameConfig.getGameRecipe();
 	}
 
 	public ArrayList<GameSound> getGameSounds() {
 		if(!hasGameConfig()) return null;
 
-		return getGameConfig().getGameSounds();
+		return new ArrayList<>(gameConfig.getGameSounds());
 	}
 
-	// TODO: Get game sound from config, check if enabled
-	public Sound getGameSound(String name) {
-		return null;
+	public HashMap<String, Object> getCustomValues() {
+		if(!hasGameConfig()) return null;
+
+		return new HashMap<>(gameConfig.getCustomValues());
+	}
+
+	@Nullable
+	public Sound getGameSound(String key) {
+		if(gameConfig.getGameSounds() == null) return null;
+
+		String configLoc = "settings.games." + getName() + ".sounds";
+		if(!ConfigUtil.getBoolean(configLoc + ".enabled")) return null;
+
+		String soundName = BoardGames.getInstance().getConfig().getString(configLoc + "." + key);
+		if(!EnumUtils.isValidEnum(Sound.class, soundName)) return null;
+
+		return Sound.valueOf(soundName);
+	}
+
+	@Nullable
+	public Object getConfigValue(String key) {
+		if(gameConfig.getCustomValues() == null) return null;
+
+		String configLoc = "settings.games." + getName() + ".misc." + key;
+
+		return BoardGames.getInstance().getConfig().get(configLoc);
 	}
 }
