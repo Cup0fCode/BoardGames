@@ -203,8 +203,11 @@ public abstract class Game {
 						// set world preconditions so the item frame can spawn
 						frameLoc.getBlock().setType(Material.AIR);
 						Block placedOn = frameLoc.getBlock().getRelative(mapData.getBlockFace().getOppositeFace());
-						if (placedOn.getType() == Material.AIR)
+						boolean removeBlock = false;
+						if (placedOn.getType() == Material.AIR) {
 							placedOn.setType(Material.BARRIER);
+							removeBlock = true;
+						}
 
 						ItemFrame frame = world.spawn(frameLoc, ItemFrame.class);
 						frame.setItem(map);
@@ -212,7 +215,9 @@ public abstract class Game {
 						frame.setInvulnerable(true);
 						frame.setFixed(true);
 						frame.setVisible(true);
-
+						if (removeBlock)
+							placedOn.setType(Material.AIR);
+						
 						frameLoc.getBlock().setType(Material.BARRIER);
 					}
 
