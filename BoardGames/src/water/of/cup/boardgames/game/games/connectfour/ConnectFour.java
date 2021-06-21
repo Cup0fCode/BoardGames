@@ -5,12 +5,14 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameRecipe;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToeStorage;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.Screen;
 import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.game.storage.StorageType;
 
 import java.util.ArrayList;
 
@@ -107,7 +109,7 @@ public class ConnectFour extends Game {
 					if (chipLocations[y + a][x + a].equals("EMPTY") || !chipLocations[y + a][x + a].equals(color))
 						continue yloop;
 				// game over
-				return color;
+				return color + "_CROSS";
 			}
 		}
 		// check diagonal -1
@@ -118,7 +120,7 @@ public class ConnectFour extends Game {
 					if (chipLocations[y - a][x + a].equals("EMPTY") || !chipLocations[y - a][x + a].equals(color))
 						continue yloop;
 				// game over
-				return color;
+				return color + "_CROSS";
 			}
 		}
 
@@ -200,7 +202,7 @@ public class ConnectFour extends Game {
 
 	@Override
 	protected GameStorage getGameStorage() {
-		return null;
+		return new ConnectFourStorage(this);
 	}
 
 	@Override
@@ -213,7 +215,7 @@ public class ConnectFour extends Game {
 
 	@Override
 	protected GameConfig getGameConfig() {
-		return null;
+		return new ConnectFourConfig(this);
 	}
 
 	@Override
@@ -236,21 +238,37 @@ public class ConnectFour extends Game {
 
 		int col = position[0];
 		if (placeChip(col, teamTurn)) {
+			this.playGameSound("click");
+
 			mapManager.renderBoard();
 
 			teamManager.nextTurn();
 
 			String winner = checkGameOver();
+
 			if (!winner.equals("EMPTY")) {
 				// game over
+				boolean crossWin = false;
+
+				if(winner.indexOf("_CROSS") > -1) {
+					winner = winner.substring(0, winner.indexOf("_CROSS"));
+					crossWin = true;
+				}
+
 				GamePlayer playerWinner = teamManager.getGamePlayerByTeam(winner);
-				endGame(playerWinner);
+				endGame(playerWinner, crossWin);
 			}
 		}
 	}
 
-	public void endGame(GamePlayer gamePlayerWinner) {
+	public void endGame(GamePlayer gamePlayer) {
+		endGame(gamePlayer, false);
+	}
+
+	public void endGame(GamePlayer gamePlayerWinner, boolean crossWin) {
 		buttons.clear();
+
+		updateGameStorage(gamePlayerWinner, crossWin);
 
 		String message;
 		if(gamePlayerWinner != null) {
@@ -264,6 +282,26 @@ public class ConnectFour extends Game {
 		}
 
 		super.endGame(gamePlayerWinner);
+	}
+
+	private void updateGameStorage(GamePlayer gamePlayerWinner, boolean crossWin) {
+		if(!hasGameStorage()) return;
+
+		if(gamePlayerWinner == null) {
+			for(GamePlayer player : teamManager.getGamePlayers()) {
+				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
+			}
+		} else {
+			GamePlayer gamePlayerLoser = teamManager.getGamePlayers().get(0).equals(gamePlayerWinner)
+					? teamManager.getGamePlayers().get(1)
+					: teamManager.getGamePlayers().get(0);
+
+			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
+			gameStorage.updateData(gamePlayerLoser.getPlayer(), StorageType.LOSSES, 1);
+
+			if(crossWin)
+				gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.CROSS_WINS, 1);
+		}
 	}
 
 	@Override

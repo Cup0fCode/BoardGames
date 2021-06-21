@@ -106,7 +106,7 @@ public class TicTacToe extends Game {
 		if (b != null) {
 			if(!b.getName().equals("empty")) return;
 
-			this.playGameSound();
+			this.playGameSound("click");
 
 			if (teamManager.getTurnTeam().equals("x")) {
 				b.getImage().setImage("TICTACTOE_X");
@@ -155,15 +155,6 @@ public class TicTacToe extends Game {
 
 			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
 			gameStorage.updateData(gamePlayerLoser.getPlayer(), StorageType.LOSSES, 1);
-		}
-	}
-
-	private void playGameSound() {
-		Sound sound = getGameSound("click");
-		if(sound == null) return;
-
-		for(GamePlayer player : teamManager.getGamePlayers()) {
-			player.getPlayer().playSound(player.getPlayer().getLocation(), sound, (float) 5.0, (float) 1.0);
 		}
 	}
 
