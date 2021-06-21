@@ -67,6 +67,7 @@ public abstract class Game {
 		clock = getClock();
 		if (clock != null)
 			clock.runTaskTimer(BoardGames.getInstance(), 1, 1);
+		renderInitial();
 	}
 
 	protected abstract void setGameName(); // set gameName
@@ -261,7 +262,7 @@ public abstract class Game {
 	}
 
 	public void renderInitial() {
-		mapManager.renderBoard();
+		mapManager.resetRenderers();
 	}
 
 	public void endGame(GamePlayer winner) {

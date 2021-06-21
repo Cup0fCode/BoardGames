@@ -29,6 +29,7 @@ public class ConwaysGameOfLife extends Game {
 
 	@Override
 	protected void startGame() {
+		super.startGame();
 		createCells();
 		mapManager.renderBoard();
 	}

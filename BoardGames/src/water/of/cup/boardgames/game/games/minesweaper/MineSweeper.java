@@ -35,6 +35,7 @@ public class MineSweeper extends Game {
 
 	@Override
 	protected void startGame() {
+		super.startGame();
 		setInGame();
 		createBoard();
 		mapManager.renderBoard();

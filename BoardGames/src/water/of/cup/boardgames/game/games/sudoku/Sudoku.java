@@ -29,6 +29,7 @@ public class Sudoku extends Game {
 
 	@Override
 	protected void startGame() {
+		super.startGame();
 		puzzle = new SudokuPuzzle();
 		selected = null;
 		setInGame();

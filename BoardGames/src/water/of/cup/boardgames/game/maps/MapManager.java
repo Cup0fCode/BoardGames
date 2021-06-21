@@ -191,6 +191,40 @@ public class MapManager {
 			MapView view = mapMeta.getMapView();
 
 			for (MapRenderer renderer : view.getRenderers())
+				if (renderer instanceof GameRenderer)
+					((GameRenderer) renderer).rerender();
+			Bukkit.getServer().getScheduler().runTaskAsynchronously(BoardGames.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					view.getWorld().getPlayers().forEach(player -> player.sendMap(view));
+				}
+			});
+		}
+		for (Screen screen : game.getScreens())
+			for (int mapVal : screen.getMapVals()) {
+				GameMap map = game.getGameMapByMapVal(mapVal);
+				MapMeta mapMeta = map.getMapMeta();
+				MapView view = mapMeta.getMapView();
+
+				for (MapRenderer renderer : view.getRenderers())
+					if (renderer instanceof GameRenderer)
+						((GameRenderer) renderer).rerender();
+				Bukkit.getServer().getScheduler().runTaskAsynchronously(BoardGames.getInstance(), new Runnable() {
+					@Override
+					public void run() {
+						view.getWorld().getPlayers().forEach(player -> player.sendMap(view));
+					}
+				});
+			}
+	}
+
+	public void resetRenderers() {
+		for (int mapVal : getMapVals()) {
+			GameMap map = game.getGameMapByMapVal(mapVal);
+			MapMeta mapMeta = map.getMapMeta();
+			MapView view = mapMeta.getMapView();
+
+			for (MapRenderer renderer : view.getRenderers())
 				view.removeRenderer(renderer);
 
 			GameRenderer renderer = new GameRenderer(game, getMapValsLocationOnBoard(mapVal));

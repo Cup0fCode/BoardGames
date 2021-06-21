@@ -35,6 +35,7 @@ public class Chess extends Game {
 
 	@Override
 	protected void startGame() {
+		super.startGame();
 		selected = null;
 		setInGame();
 		promotion = "NONE";
@@ -57,8 +58,6 @@ public class Chess extends Game {
 			buttons.add(b);
 		}
 		paintBoard();
-		super.startGame();
-
 	}
 
 	private void togglePromotionButtons() {

@@ -132,6 +132,7 @@ public class TicTacToe extends Game {
 
 	@Override
 	protected void startGame() {
+		super.startGame();
 		setInGame();
 		placeButtons();
 		mapManager.renderBoard();

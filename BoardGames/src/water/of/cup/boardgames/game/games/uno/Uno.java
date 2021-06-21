@@ -38,6 +38,7 @@ public class Uno extends Game {
 
 	@Override
 	protected void startGame() {
+		super.startGame();
 		deck = new UnoDeck();
 		
 		// set current card

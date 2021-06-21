@@ -33,12 +33,14 @@ public class Checkers extends Game {
 
 	@Override
 	public void renderInitial() {
+		super.renderInitial();
 		setUpBoard();
 		mapManager.renderBoard();
 	}
 
 	@Override
 	protected void startGame() {
+		super.startGame();
 		setInGame();
 		setUpBoard();
 		mapManager.renderBoard();
