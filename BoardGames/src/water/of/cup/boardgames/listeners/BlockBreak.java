@@ -24,6 +24,8 @@ public class BlockBreak implements Listener {
                     continue;
                 ItemFrame frame = (ItemFrame) entity;
                 ItemStack item = frame.getItem();
+
+                // TODO: check if game is in manager
                 if (GameMap.isGameMap(item)) {
                     event.setCancelled(true);
                 }

@@ -5,25 +5,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.milkbowl.vault.economy.Economy;
 import water.of.cup.boardgames.commands.DebugCommand;
+import water.of.cup.boardgames.commands.bgCommandsTabCompleter;
+import water.of.cup.boardgames.config.ConfigUtil;
+import water.of.cup.boardgames.config.GameConfigLoader;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
-import water.of.cup.boardgames.game.games.tictactoe.TicTacToeInventory;
 import water.of.cup.boardgames.game.games.uno.Uno;
 import water.of.cup.boardgames.commands.bgCommands;
 import water.of.cup.boardgames.game.games.checkers.Checkers;
@@ -34,10 +32,12 @@ import water.of.cup.boardgames.game.games.minesweaper.MineSweeper;
 import water.of.cup.boardgames.game.games.sudoku.Sudoku;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
 import water.of.cup.boardgames.game.maps.MapManager;
+import water.of.cup.boardgames.game.storage.StorageManager;
 import water.of.cup.boardgames.listeners.BlockBreak;
 import water.of.cup.boardgames.listeners.BlockPlace;
 import water.of.cup.boardgames.listeners.BoardInteract;
 import water.of.cup.boardgames.listeners.ChunkLoad;
+import water.of.cup.boardgames.listeners.PlayerJoin;
 import water.of.cup.boardgames.metrics.Metrics;
 
 public class BoardGames extends JavaPlugin {
@@ -50,20 +50,27 @@ public class BoardGames extends JavaPlugin {
 	private static Economy economy = null;
 	//private DataSource dataStore;
 
+	private StorageManager storageManager;
+
 	@SuppressWarnings("unchecked") // for register games
 	@Override
 	public void onEnable() {
 		instance = this;
-		
+
+		// Config loads database settings
+		loadConfig();
+
+		// Load database if enabled
+		if(ConfigUtil.DB_ENABLED.toBoolean())
+			loadStorage();
 		
 		Game.setGameIdKey(new NamespacedKey(this, "game_id_key"));
 		Game.setGameNameKey(new NamespacedKey(this, "game_name_key"));
 		MapManager.setMapValsKey(new NamespacedKey(this, "map_vals_key"));
 		MapManager.setRotationKey(new NamespacedKey(this, "rotation_key"));
-		
-		loadConfig();
 
-		Bukkit.getLogger().info("[BoardGames] Successfully loaded piece images");
+
+//		Bukkit.getLogger().info("[BoardGames] Successfully loaded piece images");
 
 		// Debug:
 //		new TicTacToeInventory(null).build(null, null);
@@ -75,26 +82,25 @@ public class BoardGames extends JavaPlugin {
 		gameManager.registerGames(Sudoku.class, Chess.class, ConwaysGameOfLife.class, TicTacToe.class, ConnectFour.class, Checkers.class, MineSweeper.class, Uno.class);
 		
 		getCommand("bg").setExecutor(new bgCommands());
+		getCommand("bg").setTabCompleter(new bgCommandsTabCompleter());
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());
 
 //		registerListeners(new BoardInteract(), new BlockPlace(), new InventoryClose(), new InventoryClick(), new HangingBreakByEntity(), new EntityDamageByEntity(), new HangingBreak(), new ChessPlayerJoin(), new BlockBreak());
-		registerListeners(new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak());
 		
 //		if(config.getBoolean("settings.chessboard.recipe.enabled"))
 //			addGameRecipes();
+		registerListeners(new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak(), new PlayerJoin());
 
-//		if(config.getBoolean("settings.database.enabled")) {
-//			this.dataStore = new DataSource();;
-//			this.dataStore.initialize();
-//
-//			for(Player player : Bukkit.getOnlinePlayers()) {
-//				this.dataStore.addChessPlayer(player);
-//			}
-//		}
-		
-		boolean hasEconomy = setupEconomy();
-		if (!hasEconomy) {
-			Bukkit.getLogger().info("Server must have Vault in order to place wagers on games.");
+		// Load recipes after config and games are initialized
+		GameConfigLoader.loadRecipes();
+		GameConfigLoader.loadGameSounds();
+		GameConfigLoader.loadCustomConfigValues();
+
+		if(ConfigUtil.WAGERS_ENABLED.toBoolean()) {
+			boolean hasEconomy = setupEconomy();
+			if (!hasEconomy) {
+				Bukkit.getLogger().info("Server must have Vault in order to place wagers on games.");
+			}
 		}
 
 		//GameManager.loadGames();
@@ -114,6 +120,10 @@ public class BoardGames extends JavaPlugin {
 
 		// TODO: Fix/Add save games
 //		gameManager.saveGames();
+
+		// Disconnect from database
+		if(storageManager != null)
+			storageManager.closeConnection();
 
 		/* Disable all current async tasks */
 		Bukkit.getScheduler().cancelTasks(this);
@@ -155,7 +165,7 @@ public class BoardGames extends JavaPlugin {
 //		Bukkit.addRecipe(recipe);
 	}
 
-	private void loadConfig() {
+	public void loadConfig() {
 		if (!getDataFolder().exists()) {
 			getDataFolder().mkdir();
 		}
@@ -174,44 +184,25 @@ public class BoardGames extends JavaPlugin {
 		HashMap<String, Object> defaultConfig = new HashMap<>();
 
 		/* Perms:
-		chessboard.interact - interact with chessboard
-		chessboard.place - place chessboard
-		chessboard.destroy - break chessboard
-		chessboard.command - use chessboard command
-			- chessboard.command.give - use give command
-			- chessboard.command.leaderboard - use leaderboard command
+		boardgames.interact - interact with board
+		boardgames.place - place board
+		boardgames.destroy - break board
+		boardgames.command - use board command
+			- boardgames.command.games
+			- boardgames.command.board
+			- boardgames.command.stats
+			- boardgames.command.leaderboard
+			- boardgames.command.reload
 		 */
-		defaultConfig.put("settings.chessboard.permissions", true);
-		defaultConfig.put("settings.chessboard.customImages", false); // Default false
 
-        defaultConfig.put("settings.database.host", "localhost");
-        defaultConfig.put("settings.database.port", "3306");
-        defaultConfig.put("settings.database.database", "chessboards");
-        defaultConfig.put("settings.database.username", "root");
-        defaultConfig.put("settings.database.password", " ");
-        defaultConfig.put("settings.database.enabled", false); // Database disabled by default
-
-		HashMap<String, String> defaultRecipe = new HashMap<>();
-		defaultRecipe.put("B", Material.BLACK_DYE.toString());
-		defaultRecipe.put("W", Material.WHITE_DYE.toString());
-		defaultRecipe.put("L", Material.LEATHER.toString());
-		defaultRecipe.put("Q", Material.QUARTZ.toString());
-
-		defaultConfig.put("settings.chessboard.recipe.enabled", true);
-		defaultConfig.put("settings.chessboard.recipe.shape", new ArrayList<String>() {
-			{
-				add("BW");
-				add("QQ");
-				add("LL");
-			}
-		});
-
-
-		if(!config.contains("settings.chessboard.recipe.ingredients")) {
-			for (String key : defaultRecipe.keySet()) {
-				defaultConfig.put("settings.chessboard.recipe.ingredients." + key, defaultRecipe.get(key));
-			}
+		// Load in defaults from ConfigUtil
+		for(ConfigUtil configUtil : ConfigUtil.values()) {
+			defaultConfig.put(configUtil.getPath(), configUtil.getDefaultValue());
 		}
+
+		// settings.games.GAMENAME.database
+		// settings.games.GAMENAME.recipe
+		// settings.games.GAMENAME.sounds
 
 		for (String key : defaultConfig.keySet()) {
 			if(!config.contains(key)) {
@@ -236,6 +227,16 @@ public class BoardGames extends JavaPlugin {
 		}
 	}
 
+	public void addToConfig(HashMap<String, Object> defaultConfig) {
+		for (String key : defaultConfig.keySet()) {
+			if(!config.contains(key)) {
+				config.set(key, defaultConfig.get(key));
+			}
+		}
+
+		saveConfig();
+	}
+
 	@Override
 	public FileConfiguration getConfig() {
 		return config;
@@ -248,6 +249,18 @@ public class BoardGames extends JavaPlugin {
 	public Economy getEconomy() {
         return economy;
     }
+
+    public void loadStorage() {
+		storageManager = new StorageManager();
+	}
+
+	public StorageManager getStorageManager() {
+		return storageManager;
+	}
+
+	public boolean hasStorage() {
+		return this.storageManager != null && ConfigUtil.DB_ENABLED.toBoolean();
+	}
 	
 //	public DataSource getDataStore() {
 //		return dataStore;

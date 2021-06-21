@@ -7,13 +7,10 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import water.of.cup.boardgames.game.BoardItem;
-import water.of.cup.boardgames.game.Button;
-import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.GameImage;
-import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.config.GameRecipe;
+import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
-import water.of.cup.boardgames.game.MathUtils;
+import water.of.cup.boardgames.game.storage.GameStorage;
 
 public class Uno extends Game {
 	private boolean isWild;
@@ -264,7 +261,17 @@ public class Uno extends Game {
 	}
 
 	@Override
+	protected GameStorage getGameStorage() {
+		return null;
+	}
+
+	@Override
 	public ArrayList<String> getTeamNames() {
+		return null;
+	}
+
+	@Override
+	protected GameConfig getGameConfig() {
 		return null;
 	}
 

@@ -3,6 +3,7 @@ package water.of.cup.boardgames.game.games.tictactoe;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
@@ -27,7 +28,7 @@ public class TicTacToeInventory extends GameInventory {
     protected ArrayList<GameOption> getOptions() {
         ArrayList<GameOption> options = new ArrayList<>();
 
-        List<String> rankedValues =  Arrays.asList("ranked", "unranked");
+        List<String> rankedValues =  Arrays.asList(ConfigUtil.GUI_RANKED_OPTION_TEXT.toString(), ConfigUtil.GUI_UNRANKED_OPTION_TEXT.toString());
         GameOption ranked = new GameOption("ranked", Material.EXPERIENCE_BOTTLE, GameOptionType.TOGGLE, null, rankedValues.get(0), rankedValues);
         options.add(ranked);
 

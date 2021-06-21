@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
@@ -55,8 +56,8 @@ public class GameWaitPlayersInventory extends InventoryScreen {
                         return true;
                     },
                     ChatColor.GREEN + queuePlayer.getDisplayName(),
-                    ChatColor.DARK_GREEN + "LEFT CLICK - ACCEPT",
-                    ChatColor.DARK_RED + "RIGHT CLICK - DECLINE"
+                    ConfigUtil.GUI_ACCEPT_PLAYER.toString(),
+                    ConfigUtil.GUI_DECLINE_PLAYER.toString()
             )));
         }
 
@@ -78,7 +79,7 @@ public class GameWaitPlayersInventory extends InventoryScreen {
                         callback.onStart();
                         return true;
                     },
-                            ChatColor.GREEN + "Start game with " + numAccepted + (numAccepted == 1 ? " player" : " players")
+                            ConfigUtil.GUI_START_GAME_WITH.buildString(numAccepted)
                     )
             );
         }

@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.Hash;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.EnumUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -13,13 +15,19 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
+import water.of.cup.boardgames.config.GameRecipe;
+import water.of.cup.boardgames.config.GameSound;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.MapData;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.maps.Screen;
+import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.teams.TeamManager;
 import water.of.cup.boardgames.game.wagers.WagerManager;
+
+import javax.annotation.Nullable;
 
 public abstract class Game {
 	private static NamespacedKey gameIdKey;
@@ -38,11 +46,16 @@ public abstract class Game {
 	protected Clock clock;
 	protected GameInventory gameInventory;
 	protected TeamManager teamManager;
+	protected GameStorage gameStorage;
 
 	protected ArrayList<GameMap> gameMaps; // game maps for the game
 	// public HashMap<Integer, Integer> mapValMapIds; // <mapval, mapid>
 	protected int[][] mapStructure; // the structure of mapVals, 0 for missing map
 	protected int placedMapVal; // the value of the map at the placed board location
+
+	private HashMap<String, Object> gameData;
+
+	private final GameConfig gameConfig;
 
 	protected abstract void setMapInformation(int rotation); // set mapStructure and placedMapVal
 
@@ -60,7 +73,11 @@ public abstract class Game {
 
 	protected abstract GameInventory getGameInventory();
 
+	protected abstract GameStorage getGameStorage();
+
 	public abstract ArrayList<String> getTeamNames();
+
+	protected abstract GameConfig getGameConfig();
 
 	public Game(int rotation) {
 		screens = new ArrayList<Screen>();
@@ -82,6 +99,10 @@ public abstract class Game {
 		gameMaps = new ArrayList<GameMap>();
 
 		gameInventory = getGameInventory();
+		gameStorage = getGameStorage();
+		gameConfig = getGameConfig();
+
+		gameData = new HashMap<>();
 	}
 
 	abstract public void click(Player player, double[] loc, ItemStack map);
@@ -471,5 +492,72 @@ public abstract class Game {
 				placeBoard(loc, frotation, fmapVal);
 			}
 		}, 20);
+	}
+	
+	public boolean hasGameStorage() {
+		return gameStorage != null && BoardGames.getInstance().getStorageManager() != null;
+	}
+
+	public void setGameData(HashMap<String, Object> gameData) {
+		this.gameData = new HashMap<>(gameData);
+	}
+
+	public boolean hasGameData(String key) {
+		return this.gameData.containsKey(key);
+	}
+
+	public Object getGameData(String key) {
+		if(this.gameData.get(key) instanceof String)
+			return ChatColor.stripColor((String) this.gameData.get(key));
+
+		return this.gameData.get(key);
+	}
+
+	public GameStorage getGameStore() {
+		return this.gameStorage;
+	}
+
+	public boolean hasGameConfig() {
+		return gameConfig != null;
+	}
+
+	public GameRecipe getGameRecipe() {
+		if(!hasGameConfig()) return null;
+
+		return gameConfig.getGameRecipe();
+	}
+
+	public ArrayList<GameSound> getGameSounds() {
+		if(!hasGameConfig()) return null;
+
+		return gameConfig.getGameSounds();
+	}
+
+	public HashMap<String, Object> getCustomValues() {
+		if(!hasGameConfig()) return null;
+
+		return gameConfig.getCustomValues();
+	}
+
+	@Nullable
+	public Sound getGameSound(String key) {
+		if(gameConfig.getGameSounds() == null) return null;
+
+		String configLoc = "settings.games." + getName() + ".sounds";
+		if(!ConfigUtil.getBoolean(configLoc + ".enabled")) return null;
+
+		String soundName = BoardGames.getInstance().getConfig().getString(configLoc + "." + key);
+		if(!EnumUtils.isValidEnum(Sound.class, soundName)) return null;
+
+		return Sound.valueOf(soundName);
+	}
+
+	@Nullable
+	public Object getConfigValue(String key) {
+		if(gameConfig.getCustomValues() == null) return null;
+
+		String configLoc = "settings.games." + getName() + ".misc." + key;
+
+		return BoardGames.getInstance().getConfig().get(configLoc);
 	}
 }

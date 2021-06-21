@@ -2,18 +2,20 @@ package water.of.cup.boardgames.game.games.tictactoe;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import water.of.cup.boardgames.game.BoardItem;
-import water.of.cup.boardgames.game.Button;
-import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.GameImage;
-import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.config.ConfigUtil;
+import water.of.cup.boardgames.config.GameRecipe;
+import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
+import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.game.storage.StorageType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TicTacToe extends Game {
 	private Button[][] board;
@@ -71,11 +73,21 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
+	protected GameStorage getGameStorage() {
+		return new TicTacToeStorage(this);
+	}
+
+	@Override
 	public ArrayList<String> getTeamNames() {
 		return new ArrayList<String>() {{
 			add("x");
 			add("o");
 		}};
+	}
+
+	@Override
+	protected GameConfig getGameConfig() {
+		return new TicTacToeConfig(this);
 	}
 
 	@Override
@@ -92,8 +104,9 @@ public class TicTacToe extends Game {
 		Button b = getClickedButton(gamePlayer, clickLoc);
 
 		if (b != null) {
-			player.sendMessage("you clicked button " + b.getName());
 			if(!b.getName().equals("empty")) return;
+
+			this.playGameSound();
 
 			if (teamManager.getTurnTeam().equals("x")) {
 				b.getImage().setImage("TICTACTOE_X");
@@ -113,9 +126,8 @@ public class TicTacToe extends Game {
 			}
 
 		}
-		player.sendMessage("you clicked: " + clickLoc[0] + "," + clickLoc[1]);
-		mapManager.renderBoard();
 
+		mapManager.renderBoard();
 	}
 
 	@Override
@@ -125,9 +137,41 @@ public class TicTacToe extends Game {
 		mapManager.renderBoard();
 	}
 
+	private void updateGameStorage(GamePlayer gamePlayerWinner) {
+		if(!hasGameStorage()) return;
+
+		// Check if game is "ranked"
+		if(hasGameData("ranked")
+				&& (getGameData("ranked") + "").equals(ConfigUtil.GUI_UNRANKED_OPTION_TEXT.toRawString())) return;
+
+		if(gamePlayerWinner == null) {
+			for(GamePlayer player : teamManager.getGamePlayers()) {
+				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
+			}
+		} else {
+			GamePlayer gamePlayerLoser = teamManager.getGamePlayers().get(0).equals(gamePlayerWinner)
+					? teamManager.getGamePlayers().get(1)
+					: teamManager.getGamePlayers().get(0);
+
+			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
+			gameStorage.updateData(gamePlayerLoser.getPlayer(), StorageType.LOSSES, 1);
+		}
+	}
+
+	private void playGameSound() {
+		Sound sound = getGameSound("click");
+		if(sound == null) return;
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().playSound(player.getPlayer().getLocation(), sound, (float) 5.0, (float) 1.0);
+		}
+	}
+
 	public void endGame(GamePlayer gamePlayerWinner) {
 		board = null;
 		buttons.clear();
+
+		updateGameStorage(gamePlayerWinner);
 
 		String message;
 		if(gamePlayerWinner != null) {

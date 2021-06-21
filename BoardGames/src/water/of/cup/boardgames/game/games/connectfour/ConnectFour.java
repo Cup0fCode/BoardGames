@@ -5,13 +5,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import water.of.cup.boardgames.game.BoardItem;
-import water.of.cup.boardgames.game.Button;
-import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.GameImage;
-import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.config.GameRecipe;
+import water.of.cup.boardgames.game.*;
+import water.of.cup.boardgames.game.games.tictactoe.TicTacToeStorage;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.Screen;
+import water.of.cup.boardgames.game.storage.GameStorage;
 
 import java.util.ArrayList;
 
@@ -200,11 +199,21 @@ public class ConnectFour extends Game {
 	}
 
 	@Override
+	protected GameStorage getGameStorage() {
+		return null;
+	}
+
+	@Override
 	public ArrayList<String> getTeamNames() {
 		return new ArrayList<String>() {{
 			add("RED");
 			add("BLUE");
 		}};
+	}
+
+	@Override
+	protected GameConfig getGameConfig() {
+		return null;
 	}
 
 	@Override
