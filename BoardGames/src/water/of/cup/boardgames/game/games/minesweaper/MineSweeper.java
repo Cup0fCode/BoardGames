@@ -157,11 +157,10 @@ public class MineSweeper extends Game {
 	}
 
 	@Override
-	protected void startClock() {
+	protected Clock getClock() {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
-
 	@Override
 	protected GameInventory getGameInventory() {
 		return new MineSweeperInventory(this);
@@ -241,6 +240,12 @@ public class MineSweeper extends Game {
 	@Override
 	public ItemStack getBoardItem() {
 		return new BoardItem(gameName, new ItemStack(Material.OAK_TRAPDOOR, 1));
+	}
+
+	@Override
+	protected void clockOutOfTime() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

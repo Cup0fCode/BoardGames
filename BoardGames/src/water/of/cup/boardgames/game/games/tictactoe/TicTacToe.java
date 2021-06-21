@@ -62,9 +62,9 @@ public class TicTacToe extends Game {
 	}
 
 	@Override
-	protected void startClock() {
+	protected Clock getClock() {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
@@ -233,6 +233,12 @@ public class TicTacToe extends Game {
 		if(tie) return "t";
 
 		return "n";
+	}
+
+	@Override
+	protected void clockOutOfTime() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

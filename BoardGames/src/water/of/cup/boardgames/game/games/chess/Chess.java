@@ -1,6 +1,8 @@
 package water.of.cup.boardgames.game.games.chess;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -55,6 +57,7 @@ public class Chess extends Game {
 			buttons.add(b);
 		}
 		paintBoard();
+		super.startGame();
 
 	}
 
@@ -128,9 +131,29 @@ public class Chess extends Game {
 	}
 
 	@Override
-	protected void startClock() {
+	protected Clock getClock() {
 		// TODO Auto-generated method stub
 
+		Clock clock = new Clock(getClockTime(), this, true);
+		clock.setIncrement(getClockIncrement());
+		return clock;
+	}
+
+	private int getClockTime() {
+		String gameTimeString = (String) getGameData("time");
+		int minutes = new Integer(gameTimeString.substring(0, gameTimeString.indexOf(" ")));
+		return minutes * 60;
+
+	}
+	
+	private int getClockIncrement() {
+		String gameTimeString = (String) getGameData("time");
+		if (gameTimeString.contains("|")) {
+			int stringPos = gameTimeString.indexOf("|");
+			return new Integer(gameTimeString.substring(stringPos + 2, stringPos + 3));
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -164,6 +187,7 @@ public class Chess extends Game {
 				return; // none clicked
 			board.promotePawn(teamTurn, ChessPiece.valueOf(promotion + "_" + promotionNames[p]));
 			promotion = "NONE";
+			clock.run();
 			teamManager.nextTurn();
 			paintBoard();
 			return;
@@ -197,6 +221,7 @@ public class Chess extends Game {
 
 			if (board.getPawnPromotion().equals("NONE")) {
 				// no pawn promotion
+				clock.run();
 				teamManager.nextTurn();
 				paintBoard();
 				return;
@@ -220,7 +245,7 @@ public class Chess extends Game {
 
 	@Override
 	protected void gamePlayerOutOfTime(GamePlayer turn) {
-		// TODO Auto-generated method stub
+		this.endGame(teamManager.getTurnPlayer() == turn ? teamManager.nextTurn() : teamManager.getTurnPlayer());
 
 	}
 
@@ -237,6 +262,10 @@ public class Chess extends Game {
 	@Override
 	protected GameStorage getGameStorage() {
 		return null;
+	}
+
+	@Override
+	protected void clockOutOfTime() {
 	}
 
 }

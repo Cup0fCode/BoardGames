@@ -63,13 +63,19 @@ public abstract class Game {
 		gameId = BoardGames.getInstance().getGameManager().nextGameId();
 	}
 
-	protected abstract void startGame();
+	protected void startGame() {
+		clock = getClock();
+		if (clock != null)
+			clock.runTaskTimer(BoardGames.getInstance(), 1, 1);
+	}
 
 	protected abstract void setGameName(); // set gameName
 
 	protected abstract void setBoardImage(); // set board Image
+	
+	protected abstract void clockOutOfTime();
 
-	protected abstract void startClock();
+	protected abstract Clock getClock();
 
 	protected abstract GameInventory getGameInventory();
 
@@ -262,6 +268,7 @@ public abstract class Game {
 		ingame = false;
 		wagerManager.completeWagers(winner);
 		clearGamePlayers();
+		clock.cancel();
 
 		// Ensure map gets cleared
 		renderInitial();

@@ -226,9 +226,9 @@ public class Checkers extends Game {
 	}
 
 	@Override
-	protected void startClock() {
+	protected Clock getClock() {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
@@ -383,6 +383,12 @@ public class Checkers extends Game {
 	@Override
 	public ItemStack getBoardItem() {
 		return new BoardItem(gameName, new ItemStack(Material.OAK_TRAPDOOR, 1));
+	}
+
+	@Override
+	protected void clockOutOfTime() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

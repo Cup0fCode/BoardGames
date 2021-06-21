@@ -115,9 +115,9 @@ public class Sudoku extends Game {
 	}
 
 	@Override
-	protected void startClock() {
+	protected Clock getClock() {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
@@ -188,6 +188,12 @@ public class Sudoku extends Game {
 	@Override
 	protected GameStorage getGameStorage() {
 		return null;
+	}
+
+	@Override
+	protected void clockOutOfTime() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
