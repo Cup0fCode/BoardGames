@@ -7,12 +7,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import water.of.cup.boardgames.game.BoardItem;
-import water.of.cup.boardgames.game.Button;
-import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.GameImage;
-import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
+import water.of.cup.boardgames.game.storage.GameStorage;
 
 public class Chess extends Game {
 	private ChessBoard board;
@@ -230,6 +227,16 @@ public class Chess extends Game {
 	@Override
 	public ItemStack getBoardItem() {
 		return new BoardItem(gameName, new ItemStack(Material.OAK_TRAPDOOR, 1));
+	}
+
+	@Override
+	protected GameConfig getGameConfig() {
+		return null;
+	}
+
+	@Override
+	protected GameStorage getGameStorage() {
+		return null;
 	}
 
 }

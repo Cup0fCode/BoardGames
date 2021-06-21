@@ -6,12 +6,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import water.of.cup.boardgames.game.BoardItem;
-import water.of.cup.boardgames.game.Button;
-import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.GameImage;
-import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
+import water.of.cup.boardgames.game.storage.GameStorage;
 
 public class Sudoku extends Game {
 	private SudokuPuzzle puzzle;
@@ -181,6 +178,16 @@ public class Sudoku extends Game {
 	public ItemStack getBoardItem() {
 		// TODO Auto-generated method stub
 		return new BoardItem(gameName, new ItemStack(Material.BIRCH_TRAPDOOR, 1));
+	}
+
+	@Override
+	protected GameConfig getGameConfig() {
+		return null;
+	}
+
+	@Override
+	protected GameStorage getGameStorage() {
+		return null;
 	}
 
 }
