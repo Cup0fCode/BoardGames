@@ -61,9 +61,15 @@ public class Sudoku extends Game {
 
 	private void updateBoard() {
 		int[][] vals = puzzle.getKnownStructure();
+		int n = -1;
+		if (selected != null)
+			n = vals[selected[1]][selected[0]];
+		if (n == 0)
+			n = -1;
+
 		for (int y = 0; y < 9; y++)
 			for (int x = 0; x < 9; x++) {
-				if (selected != null && x == selected[0] && y == selected[1]) {
+				if (vals[y][x] == n || selected != null && (x == selected[0] && y == selected[1])) {
 					boardButtons[y][x].setImage("SUDOKU_HIGHLIGHTED");
 				} else {
 					boardButtons[y][x].setImage("SUDOKU_0");
@@ -72,6 +78,21 @@ public class Sudoku extends Game {
 			}
 
 		mapManager.renderBoard();
+	}
+	
+	private void removeFinishedNumberButtons() {
+		for (int n : puzzle.getFinishedNumbers()) {
+			if (numberButtons[n - 1] != null) {
+				buttons.remove(numberButtons[n - 1]);
+				numberButtons[n - 1] = null;
+				updateBoard();
+			}
+		}
+	}
+	
+	private void checkGameOver() {
+		if (puzzle.checkGameWon())
+			endGame(teamManager.getTurnPlayer());
 	}
 
 	private int[] getButtonLocation(Button b) {
@@ -120,7 +141,7 @@ public class Sudoku extends Game {
 
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
 		Button b = getClickedButton(gamePlayer, clickLoc);
-		
+
 		if (b == null)
 			return;
 
@@ -138,7 +159,8 @@ public class Sudoku extends Game {
 						this.endGame(null);
 						player.sendMessage("You lost.");
 					} else {
-						// TODO: check game over
+						removeFinishedNumberButtons();
+						checkGameOver();
 					}
 					break;
 				}

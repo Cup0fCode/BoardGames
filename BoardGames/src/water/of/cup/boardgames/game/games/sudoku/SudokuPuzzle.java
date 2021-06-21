@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game.games.sudoku;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class SudokuPuzzle {
@@ -66,6 +67,27 @@ public class SudokuPuzzle {
 	
 	public int[][] getKnownStructure() {
 		return filledStructure;
+	}
+	
+	public boolean checkGameWon() {
+		for (int[] line : filledStructure)
+			for (int n : line)
+				if (n == 0)
+					return false;
+		return true;
+	}
+	
+	public ArrayList<Integer> getFinishedNumbers() {
+		ArrayList<Integer> finished = new ArrayList<Integer>();
+		int[] counts = new int[9];
+		for (int[] line : filledStructure)
+			for (int n : line)
+				if (n != 0)
+					counts[n - 1]++;
+		for (int n = 0; n < 9; n++)
+			if (counts[n] == 9)
+				finished.add(n + 1);
+		return finished;
 	}
 
 	private void generate() {
