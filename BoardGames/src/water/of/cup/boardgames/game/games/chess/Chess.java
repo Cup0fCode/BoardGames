@@ -3,6 +3,7 @@ package water.of.cup.boardgames.game.games.chess;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.game.storage.StorageType;
 
 public class Chess extends Game {
 	private ChessBoard board;
@@ -186,6 +188,8 @@ public class Chess extends Game {
 			// move works
 			selected = null;
 
+			this.playGameSound("click");
+
 			if (!board.checkGameOver().equals("")) {
 				// game over
 				GamePlayer playerWinner = teamManager.getGamePlayerByTeam(board.checkGameOver());
@@ -231,12 +235,45 @@ public class Chess extends Game {
 
 	@Override
 	protected GameConfig getGameConfig() {
-		return null;
+		return new ChessConfig(this);
 	}
 
 	@Override
 	protected GameStorage getGameStorage() {
-		return null;
+		return new ChessStorage(this);
 	}
 
+	public void endGame(GamePlayer gamePlayerWinner) {
+		updateGameStorage(gamePlayerWinner);
+
+		String message;
+		if(gamePlayerWinner != null) {
+			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+		} else {
+			message = ChatColor.GREEN + "Tie game!";
+		}
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().sendMessage(message);
+		}
+
+		super.endGame(gamePlayerWinner);
+	}
+
+	private void updateGameStorage(GamePlayer gamePlayerWinner) {
+		if(!hasGameStorage()) return;
+
+		if(gamePlayerWinner == null) {
+			for(GamePlayer player : teamManager.getGamePlayers()) {
+				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
+			}
+		} else {
+			GamePlayer gamePlayerLoser = teamManager.getGamePlayers().get(0).equals(gamePlayerWinner)
+					? teamManager.getGamePlayers().get(1)
+					: teamManager.getGamePlayers().get(0);
+
+			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
+			gameStorage.updateData(gamePlayerLoser.getPlayer(), StorageType.LOSSES, 1);
+		}
+	}
 }

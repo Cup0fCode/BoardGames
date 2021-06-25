@@ -2,6 +2,7 @@ package water.of.cup.boardgames.game.games.sudoku;
 
 import java.util.ArrayList;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.game.storage.StorageType;
 
 public class Sudoku extends Game {
 	private SudokuPuzzle puzzle;
@@ -146,6 +148,8 @@ public class Sudoku extends Game {
 			int[] position = getButtonLocation(b);
 			selected = position;
 			updateBoard();
+
+			this.playGameSound("click");
 		} else {
 			if (selected == null)
 				return;
@@ -168,6 +172,37 @@ public class Sudoku extends Game {
 
 	}
 
+	public void endGame(GamePlayer gamePlayerWinner) {
+		this.updateGameStorage(gamePlayerWinner);
+
+		String message;
+		if(gamePlayerWinner != null) {
+			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+		} else {
+			message = ChatColor.GREEN + "You lost!";
+		}
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().sendMessage(message);
+		}
+
+		super.endGame(gamePlayerWinner);
+	}
+
+	private void updateGameStorage(GamePlayer gamePlayerWinner) {
+		if(!hasGameStorage()) return;
+
+		if(gamePlayerWinner == null) {
+			for(GamePlayer player : teamManager.getGamePlayers()) {
+				gameStorage.updateData(player.getPlayer(), StorageType.LOSSES, 1);
+			}
+		} else {
+			for(GamePlayer player : teamManager.getGamePlayers()) {
+				gameStorage.updateData(player.getPlayer(), StorageType.WINS, 1);
+			}
+		}
+	}
+
 	@Override
 	protected void gamePlayerOutOfTime(GamePlayer turn) {
 		// TODO Auto-generated method stub
@@ -182,12 +217,12 @@ public class Sudoku extends Game {
 
 	@Override
 	protected GameConfig getGameConfig() {
-		return null;
+		return new SudokuConfig(this);
 	}
 
 	@Override
 	protected GameStorage getGameStorage() {
-		return null;
+		return new SudokuStorage(this);
 	}
 
 }

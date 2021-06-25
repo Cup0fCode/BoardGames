@@ -3,6 +3,7 @@ package water.of.cup.boardgames.game.games.uno;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +12,7 @@ import water.of.cup.boardgames.config.GameRecipe;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.game.storage.StorageType;
 
 public class Uno extends Game {
 	private boolean isWild;
@@ -184,7 +186,7 @@ public class Uno extends Game {
 				this.getGamePlayers()
 						.forEach((p) -> p.getPlayer().sendMessage(player.getPlayer().getDisplayName() + ": Uno!"));
 			} else if (hand.cardsLeft() == 0) {
-				super.endGame(player);
+				this.endGame(player);
 			}
 
 			currentCard = card;
@@ -262,7 +264,7 @@ public class Uno extends Game {
 
 	@Override
 	protected GameStorage getGameStorage() {
-		return null;
+		return new UnoStorage(this);
 	}
 
 	@Override
@@ -272,7 +274,7 @@ public class Uno extends Game {
 
 	@Override
 	protected GameConfig getGameConfig() {
-		return null;
+		return new UnoConfig(this);
 	}
 
 	@Override
@@ -325,6 +327,8 @@ public class Uno extends Game {
 			return;
 
 		if (playCard(gamePlayer, card)) {
+			this.playGameSound("click");
+
 			player.sendMessage("played card");
 			toggleHandButtons();
 			setCardButtons(teamManager.getTurnPlayer());
@@ -339,6 +343,30 @@ public class Uno extends Game {
 //		Button cardButton = new Button(this, card.getGameImage(), clickLoc, 0, card.getType());
 //		buttons.add(cardButton);
 //		mapManager.renderBoard();
+	}
+
+	public void endGame(GamePlayer gamePlayerWinner) {
+		this.updateGameStorage(gamePlayerWinner);
+
+		String message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().sendMessage(message);
+		}
+
+		super.endGame(gamePlayerWinner);
+	}
+
+	private void updateGameStorage(GamePlayer gamePlayerWinner) {
+		if(!hasGameStorage()) return;
+
+		gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			if(player.getPlayer().getName().equals(gamePlayerWinner.getPlayer().getName())) continue;
+
+			gameStorage.updateData(player.getPlayer(), StorageType.LOSSES, 1);
+		}
 	}
 
 	@Override
