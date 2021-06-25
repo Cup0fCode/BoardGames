@@ -94,7 +94,7 @@ public class bgCommands implements CommandExecutor {
 					return false;
 				}
 
-				LinkedHashMap<StorageType, Object> playerStats = instance.getStorageManager().fetchPlayerStats(player, tempGame.getGameStore());
+				LinkedHashMap<StorageType, Object> playerStats = instance.getStorageManager().fetchPlayerStats(player, tempGame.getGameStore(), true);
 				if(playerStats == null) {
 					p.sendMessage(ConfigUtil.CHAT_NO_PLAYER.toString());
 					return false;
