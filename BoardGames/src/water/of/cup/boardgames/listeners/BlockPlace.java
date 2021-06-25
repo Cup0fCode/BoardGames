@@ -59,9 +59,9 @@ public class BlockPlace implements Listener {
 				if (finalGame.canPlaceBoard(loc, rotation)) {
 					finalGame.placeBoard(loc, rotation);
 					gameManager.addGame(finalGame);
-					player.sendMessage("placed");
+					player.sendMessage(ConfigUtil.CHAT_PLACED_BOARD.toString());
 				} else {
-					player.sendMessage("no room to place");
+					player.sendMessage(ConfigUtil.CHAT_NO_BOARD_ROOM.toString());
 				}
 			}
 		});

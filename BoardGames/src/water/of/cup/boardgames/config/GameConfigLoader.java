@@ -16,21 +16,24 @@ import java.util.HashMap;
 public class GameConfigLoader {
 
     private static final BoardGames instance = BoardGames.getInstance();
-    private static final GameManager gameManager = instance.getGameManager();
-    private static final ArrayList<GameRecipe> GAME_RECIPES = new ArrayList<>();
     private static final HashMap<String, Game> GAMES = new HashMap<>();
 
-    static {
-        for (String name : gameManager.getGameNames()) {
-            Game temp = gameManager.newGame(name, 0);
+    public static void loadGameConfig() {
+        for (String name : instance.getGameManager().getGameNames()) {
+            Game temp = instance.getGameManager().newGame(name, 0);
 
             if(temp != null) {
+                Bukkit.getLogger().info("[BoardGames] Loading game " + temp.getName());
                 GAMES.put(temp.getName(), temp);
             }
         }
+
+        loadRecipes();
+        loadGameSounds();
+        loadCustomConfigValues();
     }
 
-    public static void loadRecipes() {
+    private static void loadRecipes() {
         for(String gameName : GAMES.keySet()) {
             Game game = GAMES.get(gameName);
 
@@ -43,7 +46,7 @@ public class GameConfigLoader {
             addBukkitRecipes();
     }
 
-    public static void loadGameSounds() {
+    private static void loadGameSounds() {
         HashMap<String, Object> defaultConfig = new HashMap<>();
 
         for (String gameName : GAMES.keySet()) {
@@ -65,7 +68,7 @@ public class GameConfigLoader {
         instance.addToConfig(defaultConfig);
     }
 
-    public static void loadCustomConfigValues() {
+    private static void loadCustomConfigValues() {
         HashMap<String, Object> defaultConfig = new HashMap<>();
 
         for (String gameName : GAMES.keySet()) {
@@ -89,9 +92,9 @@ public class GameConfigLoader {
         FileConfiguration config = instance.getConfig();
 
         for (String recipeKey : config.getConfigurationSection("settings.games").getKeys(false)) {
-            if(!gameManager.isValidGame(recipeKey)) continue;
+            if(!instance.getGameManager().isValidGame(recipeKey)) continue;
 
-            Game temp = gameManager.newGame(recipeKey, 0);
+            Game temp = instance.getGameManager().newGame(recipeKey, 0);
 
             ItemStack boardItemStack = temp.getBoardItem();
             NamespacedKey key = new NamespacedKey(instance, recipeKey);

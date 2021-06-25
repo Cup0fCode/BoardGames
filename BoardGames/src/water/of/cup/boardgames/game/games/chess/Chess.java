@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.storage.GameStorage;
@@ -272,9 +273,9 @@ public class Chess extends Game {
 
 		String message;
 		if(gamePlayerWinner != null) {
-			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
 		} else {
-			message = ChatColor.GREEN + "Tie game!";
+			message = ConfigUtil.CHAT_GAME_TIE.toString();
 		}
 
 		for(GamePlayer player : teamManager.getGamePlayers()) {

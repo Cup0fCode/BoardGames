@@ -142,7 +142,7 @@ public class BoardInteract implements Listener {
 
 		{
 			if (gameManager.getGameByPlayer(player) != null && gameManager.getGameByPlayer(player) != game) {
-				player.sendMessage("You must finish your game before joining another.");
+				player.sendMessage(ConfigUtil.CHAT_PLAYER_INGAME.toString());
 				return;
 			}
 

@@ -92,9 +92,7 @@ public class BoardGames extends JavaPlugin {
 		registerListeners(new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak(), new PlayerJoin());
 
 		// Load recipes after config and games are initialized
-		GameConfigLoader.loadRecipes();
-		GameConfigLoader.loadGameSounds();
-		GameConfigLoader.loadCustomConfigValues();
+		GameConfigLoader.loadGameConfig();
 
 		if(ConfigUtil.WAGERS_ENABLED.toBoolean()) {
 			boolean hasEconomy = setupEconomy();

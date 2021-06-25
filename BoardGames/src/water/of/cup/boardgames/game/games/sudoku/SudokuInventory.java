@@ -3,6 +3,7 @@ package water.of.cup.boardgames.game.games.sudoku;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
@@ -58,6 +59,10 @@ public class SudokuInventory extends GameInventory {
 
     @Override
     protected void onGameCreate(HashMap<String, Object> gameData, ArrayList<GamePlayer> players) {
+        for(GamePlayer player : players) {
+            player.getPlayer().sendMessage(ConfigUtil.CHAT_WELCOME_GAME.buildString("Sudoku"));
+        }
+
         game.startGame();
     }
 }
