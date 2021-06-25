@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.storage.GameStorage;
@@ -79,7 +80,7 @@ public class Sudoku extends Game {
 
 		mapManager.renderBoard();
 	}
-	
+
 	private void removeFinishedNumberButtons() {
 		for (int n : puzzle.getFinishedNumbers()) {
 			if (numberButtons[n - 1] != null) {
@@ -89,11 +90,11 @@ public class Sudoku extends Game {
 			}
 		}
 	}
-	
+
 	private void checkGameOver() {
 		if (puzzle.checkGameWon())
 			mapManager.renderBoard();
-			endGame(teamManager.getTurnPlayer());
+		endGame(teamManager.getTurnPlayer());
 	}
 
 	private int[] getButtonLocation(Button b) {
@@ -121,7 +122,9 @@ public class Sudoku extends Game {
 	@Override
 	protected Clock getClock() {
 		// TODO Auto-generated method stub
-		return null;
+		Clock c = new Clock(1, this, false);
+		c.setTimer(true);
+		return c;
 	}
 
 	@Override
@@ -176,16 +179,17 @@ public class Sudoku extends Game {
 	}
 
 	public void endGame(GamePlayer gamePlayerWinner) {
+		clock.cancel();
 		this.updateGameStorage(gamePlayerWinner);
 
 		String message;
-		if(gamePlayerWinner != null) {
+		if (gamePlayerWinner != null) {
 			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
 		} else {
 			message = ChatColor.GREEN + "You lost!";
 		}
 
-		for(GamePlayer player : teamManager.getGamePlayers()) {
+		for (GamePlayer player : teamManager.getGamePlayers()) {
 			player.getPlayer().sendMessage(message);
 		}
 
@@ -193,15 +197,23 @@ public class Sudoku extends Game {
 	}
 
 	private void updateGameStorage(GamePlayer gamePlayerWinner) {
-		if(!hasGameStorage()) return;
+		if (!hasGameStorage())
+			return;
 
-		if(gamePlayerWinner == null) {
-			for(GamePlayer player : teamManager.getGamePlayers()) {
+		if (gamePlayerWinner == null) {
+			for (GamePlayer player : teamManager.getGamePlayers()) {
 				gameStorage.updateData(player.getPlayer(), StorageType.LOSSES, 1);
 			}
 		} else {
-			for(GamePlayer player : teamManager.getGamePlayers()) {
+			for (GamePlayer player : teamManager.getGamePlayers()) {
 				gameStorage.updateData(player.getPlayer(), StorageType.WINS, 1);
+
+				Double bestTime = (Double) BoardGames.getInstance().getStorageManager()
+						.fetchPlayerStats(player.getPlayer(), getGameStore(), false).get(StorageType.BEST_TIME);
+				Double time = clock.getPlayerTimes().get(player);
+				
+				if (bestTime <= 0 || bestTime > time)
+					gameStorage.setData(player.getPlayer(), StorageType.BEST_TIME, time);
 			}
 		}
 	}
@@ -231,7 +243,7 @@ public class Sudoku extends Game {
 	@Override
 	protected void clockOutOfTime() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

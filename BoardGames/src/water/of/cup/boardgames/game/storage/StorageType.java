@@ -10,7 +10,8 @@ public enum StorageType {
     TIES   ("ties", "int default 0", JDBCType.INTEGER),
 
     // Specific type example
-    CROSS_WINS("cross_wins", "int default 0", JDBCType.INTEGER);
+    CROSS_WINS("cross_wins", "int default 0", JDBCType.INTEGER), 
+    BEST_TIME("best_time", "double default 0", JDBCType.DOUBLE);
 
     private final String key;
     private final JDBCType dataType;

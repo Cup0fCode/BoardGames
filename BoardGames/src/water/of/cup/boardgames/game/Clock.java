@@ -16,6 +16,7 @@ public class Clock extends BukkitRunnable {
 	private double lastTimeChange;
 
 	private int increment;
+	private boolean timer;
 	
 	private GamePlayer turn;
 	private boolean sendAllTimes; // if true players are sent all times, otherwise just their own
@@ -31,6 +32,7 @@ public class Clock extends BukkitRunnable {
 		lastTimeChange = System.currentTimeMillis() / 1000;
 		
 		increment = 0;
+		timer = false;
 	}
 	
 	public void setIncrement(int seconds) {
@@ -50,6 +52,9 @@ public class Clock extends BukkitRunnable {
 		// change color timers
 		double timeDifference = System.currentTimeMillis() / 1000 - lastTimeChange;
 		lastTimeChange = System.currentTimeMillis() / 1000;
+		
+		if (timer)
+			timeDifference *= -1;
 		
 		if (game.getTurn() != turn) {
 			//Increment turn swap
@@ -101,5 +106,13 @@ public class Clock extends BukkitRunnable {
 	public HashMap<GamePlayer, Double> getPlayerTimes() {
 		return playerTimes;
 		
+	}
+	
+	public void setTimer(boolean v) {
+		timer = v;
+	}
+	
+	public boolean getTimer() {
+		return timer;
 	}
 }
