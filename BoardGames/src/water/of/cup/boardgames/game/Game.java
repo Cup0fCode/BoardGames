@@ -568,4 +568,14 @@ public abstract class Game {
 
 		return BoardGames.getInstance().getConfig().get(configLoc);
 	}
+
+	protected void playGameSound(String soundKey) {
+		Sound sound = getGameSound(soundKey);
+		if(sound == null) return;
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().playSound(player.getPlayer().getLocation(), sound, (float) 5.0, (float) 1.0);
+		}
+	}
+
 }

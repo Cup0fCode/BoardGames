@@ -1,18 +1,18 @@
-package water.of.cup.boardgames.game.games.tictactoe;
+package water.of.cup.boardgames.game.games.chess;
 
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.storage.StorageType;
 
-public class TicTacToeStorage extends GameStorage {
+public class ChessStorage extends GameStorage {
 
-    public TicTacToeStorage(Game game) {
+    public ChessStorage(Game game) {
         super(game);
     }
 
     @Override
     protected String getTableName() {
-        return "tictactoe";
+        return "chess";
     }
 
     @Override

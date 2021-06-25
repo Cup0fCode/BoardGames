@@ -180,7 +180,7 @@ public class ConwaysGameOfLife extends Game {
 
 	@Override
 	protected GameConfig getGameConfig() {
-		return null;
+		return new ConwaysGameOfLifeConfig(this);
 	}
 
 	@Override

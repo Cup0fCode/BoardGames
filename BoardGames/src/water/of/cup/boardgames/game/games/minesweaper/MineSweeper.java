@@ -9,6 +9,7 @@ import water.of.cup.boardgames.config.GameRecipe;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.game.storage.StorageType;
 
 import java.util.ArrayList;
 
@@ -169,7 +170,7 @@ public class MineSweeper extends Game {
 
 	@Override
 	protected GameStorage getGameStorage() {
-		return null;
+		return new MineSweeperStorage(this);
 	}
 
 	@Override
@@ -179,7 +180,7 @@ public class MineSweeper extends Game {
 
 	@Override
 	protected GameConfig getGameConfig() {
-		return null;
+		return new MineSweeperConfig(this);
 	}
 
 	@Override
@@ -200,6 +201,8 @@ public class MineSweeper extends Game {
 		} else {
 			// open tile
 			if (openTile(position)) {
+				this.playGameSound("click");
+
 				// safe tile
 				if (openedTiles + numberOfBombs >= 16 * 16) {
 					// all safe tiles opened
@@ -218,6 +221,8 @@ public class MineSweeper extends Game {
 		buttons.clear();
 		openedTiles = 0;
 
+		this.updateGameStorage(gamePlayerWinner);
+
 		String message;
 		if(gamePlayerWinner != null) {
 			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
@@ -230,6 +235,20 @@ public class MineSweeper extends Game {
 		}
 
 		super.endGame(gamePlayerWinner);
+	}
+
+	private void updateGameStorage(GamePlayer gamePlayerWinner) {
+		if(!hasGameStorage()) return;
+
+		if(gamePlayerWinner == null) {
+			for(GamePlayer player : teamManager.getGamePlayers()) {
+				gameStorage.updateData(player.getPlayer(), StorageType.LOSSES, 1);
+			}
+		} else {
+			for(GamePlayer player : teamManager.getGamePlayers()) {
+				gameStorage.updateData(player.getPlayer(), StorageType.WINS, 1);
+			}
+		}
 	}
 
 	@Override

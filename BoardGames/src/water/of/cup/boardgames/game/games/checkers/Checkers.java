@@ -10,6 +10,7 @@ import water.of.cup.boardgames.config.GameRecipe;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.game.storage.StorageType;
 
 import java.util.ArrayList;
 
@@ -240,7 +241,7 @@ public class Checkers extends Game {
 
 	@Override
 	protected GameStorage getGameStorage() {
-		return null;
+		return new CheckersStorage(this);
 	}
 
 	@Override
@@ -253,7 +254,7 @@ public class Checkers extends Game {
 
 	@Override
 	protected GameConfig getGameConfig() {
-		return null;
+		return new CheckersConfig(this);
 	}
 
 	@Override
@@ -294,6 +295,8 @@ public class Checkers extends Game {
 			// check if can make move
 			if (!canMove(selected, position))
 				return;
+
+			this.playGameSound("click");
 
 			boolean isJump = (2 == Math.abs(position[1] - selected[1]));
 
@@ -341,6 +344,8 @@ public class Checkers extends Game {
 		selected = null;
 		canDeSelect = false;
 
+		updateGameStorage(gamePlayerWinner);
+
 		String message;
 		if(gamePlayerWinner != null) {
 			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
@@ -353,6 +358,23 @@ public class Checkers extends Game {
 		}
 
 		super.endGame(gamePlayerWinner);
+	}
+
+	private void updateGameStorage(GamePlayer gamePlayerWinner) {
+		if(!hasGameStorage()) return;
+
+		if(gamePlayerWinner == null) {
+			for(GamePlayer player : teamManager.getGamePlayers()) {
+				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
+			}
+		} else {
+			GamePlayer gamePlayerLoser = teamManager.getGamePlayers().get(0).equals(gamePlayerWinner)
+					? teamManager.getGamePlayers().get(1)
+					: teamManager.getGamePlayers().get(0);
+
+			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
+			gameStorage.updateData(gamePlayerLoser.getPlayer(), StorageType.LOSSES, 1);
+		}
 	}
 
 	private String checkGameOver() { // returns empty for game not over
