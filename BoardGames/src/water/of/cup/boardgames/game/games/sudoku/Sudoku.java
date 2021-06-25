@@ -92,9 +92,10 @@ public class Sudoku extends Game {
 	}
 
 	private void checkGameOver() {
-		if (puzzle.checkGameWon())
+		if (puzzle.checkGameWon()) {
 			mapManager.renderBoard();
-		endGame(teamManager.getTurnPlayer());
+			endGame(teamManager.getTurnPlayer());
+		}
 	}
 
 	private int[] getButtonLocation(Button b) {
@@ -211,8 +212,8 @@ public class Sudoku extends Game {
 				Double bestTime = (Double) BoardGames.getInstance().getStorageManager()
 						.fetchPlayerStats(player.getPlayer(), getGameStore(), false).get(StorageType.BEST_TIME);
 				Double time = clock.getPlayerTimes().get(player);
-				
-				if (bestTime <= 0 || bestTime > time)
+
+				if (bestTime == null || bestTime <= 0 || bestTime > time)
 					gameStorage.setData(player.getPlayer(), StorageType.BEST_TIME, time);
 			}
 		}

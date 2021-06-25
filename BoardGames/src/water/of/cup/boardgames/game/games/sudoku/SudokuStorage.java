@@ -19,6 +19,7 @@ public class SudokuStorage extends GameStorage {
         return new StorageType[] {
                 StorageType.WINS,
                 StorageType.LOSSES,
+                StorageType.BEST_TIME,
         };
     }
 }
