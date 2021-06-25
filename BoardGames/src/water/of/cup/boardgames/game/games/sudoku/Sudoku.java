@@ -90,6 +90,7 @@ public class Sudoku extends Game {
 	
 	private void checkGameOver() {
 		if (puzzle.checkGameWon())
+			mapManager.renderBoard();
 			endGame(teamManager.getTurnPlayer());
 	}
 
@@ -154,8 +155,9 @@ public class Sudoku extends Game {
 				if (b == but) {
 					int i = Integer.parseInt(but.getName());
 					if (!puzzle.check(selected, i)) {
-						this.endGame(null);
+						mapManager.renderBoard();
 						player.sendMessage("You lost.");
+						this.endGame(null);
 					} else {
 						removeFinishedNumberButtons();
 						checkGameOver();
