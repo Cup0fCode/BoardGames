@@ -29,6 +29,7 @@ public class ConwaysGameOfLife extends Game {
 
 	@Override
 	protected void startGame() {
+		super.startGame();
 		createCells();
 		mapManager.renderBoard();
 	}
@@ -127,9 +128,9 @@ public class ConwaysGameOfLife extends Game {
 	}
 
 	@Override
-	protected void startClock() {
+	protected Clock getClock() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
@@ -180,6 +181,12 @@ public class ConwaysGameOfLife extends Game {
 	@Override
 	protected GameConfig getGameConfig() {
 		return new ConwaysGameOfLifeConfig(this);
+	}
+
+	@Override
+	protected void clockOutOfTime() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

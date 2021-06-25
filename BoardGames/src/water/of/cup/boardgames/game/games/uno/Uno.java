@@ -40,6 +40,7 @@ public class Uno extends Game {
 
 	@Override
 	protected void startGame() {
+		super.startGame();
 		deck = new UnoDeck();
 		
 		// set current card
@@ -252,9 +253,9 @@ public class Uno extends Game {
 	}
 
 	@Override
-	protected void startClock() {
+	protected Clock getClock() {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
@@ -378,6 +379,12 @@ public class Uno extends Game {
 	@Override
 	public BoardItem getBoardItem() {
 		return new BoardItem(gameName, new ItemStack(Material.SPRUCE_TRAPDOOR, 1));
+	}
+
+	@Override
+	protected void clockOutOfTime() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

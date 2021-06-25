@@ -31,6 +31,7 @@ public class Sudoku extends Game {
 
 	@Override
 	protected void startGame() {
+		super.startGame();
 		puzzle = new SudokuPuzzle();
 		selected = null;
 		setInGame();
@@ -91,6 +92,7 @@ public class Sudoku extends Game {
 	
 	private void checkGameOver() {
 		if (puzzle.checkGameWon())
+			mapManager.renderBoard();
 			endGame(teamManager.getTurnPlayer());
 	}
 
@@ -117,9 +119,9 @@ public class Sudoku extends Game {
 	}
 
 	@Override
-	protected void startClock() {
+	protected Clock getClock() {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
@@ -157,8 +159,9 @@ public class Sudoku extends Game {
 				if (b == but) {
 					int i = Integer.parseInt(but.getName());
 					if (!puzzle.check(selected, i)) {
-						this.endGame(null);
+						mapManager.renderBoard();
 						player.sendMessage("You lost.");
+						this.endGame(null);
 					} else {
 						removeFinishedNumberButtons();
 						checkGameOver();
@@ -223,6 +226,12 @@ public class Sudoku extends Game {
 	@Override
 	protected GameStorage getGameStorage() {
 		return new SudokuStorage(this);
+	}
+
+	@Override
+	protected void clockOutOfTime() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

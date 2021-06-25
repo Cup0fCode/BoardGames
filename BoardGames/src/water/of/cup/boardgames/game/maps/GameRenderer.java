@@ -65,4 +65,8 @@ public class GameRenderer extends MapRenderer {
 		gameImage.cropMap(loc);
 		canvas.drawImage(0, 0, gameImage.getImage(screen == null ? game.getRotation() : 0));
 	}
+
+	public void rerender() {
+		rendered = new HashSet<UUID>();
+	}
 }

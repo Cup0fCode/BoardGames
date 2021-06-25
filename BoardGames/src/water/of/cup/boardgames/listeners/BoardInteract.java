@@ -181,7 +181,6 @@ public class BoardInteract implements Listener {
 				game.click(player, loc, map);
 			} else {
 				game.displayGameInventory(player);
-				game.renderInitial();
 				//player.sendMessage("You are not part of this game");
 			}
 
