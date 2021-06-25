@@ -63,6 +63,19 @@ public enum ConfigUtil {
     CHAT_GUI_WAGER_ACCEPT("settings.messages.gui.chatwageraccept", "%player% has accepted your wager!"),
     CHAT_GUI_WAGER_ACCEPTED("settings.messages.gui.chatwageraccept", "You have accepted %player%'s wager!"),
 
+    // GAME CHAT MESSAGES
+    CHAT_GAME_PLAYER_WIN("settings.messages.chat.playerwin", "%player% has won the game!"),
+    CHAT_GAME_PLAYER_LOSE("settings.messages.chat.playerlose", "&aYou lost!"),
+    CHAT_GAME_TIE("settings.messages.chat.gametie", "&aTie game!"),
+    CHAT_GAME_FORCE_JUMP("settings.messages.chat.forcejump", "You must select a piece that can jump if a jump is possible."),
+    CHAT_GAME_UNO_FORCE_2("settings.messages.chat.unoforce2", "You were forced to draw 2 cards."),
+    CHAT_GAME_UNO_FORCE_4("settings.messages.chat.unoforce4", "You were forced to draw 4 cards."),
+    CHAT_GAME_UNO_SKIPPED("settings.messages.chat.unoskipped", "You were skipped."),
+    CHAT_GAME_UNO_NOT_YOUR_TURN("settings.messages.chat.unonotyourturn", "It is not your turn."),
+    CHAT_GAME_UNO_SELECT_COLOR("settings.messages.chat.unoselectcolor", "Select a color."),
+    CHAT_GAME_UNO_FORCE_DRAW("settings.messages.chat.unoforcedraw", "You have no playable cards and were forced to draw a card."),
+    CHAT_GAME_UNO_INVALID_CARD("settings.messages.chat.unoinvalidcard", "You can not play that card."),
+
     // CHAT MESSAGES
     CHAT_NO_DB("settings.messages.chat.nodb", "Database must be enabled to view stats."),
     CHAT_NO_GAME("settings.messages.chat.nogame", "No game found with that name."),
@@ -72,7 +85,11 @@ public enum ConfigUtil {
     CHAT_GAME_NAMES("settings.messages.chat.gamenames", "Game Names: "),
     CHAT_STATS_HEADER("settings.messages.chat.statsheader", "%player%'s stats"),
     CHAT_LEADERBOARD_HEADER("settings.messages.chat.leaderboardheader", "%game% leaderboard sorting by %sort%"),
-    CHAT_AVAIL_COMMANDS("settings.messages.chat.availcommands", "Available commands\n/bg games - lists games\n/bg board [game name] - gives you the game's item\n/bg stats [game name] [player name]\n/bg leaderboard [game name] [order by]\n/bg reload");
+    CHAT_AVAIL_COMMANDS("settings.messages.chat.availcommands", "Available commands\n/bg games - lists games\n/bg board [game name] - gives you the game's item\n/bg stats [game name] [player name]\n/bg leaderboard [game name] [order by]\n/bg reload"),
+    CHAT_PLAYER_INGAME("settings.messages.chat.playeringame", "You must finish your game before joining another."),
+    CHAT_PLACED_BOARD("settings.messages.chat.placedboard", "Placed board."),
+    CHAT_NO_BOARD_ROOM("settings.messages.chat.noboardroom", "No room to place board."),
+    CHAT_WELCOME_GAME("settings.messages.chat.welcomegame", "Welcome to %game%!");
 
     private final String path;
     private final String defaultValue;
@@ -116,10 +133,10 @@ public enum ConfigUtil {
         return configString.equals("true");
     }
 
-    public String buildString(String playerName) {
+    public String buildString(String replaceWith) {
         String formatted = this.toString();
 
-        formatted = formatted.replace("%player%", playerName);
+        formatted = formatted.replace("%player%", replaceWith).replace("%game%", replaceWith);
 
         return formatted;
     }

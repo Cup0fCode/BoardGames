@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameRecipe;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
@@ -216,19 +217,19 @@ public class Uno extends Game {
 		for (String action : card.getActions()) {
 			if (action.equals("DRAW2")) {
 				playerHands.get(player).draw(deck, 2);
-				player.getPlayer().sendMessage("You were forced to draw 2 cards.");
+				player.getPlayer().sendMessage(ConfigUtil.CHAT_GAME_UNO_FORCE_2.toString());
 				setCardButtons(player);
 				continue;
 			}
 			if (action.equals("DRAW4")) {
 				playerHands.get(player).draw(deck, 4);
-				player.getPlayer().sendMessage("You were forced to draw 4 cards.");
+				player.getPlayer().sendMessage(ConfigUtil.CHAT_GAME_UNO_FORCE_2.toString());
 				setCardButtons(player);
 				continue;
 			}
 			if (action.equals("SKIP")) {
 				teamManager.nextTurn();
-				player.getPlayer().sendMessage("You were skipped.");
+				player.getPlayer().sendMessage(ConfigUtil.CHAT_GAME_UNO_SKIPPED.toString());
 				continue;
 			}
 			if (action.equals("REVERSE")) {
@@ -282,12 +283,11 @@ public class Uno extends Game {
 	public void click(Player player, double[] loc, ItemStack map) {
 		GamePlayer gamePlayer = getGamePlayer(player);
 		if (gamePlayer == null) {
-			player.sendMessage("You are not part of this game.");
 			return;
 		}
 
 		if (gamePlayer != teamManager.getTurnPlayer()) {
-			player.sendMessage("It is not your turn");
+			player.sendMessage(ConfigUtil.CHAT_GAME_UNO_NOT_YOUR_TURN.toString());
 			return;
 		}
 
@@ -310,14 +310,14 @@ public class Uno extends Game {
 				this.getGamePlayers().forEach((p) -> p.getPlayer()
 						.sendMessage(player.getPlayer().getDisplayName() + ": " + b.getName() + "!"));
 			} else {
-				player.sendMessage("Select a color");
+				player.sendMessage(ConfigUtil.CHAT_GAME_UNO_SELECT_COLOR.toString());
 			}
 			return;
 		}
 
 		UnoHand hand = playerHands.get(gamePlayer);
 		if (!hand.canPlay(currentCard)) {
-			player.sendMessage("You have no playable cards and were forced to draw a card.");
+			player.sendMessage(ConfigUtil.CHAT_GAME_UNO_FORCE_DRAW.toString());
 			hand.draw(deck, 1);
 			setCardButtons(gamePlayer);
 			mapManager.renderBoard();
@@ -335,7 +335,7 @@ public class Uno extends Game {
 			setCardButtons(teamManager.getTurnPlayer());
 			mapManager.renderBoard();
 		} else {
-			player.sendMessage("You can not play that card.");
+			player.sendMessage(ConfigUtil.CHAT_GAME_UNO_INVALID_CARD.toString());
 		}
 
 		// if (playCard(gamePlayer, ))
@@ -349,7 +349,7 @@ public class Uno extends Game {
 	public void endGame(GamePlayer gamePlayerWinner) {
 		this.updateGameStorage(gamePlayerWinner);
 
-		String message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+		String message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
 
 		for(GamePlayer player : teamManager.getGamePlayers()) {
 			player.getPlayer().sendMessage(message);

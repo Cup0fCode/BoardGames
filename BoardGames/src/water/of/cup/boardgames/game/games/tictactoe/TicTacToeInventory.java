@@ -28,9 +28,9 @@ public class TicTacToeInventory extends GameInventory {
     protected ArrayList<GameOption> getOptions() {
         ArrayList<GameOption> options = new ArrayList<>();
 
-        List<String> rankedValues =  Arrays.asList(ConfigUtil.GUI_RANKED_OPTION_TEXT.toString(), ConfigUtil.GUI_UNRANKED_OPTION_TEXT.toString());
-        GameOption ranked = new GameOption("ranked", Material.EXPERIENCE_BOTTLE, GameOptionType.TOGGLE, null, rankedValues.get(0), rankedValues);
-        options.add(ranked);
+//        List<String> rankedValues =  Arrays.asList(ConfigUtil.GUI_RANKED_OPTION_TEXT.toString(), ConfigUtil.GUI_UNRANKED_OPTION_TEXT.toString());
+//        GameOption ranked = new GameOption("ranked", Material.EXPERIENCE_BOTTLE, GameOptionType.TOGGLE, null, rankedValues.get(0), rankedValues);
+//        options.add(ranked);
 
 //        List<String> derpedValues =  Arrays.asList("derped", "underped");
 //        GameOption derped = new GameOption("derped", Material.QUARTZ, GameOptionType.TOGGLE, null, derpedValues.get(0), derpedValues);
@@ -87,7 +87,7 @@ public class TicTacToeInventory extends GameInventory {
     @Override
     protected void onGameCreate(HashMap<String, Object> gameData, ArrayList<GamePlayer> players) {
         for(GamePlayer player : players) {
-            player.getPlayer().sendMessage("Welcome to TIC TAC TOE!");
+            player.getPlayer().sendMessage(ConfigUtil.CHAT_WELCOME_GAME.buildString("Tic Tac Toe"));
         }
 
         game.startGame();

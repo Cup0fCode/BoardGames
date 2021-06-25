@@ -272,9 +272,9 @@ public class ConnectFour extends Game {
 
 		String message;
 		if(gamePlayerWinner != null) {
-			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
 		} else {
-			message = ChatColor.GREEN + "Tie game!";
+			message = ConfigUtil.CHAT_GAME_TIE.toString();
 		}
 
 		for(GamePlayer player : teamManager.getGamePlayers()) {

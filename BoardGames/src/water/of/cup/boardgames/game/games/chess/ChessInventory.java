@@ -77,7 +77,7 @@ public class ChessInventory extends GameInventory {
     @Override
     protected void onGameCreate(HashMap<String, Object> gameData, ArrayList<GamePlayer> players) {
         for(GamePlayer player : players) {
-            player.getPlayer().sendMessage("Welcome to Chess!");
+            player.getPlayer().sendMessage(ConfigUtil.CHAT_WELCOME_GAME.buildString("Chess"));
         }
 
         game.startGame();
