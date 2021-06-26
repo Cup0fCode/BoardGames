@@ -323,6 +323,32 @@ public class StorageManager {
 		return future.join();
 	}
 
+	public int getGamePlayerTotal(GameStorage gameStorage) {
+		CompletableFuture<Integer> future = new CompletableFuture<>();
+
+		String sqlString = "SELECT * FROM " + gameStorage.getTableName();
+
+		executorService.submit(() -> {
+			try {
+				int num = 0;
+				try (Connection con = getConnection();
+					 PreparedStatement sql = con.prepareStatement(sqlString);
+					 ResultSet playerData = sql.executeQuery();) {
+					while (playerData.next()) {
+						num++;
+					}
+				}
+
+				future.complete(num);
+			} catch (SQLException throwables) {
+				throwables.printStackTrace();
+				future.complete(0);
+			}
+		});
+
+		return future.join();
+	}
+
 	private LinkedHashMap<StorageType, Object> getStatsFromResult(GameStorage storage, ResultSet resultSet)
 			throws SQLException {
 		LinkedHashMap<StorageType, Object> playerStats = new LinkedHashMap<>();

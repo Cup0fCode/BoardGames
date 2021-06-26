@@ -146,16 +146,35 @@ public class bgCommands implements CommandExecutor {
 					}
 				}
 
-				LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>> topPlayers = instance.getStorageManager().fetchTopPlayers(gameStorage, orderBy, 0);
+				int numGamePlayers = instance.getStorageManager().getGamePlayerTotal(gameStorage);
+
+				int page = 0;
+				if(args.length > 3) {
+					try {
+						page = Integer.parseInt(args[3]) - 1;
+					} catch (NumberFormatException e) {
+					}
+				}
+
+				if (page < 0)
+					page = 0;
+
+				int numOfPages = (numGamePlayers / 10) + 1;
+
+				if (page > numOfPages - 1)
+					page = numOfPages - 1;
+
+				LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>> topPlayers = instance.getStorageManager().fetchTopPlayers(gameStorage, orderBy, page);
 
 				if(topPlayers == null) {
 					p.sendMessage(ConfigUtil.CHAT_DB_ERROR.toString());
 					return false;
 				}
 
-				int count = 1;
+				int count = 1 + (page * 10);;
 
-				p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_HEADER.buildString(tempGame.getName(), orderBy.getKey()));
+				p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_HEADER.buildString(tempGame.getName(), orderBy.getKey()) + " (" + (page + 1) + "/"
+						+ numOfPages + ")");
 				for(OfflinePlayer player : topPlayers.keySet()) {
 					p.sendMessage("#" + count + ". " + player.getName() + " - " + topPlayers.get(player).get(orderBy));
 					count++;
