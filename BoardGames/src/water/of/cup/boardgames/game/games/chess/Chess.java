@@ -29,6 +29,14 @@ public class Chess extends Game {
 		super(rotation);
 		// TODO Auto-generated constructor stub
 	}
+	
+	@Override
+	public void renderInitial() {
+		super.renderInitial();
+		setBoard();
+		paintBoard();
+		mapManager.renderBoard();
+	}
 
 	@Override
 	protected void setMapInformation(int rotation) {
@@ -39,8 +47,13 @@ public class Chess extends Game {
 	@Override
 	protected void startGame() {
 		super.startGame();
-		selected = null;
 		setInGame();
+		setBoard();
+		paintBoard();
+	}
+	
+	private void setBoard() {
+		selected = null;
 		promotion = "NONE";
 		buttons.clear();
 		board = new ChessBoard();
@@ -60,7 +73,6 @@ public class Chess extends Game {
 			promotionButtons[i] = b;
 			buttons.add(b);
 		}
-		paintBoard();
 	}
 
 	private void togglePromotionButtons() {
