@@ -70,6 +70,16 @@ public abstract class GameStorage {
         return false;
     }
 
+    public boolean hasStorageType(String columnName) {
+        for(StorageType type : getGameStores()) {
+            if (type.getKey().equals(columnName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected void initializeConfig() {
         FileConfiguration config = instance.getConfig();
 
