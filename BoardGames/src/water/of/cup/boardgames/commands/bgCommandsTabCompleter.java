@@ -51,6 +51,19 @@ public class bgCommandsTabCompleter implements TabCompleter {
                     args.add(player.getName());
                 }
             }
+        } else if(strings.length == 4) {
+            if (strings[0].equalsIgnoreCase("leaderboard")) {
+                String gameName = strings[1];
+                Game tempGame = gameManager.newGame(gameName, 0);
+
+                if(tempGame != null) {
+                    GameStorage gameStorage = tempGame.getGameStore();
+                    int extraPages = (instance.getStorageManager().getGamePlayerTotal(gameStorage) / 2);
+                    for (int i = 0; i < extraPages; i++) {
+                        args.add((i + 2) + "");
+                    }
+                }
+            }
         }
         return args;
     }
