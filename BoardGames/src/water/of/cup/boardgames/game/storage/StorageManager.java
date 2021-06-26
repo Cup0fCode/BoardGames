@@ -71,6 +71,98 @@ public class StorageManager {
 		} catch (SQLException throwables) {
 			throwables.printStackTrace();
 		}
+
+		this.refreshGameStorageColumns(gameStorage);
+	}
+
+	private void refreshGameStorageColumns(GameStorage gameStorage) {
+		StorageType[] storageTypes = gameStorage.getGameStores();
+		String tableName = gameStorage.getTableName();
+
+		if(!tableExists(tableName)) return;
+
+		// Add in newly added columns
+		for(StorageType storageType : storageTypes) {
+			if(!columnExists(tableName, storageType.getKey())) {
+				addStorageType(tableName, storageType);
+			}
+		}
+
+		// Remove old columns
+		ArrayList<String> colNames = getColumns(tableName);
+		for(String col : colNames) {
+			if(!gameStorage.hasStorageType(col)) {
+				removeStorageType(tableName, col);
+			}
+		}
+	}
+
+	private boolean tableExists(String table) {
+		try(Connection con = getConnection(); ) {
+			DatabaseMetaData md = con.getMetaData();
+			try (ResultSet resultSet = md.getTables(null, null, table, null);) {
+				return resultSet.next();
+			}
+		} catch (SQLException throwables) {
+			throwables.printStackTrace();
+			return false;
+		}
+	}
+
+	private boolean columnExists(String table, String column) {
+		try(Connection con = getConnection(); ) {
+			DatabaseMetaData md = con.getMetaData();
+			try (ResultSet resultSet = md.getColumns(null, null, table, column);) {
+				return resultSet.next();
+			}
+		} catch (SQLException throwables) {
+			throwables.printStackTrace();
+			return false;
+		}
+	}
+
+	private ArrayList<String> getColumns(String tableName) {
+		String query = "SELECT * FROM " + tableName;
+
+		try(Connection con = getConnection(); Statement statement = con.createStatement();) {
+			try (ResultSet resultSet = statement.executeQuery(query);) {
+				int colCount = resultSet.getMetaData().getColumnCount();
+				ArrayList<String> colNames = new ArrayList<>();
+
+				for(int i = 1; i <= colCount; i++) {
+					colNames.add(resultSet.getMetaData().getColumnName(i));
+				}
+
+				return colNames;
+			}
+		} catch (SQLException throwables) {
+			throwables.printStackTrace();
+			return new ArrayList<>();
+		}
+	}
+
+	private void addStorageType(String tableName, StorageType storageType) {
+		String alterSql = "ALTER TABLE " + tableName + " ADD COLUMN " + storageType.getKey() + " " + storageType.getQuery();
+
+		executorService.submit(() -> {
+			try (Connection con = getConnection(); Statement statement = con.createStatement();) {
+				statement.execute(alterSql);
+			} catch (SQLException throwables) {
+				throwables.printStackTrace();
+			}
+		});
+	}
+
+	private void removeStorageType(String tableName, String columnName) {
+		String alterSql = "ALTER TABLE " + tableName + " DROP COLUMN " + columnName;
+
+		executorService.submit(() -> {
+			try (Connection con = getConnection(); Statement statement = con.createStatement();) {
+				statement.execute(alterSql);
+			} catch (SQLException throwables) {
+				throwables.printStackTrace();
+			}
+		});
 	}
 
 	private void initialize() {
