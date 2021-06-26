@@ -38,6 +38,7 @@ import water.of.cup.boardgames.listeners.BlockPlace;
 import water.of.cup.boardgames.listeners.BoardInteract;
 import water.of.cup.boardgames.listeners.ChunkLoad;
 import water.of.cup.boardgames.listeners.PlayerJoin;
+import water.of.cup.boardgames.listeners.PlayerQuit;
 import water.of.cup.boardgames.metrics.Metrics;
 
 public class BoardGames extends JavaPlugin {
@@ -89,7 +90,7 @@ public class BoardGames extends JavaPlugin {
 		
 //		if(config.getBoolean("settings.chessboard.recipe.enabled"))
 //			addGameRecipes();
-		registerListeners(new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak(), new PlayerJoin());
+		registerListeners(new PlayerQuit(), new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak(), new PlayerJoin());
 
 		// Load recipes after config and games are initialized
 		GameConfigLoader.loadGameConfig();

@@ -578,4 +578,15 @@ public abstract class Game {
 		}
 	}
 
+	public void exitPlayer(Player player) {
+		if (teamManager.getGamePlayers().size() == 1) {
+			this.endGame(null);
+			return;
+		}
+		teamManager.removeTeamByPlayer(player);
+		if (teamManager.getGamePlayers().size() == 1) {
+			this.endGame(teamManager.getGamePlayers().get(0));
+			return;
+		}	
+	}
 }
