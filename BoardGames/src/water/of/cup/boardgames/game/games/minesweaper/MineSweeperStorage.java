@@ -18,7 +18,7 @@ public class MineSweeperStorage extends GameStorage {
     protected StorageType[] getGameStores() {
         return new StorageType[] {
                 StorageType.WINS,
-                StorageType.LOSSES,
+                StorageType.BEST_TIME,
         };
     }
 }

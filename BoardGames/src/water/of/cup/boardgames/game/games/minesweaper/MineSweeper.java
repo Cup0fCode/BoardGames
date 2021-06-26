@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameRecipe;
 import water.of.cup.boardgames.game.*;
@@ -162,8 +163,11 @@ public class MineSweeper extends Game {
 	@Override
 	protected Clock getClock() {
 		// TODO Auto-generated method stub
-		return null;
+		Clock c = new Clock(1, this, false);
+		c.setTimer(true);
+		return c;
 	}
+	
 	@Override
 	protected GameInventory getGameInventory() {
 		return new MineSweeperInventory(this);
@@ -248,6 +252,13 @@ public class MineSweeper extends Game {
 		} else {
 			for(GamePlayer player : teamManager.getGamePlayers()) {
 				gameStorage.updateData(player.getPlayer(), StorageType.WINS, 1);
+				
+				Double bestTime = (Double) BoardGames.getInstance().getStorageManager()
+						.fetchPlayerStats(player.getPlayer(), getGameStore(), false).get(StorageType.BEST_TIME);
+				Double time = clock.getPlayerTimes().get(player);
+
+				if (bestTime == null || bestTime <= 0 || bestTime > time)
+					gameStorage.setData(player.getPlayer(), StorageType.BEST_TIME, time);
 			}
 		}
 	}
