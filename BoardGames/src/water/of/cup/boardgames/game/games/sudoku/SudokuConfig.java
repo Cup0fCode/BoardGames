@@ -26,7 +26,7 @@ public class SudokuConfig extends GameConfig {
             {
                 add("WB");
                 add("BW");
-                add("LB");
+                add("LL");
             }
         };
 
