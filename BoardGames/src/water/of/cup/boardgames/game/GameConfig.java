@@ -12,6 +12,7 @@ public abstract class GameConfig {
     protected abstract GameRecipe getGameRecipe();
     protected abstract ArrayList<GameSound> getGameSounds();
     protected abstract HashMap<String, Object> getCustomValues();
+    protected abstract int getWinAmount();
     protected final Game game;
 
     public GameConfig(Game game) {

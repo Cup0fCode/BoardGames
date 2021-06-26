@@ -268,6 +268,7 @@ public abstract class Game {
 	public void endGame(GamePlayer winner) {
 		ingame = false;
 		wagerManager.completeWagers(winner);
+		sendGameWinMoney(winner);
 		clearGamePlayers();
 		clock.cancel();
 
@@ -545,6 +546,24 @@ public abstract class Game {
 		if(!hasGameConfig()) return null;
 
 		return gameConfig.getCustomValues();
+	}
+
+	public int getGameWinAmount() {
+		if(!hasGameConfig()) return 0;
+
+		return gameConfig.getWinAmount();
+	}
+
+	public void sendGameWinMoney(GamePlayer winner) {
+		if(winner == null) return;
+		if(!hasGameConfig()) return;
+
+		String configLoc = "settings.games." + getName() + ".winAmount";
+		int winAmount = BoardGames.getInstance().getConfig().getInt(configLoc);
+
+		if(BoardGames.getInstance().getEconomy() != null && winAmount != 0) {
+			BoardGames.getInstance().getEconomy().depositPlayer(winner.getPlayer(), winAmount);
+		}
 	}
 
 	@Nullable
