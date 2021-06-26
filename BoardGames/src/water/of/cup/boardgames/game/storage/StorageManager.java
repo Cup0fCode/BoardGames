@@ -293,6 +293,7 @@ public class StorageManager {
 				try (Connection con = getConnection();
 						PreparedStatement fetchQuery = con.prepareStatement(sql);
 						ResultSet resultSet = fetchQuery.executeQuery()) {
+					LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>> bottomPlayers = new LinkedHashMap<>();
 					while (resultSet.next()) {
 						String playerUUID = resultSet.getString("uuid");
 						if (playerUUID == null)
@@ -306,10 +307,17 @@ public class StorageManager {
 								resultSet);
 
 						if(!orderBy.isOrderByDescending()) {
-							if((playerStats.get(orderBy) + "").equals("0:0")) continue;
+							if((playerStats.get(orderBy) + "").equals("0:0")) {
+								bottomPlayers.put(player, playerStats);
+								continue;
+							}
 						}
 
 						topPlayers.put(player, playerStats);
+					}
+
+					for(OfflinePlayer bottomPlayer : bottomPlayers.keySet()) {
+						topPlayers.put(bottomPlayer, bottomPlayers.get(bottomPlayer));
 					}
 
 					future.complete(topPlayers);

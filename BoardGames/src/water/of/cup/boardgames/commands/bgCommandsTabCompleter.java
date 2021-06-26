@@ -58,7 +58,7 @@ public class bgCommandsTabCompleter implements TabCompleter {
 
                 if(tempGame != null) {
                     GameStorage gameStorage = tempGame.getGameStore();
-                    int extraPages = (instance.getStorageManager().getGamePlayerTotal(gameStorage) / 2);
+                    int extraPages = (instance.getStorageManager().getGamePlayerTotal(gameStorage) / 10);
                     for (int i = 0; i < extraPages; i++) {
                         args.add((i + 2) + "");
                     }
