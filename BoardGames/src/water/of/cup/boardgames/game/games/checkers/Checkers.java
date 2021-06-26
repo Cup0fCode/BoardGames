@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameRecipe;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
@@ -278,7 +279,7 @@ public class Checkers extends Game {
 
 			// check if piece must jump
 			if (colorCanJump(teamTurn)) {
-				player.sendMessage("You must select a piece that can jump if a jump is possible.");
+				player.sendMessage(ConfigUtil.CHAT_GAME_FORCE_JUMP.toString());
 				// check if piece can jump
 				if (!canJump(position))
 					return;
@@ -348,9 +349,9 @@ public class Checkers extends Game {
 
 		String message;
 		if(gamePlayerWinner != null) {
-			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
 		} else {
-			message = ChatColor.GREEN + "Tie game!";
+			message = ConfigUtil.CHAT_GAME_TIE.toString();
 		}
 
 		for(GamePlayer player : teamManager.getGamePlayers()) {

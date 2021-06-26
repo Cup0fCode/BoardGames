@@ -19,7 +19,7 @@ public class SudokuConfig extends GameConfig {
     protected GameRecipe getGameRecipe() {
         HashMap<String, String> recipe = new HashMap<>();
         recipe.put("B", Material.BLACK_DYE.toString());
-        recipe.put("T", Material.WHITE_DYE.toString());
+        recipe.put("W", Material.WHITE_DYE.toString());
         recipe.put("L", Material.LEATHER.toString());
 
         ArrayList<String> shape = new ArrayList<String>() {

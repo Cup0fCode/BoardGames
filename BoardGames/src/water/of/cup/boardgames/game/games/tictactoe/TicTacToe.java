@@ -142,8 +142,8 @@ public class TicTacToe extends Game {
 		if(!hasGameStorage()) return;
 
 		// Check if game is "ranked"
-		if(hasGameData("ranked")
-				&& (getGameData("ranked") + "").equals(ConfigUtil.GUI_UNRANKED_OPTION_TEXT.toRawString())) return;
+//		if(hasGameData("ranked")
+//				&& (getGameData("ranked") + "").equals(ConfigUtil.GUI_UNRANKED_OPTION_TEXT.toRawString())) return;
 
 		if(gamePlayerWinner == null) {
 			for(GamePlayer player : teamManager.getGamePlayers()) {
@@ -167,9 +167,9 @@ public class TicTacToe extends Game {
 
 		String message;
 		if(gamePlayerWinner != null) {
-			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
 		} else {
-			message = ChatColor.GREEN + "Tie game!";
+			message = ConfigUtil.CHAT_GAME_TIE.toString();
 		}
 
 		for(GamePlayer player : teamManager.getGamePlayers()) {

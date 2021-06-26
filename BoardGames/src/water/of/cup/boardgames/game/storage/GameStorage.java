@@ -51,10 +51,12 @@ public abstract class GameStorage {
         if(!hasStorageType(storageType)) return false;
 
         // Check if tracking is enabled for this storageType in config
-        String enabledPath = "settings.database." + getTableName() + ".enabled";
+        String path = "settings.games." + game.getName() + ".database";
+
+        String enabledPath = path + ".enabled";
         if(!ConfigUtil.getBoolean(enabledPath)) return false;
 
-        String storagePath = "settings.database." + getTableName() + "." + storageType.getKey();
+        String storagePath = path + "." + storageType.getKey();
         return ConfigUtil.getBoolean(storagePath);
     }
 
