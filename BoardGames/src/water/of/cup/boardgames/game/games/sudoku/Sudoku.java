@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.storage.GameStorage;
@@ -164,7 +165,6 @@ public class Sudoku extends Game {
 					int i = Integer.parseInt(but.getName());
 					if (!puzzle.check(selected, i)) {
 						mapManager.renderBoard();
-						player.sendMessage("You lost.");
 						this.endGame(null);
 					} else {
 						removeFinishedNumberButtons();
@@ -185,9 +185,9 @@ public class Sudoku extends Game {
 
 		String message;
 		if (gamePlayerWinner != null) {
-			message = gamePlayerWinner.getPlayer().getDisplayName() + " has won the game!";
+			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
 		} else {
-			message = ChatColor.GREEN + "You lost!";
+			message = ConfigUtil.CHAT_GAME_PLAYER_LOSE.toString();
 		}
 
 		for (GamePlayer player : teamManager.getGamePlayers()) {

@@ -129,7 +129,8 @@ public class StorageManager {
 				int colCount = resultSet.getMetaData().getColumnCount();
 				ArrayList<String> colNames = new ArrayList<>();
 
-				for(int i = 1; i <= colCount; i++) {
+				// Start at 4 so id, uuid, and username are not removed
+				for(int i = 4; i <= colCount; i++) {
 					colNames.add(resultSet.getMetaData().getColumnName(i));
 				}
 
@@ -222,7 +223,7 @@ public class StorageManager {
 				String updateSql = "INSERT INTO `" + tableName + "` (uuid,username," + columnName
 						+ ") VALUES (?,?,?) ON DUPLICATE KEY ";
 
-				updateSql += (replace) ? "SET " + columnName + " = ?;"
+				updateSql += (replace) ? "UPDATE " + columnName + " = ?;"
 						: "UPDATE " + columnName + " = " + columnName + " + ?;";
 
 				try (Connection con = getConnection();
