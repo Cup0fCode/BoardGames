@@ -54,7 +54,7 @@ public class SudokuInventory extends GameInventory {
 
     @Override
     protected boolean hasForfeitScreen() {
-        return false;
+        return true;
     }
 
     @Override
