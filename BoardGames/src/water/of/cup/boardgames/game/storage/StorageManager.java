@@ -284,7 +284,8 @@ public class StorageManager {
 		LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>> topPlayers = new LinkedHashMap<>();
 
 		String tableName = gameStorage.getTableName();
-		String sql = "SELECT * FROM `" + tableName + "` ORDER BY `" + orderBy.getKey() + "` DESC LIMIT " + (page * 10)
+		String isDesc = orderBy.isOrderByDescending() ? "DESC" : "ASC";
+		String sql = "SELECT * FROM `" + tableName + "` ORDER BY `" + orderBy.getKey() + "` " + isDesc + " LIMIT " + (page * 10)
 				+ ", 10";
 
 		executorService.submit(() -> {
@@ -292,6 +293,7 @@ public class StorageManager {
 				try (Connection con = getConnection();
 						PreparedStatement fetchQuery = con.prepareStatement(sql);
 						ResultSet resultSet = fetchQuery.executeQuery()) {
+					LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>> bottomPlayers = new LinkedHashMap<>();
 					while (resultSet.next()) {
 						String playerUUID = resultSet.getString("uuid");
 						if (playerUUID == null)
@@ -304,7 +306,18 @@ public class StorageManager {
 						LinkedHashMap<StorageType, Object> playerStats = this.getStringStatsFromResult(gameStorage,
 								resultSet);
 
+						if(!orderBy.isOrderByDescending()) {
+							if((playerStats.get(orderBy) + "").equals("0:0")) {
+								bottomPlayers.put(player, playerStats);
+								continue;
+							}
+						}
+
 						topPlayers.put(player, playerStats);
+					}
+
+					for(OfflinePlayer bottomPlayer : bottomPlayers.keySet()) {
+						topPlayers.put(bottomPlayer, bottomPlayers.get(bottomPlayer));
 					}
 
 					future.complete(topPlayers);
@@ -312,6 +325,32 @@ public class StorageManager {
 			} catch (SQLException throwables) {
 				throwables.printStackTrace();
 				future.complete(null);
+			}
+		});
+
+		return future.join();
+	}
+
+	public int getGamePlayerTotal(GameStorage gameStorage) {
+		CompletableFuture<Integer> future = new CompletableFuture<>();
+
+		String sqlString = "SELECT * FROM " + gameStorage.getTableName();
+
+		executorService.submit(() -> {
+			try {
+				int num = 0;
+				try (Connection con = getConnection();
+					 PreparedStatement sql = con.prepareStatement(sqlString);
+					 ResultSet playerData = sql.executeQuery();) {
+					while (playerData.next()) {
+						num++;
+					}
+				}
+
+				future.complete(num);
+			} catch (SQLException throwables) {
+				throwables.printStackTrace();
+				future.complete(0);
 			}
 		});
 

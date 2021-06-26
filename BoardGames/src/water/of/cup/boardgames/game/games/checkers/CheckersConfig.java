@@ -43,4 +43,9 @@ public class CheckersConfig extends GameConfig {
     protected HashMap<String, Object> getCustomValues() {
         return null;
     }
+
+    @Override
+    protected int getWinAmount() {
+        return 0;
+    }
 }

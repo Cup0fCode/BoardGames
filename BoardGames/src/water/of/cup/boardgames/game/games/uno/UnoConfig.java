@@ -45,4 +45,9 @@ public class UnoConfig extends GameConfig {
     protected HashMap<String, Object> getCustomValues() {
         return null;
     }
+
+    @Override
+    protected int getWinAmount() {
+        return 0;
+    }
 }

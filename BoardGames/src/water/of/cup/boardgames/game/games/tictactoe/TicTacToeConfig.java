@@ -49,4 +49,9 @@ public class TicTacToeConfig extends GameConfig {
 //        return customValues;
         return null;
     }
+
+    @Override
+    protected int getWinAmount() {
+        return 0;
+    }
 }

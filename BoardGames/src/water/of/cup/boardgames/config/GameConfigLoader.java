@@ -31,6 +31,7 @@ public class GameConfigLoader {
         loadRecipes();
         loadGameSounds();
         loadCustomConfigValues();
+        loadGameWinAmounts();
     }
 
     private static void loadRecipes() {
@@ -61,6 +62,24 @@ public class GameConfigLoader {
                     }
 
                     defaultConfig.put(configLoc + ".enabled", "true");
+                }
+            }
+        }
+
+        instance.addToConfig(defaultConfig);
+    }
+
+    private static void loadGameWinAmounts() {
+        HashMap<String, Object> defaultConfig = new HashMap<>();
+
+        for (String gameName : GAMES.keySet()) {
+            Game temp = GAMES.get(gameName);
+
+            if (temp != null) {
+                int gameWinAmount = temp.getGameWinAmount();
+                if(gameWinAmount != 0) {
+                    String configLoc = "settings.games." + temp.getName() + ".winAmount";
+                    defaultConfig.put(configLoc, gameWinAmount);
                 }
             }
         }
