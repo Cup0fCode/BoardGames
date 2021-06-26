@@ -183,7 +183,7 @@ public class GameCreateInventory extends InventoryScreen {
                                         click.getGui().draw();
                                         return true;
                                     },
-                                            ChatColor.GREEN + "/\\"
+                                            ConfigUtil.GUI_UP_ARROW.toString()
                                     )
                             );
 
@@ -217,7 +217,7 @@ public class GameCreateInventory extends InventoryScreen {
                                         click.getGui().draw();
                                         return true;
                                     },
-                                            ChatColor.GREEN + "\\/"
+                                            ConfigUtil.GUI_DOWN_ARROW.toString()
                                     )
                             );
                             break;

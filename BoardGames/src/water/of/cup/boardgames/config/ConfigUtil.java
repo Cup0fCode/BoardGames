@@ -42,6 +42,8 @@ public enum ConfigUtil {
     GUI_WAGER_DECREASE("settings.messages.gui.wagerdecrease", "&aDecrease Wager"),
     GUI_WAGER_BETTINGON("settings.messages.gui.bettingon", "&aBetting on %player%"),
     GUI_WAGER_TEXT("settings.messages.gui.wagertext", "&aWagers"),
+    GUI_UP_ARROW("settings.messages.gui.uparrow", "&a/\\"),
+    GUI_DOWN_ARROW("settings.messages.gui.downarrow", "&a\\/"),
 
     // GUI GAME OPTIONS
     GUI_WAGER_LABEL("settings.messages.gui.wagerlabel", "&2Wager: "),
