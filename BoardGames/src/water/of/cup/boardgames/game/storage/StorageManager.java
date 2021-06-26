@@ -284,7 +284,8 @@ public class StorageManager {
 		LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>> topPlayers = new LinkedHashMap<>();
 
 		String tableName = gameStorage.getTableName();
-		String sql = "SELECT * FROM `" + tableName + "` ORDER BY `" + orderBy.getKey() + "` DESC LIMIT " + (page * 10)
+		String isDesc = orderBy.isOrderByDescending() ? "DESC" : "ASC";
+		String sql = "SELECT * FROM `" + tableName + "` ORDER BY `" + orderBy.getKey() + "` " + isDesc + " LIMIT " + (page * 10)
 				+ ", 10";
 
 		executorService.submit(() -> {
@@ -303,6 +304,10 @@ public class StorageManager {
 
 						LinkedHashMap<StorageType, Object> playerStats = this.getStringStatsFromResult(gameStorage,
 								resultSet);
+
+						if(!orderBy.isOrderByDescending()) {
+							if((playerStats.get(orderBy) + "").equals("0:0")) continue;
+						}
 
 						topPlayers.put(player, playerStats);
 					}

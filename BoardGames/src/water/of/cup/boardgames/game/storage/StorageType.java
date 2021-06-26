@@ -5,22 +5,24 @@ import java.sql.JDBCType;
 public enum StorageType {
 
     // General types
-    WINS   ("wins", "int default 0", JDBCType.INTEGER),
-    LOSSES ("losses", "int default 0", JDBCType.INTEGER),
-    TIES   ("ties", "int default 0", JDBCType.INTEGER),
+    WINS   ("wins", "int default 0", JDBCType.INTEGER, true),
+    LOSSES ("losses", "int default 0", JDBCType.INTEGER, true),
+    TIES   ("ties", "int default 0", JDBCType.INTEGER, true),
 
     // Specific type example
-    CROSS_WINS("cross_wins", "int default 0", JDBCType.INTEGER), 
-    BEST_TIME("best_time", "double default 0", JDBCType.DOUBLE);
+    CROSS_WINS("cross_wins", "int default 0", JDBCType.INTEGER, true),
+    BEST_TIME("best_time", "double default 0", JDBCType.DOUBLE, false);
 
     private final String key;
     private final JDBCType dataType;
     private final String query;
+    private final boolean orderByDescending;
 
-    StorageType(String key, String query, JDBCType dataType) {
+    StorageType(String key, String query, JDBCType dataType, boolean orderByDescending) {
         this.key = key;
         this.dataType = dataType;
         this.query = query;
+        this.orderByDescending = orderByDescending;
     }
 
     public String getKey() {
@@ -29,6 +31,10 @@ public enum StorageType {
 
     public JDBCType getDataType() {
         return dataType;
+    }
+
+    public boolean isOrderByDescending() {
+        return orderByDescending;
     }
 
     public String getQuery() {
