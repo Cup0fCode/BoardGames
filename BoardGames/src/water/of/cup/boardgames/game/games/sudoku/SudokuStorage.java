@@ -17,9 +17,9 @@ public class SudokuStorage extends GameStorage {
     @Override
     protected StorageType[] getGameStores() {
         return new StorageType[] {
+                StorageType.BEST_TIME,
                 StorageType.WINS,
                 StorageType.LOSSES,
-                StorageType.BEST_TIME,
         };
     }
 }

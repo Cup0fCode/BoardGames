@@ -3,6 +3,9 @@ package water.of.cup.boardgames.config;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.game.storage.StorageType;
+
+import java.util.HashMap;
 
 public enum ConfigUtil {
 
@@ -51,6 +54,11 @@ public enum ConfigUtil {
     GUI_RANKED_OPTION_TEXT("settings.messages.gui.rankedoption", "ranked"),
     GUI_UNRANKED_OPTION_TEXT("settings.messages.gui.unrankedoption", "unranked"),
 
+    GUI_TEAM_RED_TEXT("settings.messages.gui.teamredtext", "RED"),
+    GUI_TEAM_BLACK_TEXT("settings.messages.gui.teamblacktext", "BLACK"),
+    GUI_TEAM_WHITE_TEXT("settings.messages.gui.teamwhitetext", "WHITE"),
+    GUI_TEAM_BLUE_TEXT("settings.messages.gui.teambluetext", "BLUE"),
+
     // GUI CHAT MESSAGES
     CHAT_GUI_GAME_ALREADY_CREATED("settings.messages.gui.gamealreadycreated", "Game has already been created."),
     CHAT_GUI_GAME_NO_MONEY_CREATE("settings.messages.gui.gamenomoneycreate", "&cNot enough money to create game."),
@@ -96,6 +104,14 @@ public enum ConfigUtil {
     private final String path;
     private final String defaultValue;
     private static final BoardGames instance = BoardGames.getInstance();
+    private static final HashMap<String, ConfigUtil> teamNameMap = new HashMap<>();
+
+    static {
+        teamNameMap.put("RED", ConfigUtil.GUI_TEAM_RED_TEXT);
+        teamNameMap.put("BLACK", ConfigUtil.GUI_TEAM_BLACK_TEXT);
+        teamNameMap.put("WHITE", ConfigUtil.GUI_TEAM_WHITE_TEXT);
+        teamNameMap.put("BLUE", ConfigUtil.GUI_TEAM_BLUE_TEXT);
+    }
 
     ConfigUtil(String path, String defaultValue) {
         this.path = path;
@@ -133,6 +149,14 @@ public enum ConfigUtil {
         if(configString == null) return false;
 
         return configString.equals("true");
+    }
+
+    public static String translateTeamName(String teamName) {
+        if(teamNameMap.containsKey(teamName)) {
+            return teamNameMap.get(teamName).toString();
+        }
+
+        return teamName;
     }
 
     public String buildString(String replaceWith) {

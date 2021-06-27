@@ -114,7 +114,7 @@ public class GameCreateInventory extends InventoryScreen {
 
                     gui.addElement(new DynamicGuiElement(curr, () ->
                             new StaticGuiElement(curr, new ItemStack(gameOption.getMaterial()), click -> true,
-                                    label + ChatColor.GREEN + gameData.get(gameOption.getKey()).toString() // gameData.get(gameOption.getKey())
+                                    label + ChatColor.GREEN + ConfigUtil.translateTeamName(gameData.get(gameOption.getKey()).toString())// gameData.get(gameOption.getKey())
                             )));
 
                     // Add toggle buttons

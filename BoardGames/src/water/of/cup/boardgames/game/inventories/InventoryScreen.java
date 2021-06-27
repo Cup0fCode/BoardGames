@@ -6,6 +6,7 @@ import de.themoep.inventorygui.StaticGuiElement;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import water.of.cup.boardgames.config.ConfigUtil;
 
 public class InventoryScreen {
 
@@ -29,7 +30,7 @@ public class InventoryScreen {
 
             gameOptionGroup.addElement((new StaticGuiElement(groupPos,
                     new ItemStack(gameOption.getMaterial()),
-                    label + ChatColor.GREEN + gameInventory.getGameData(gameOption.getKey()).toString()
+                    label + ChatColor.GREEN + ConfigUtil.translateTeamName(gameInventory.getGameData(gameOption.getKey()).toString())
             )));
         }
 
