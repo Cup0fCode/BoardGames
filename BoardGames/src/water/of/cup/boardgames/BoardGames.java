@@ -2,12 +2,10 @@ package water.of.cup.boardgames;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,7 +14,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import net.milkbowl.vault.economy.Economy;
-import water.of.cup.boardgames.commands.DebugCommand;
 import water.of.cup.boardgames.commands.bgCommandsTabCompleter;
 import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameConfigLoader;
@@ -77,7 +74,7 @@ public class BoardGames extends JavaPlugin {
 //		new TicTacToeInventory(null).build(null, null);
 
 		// Debug:
-		getCommand("debug").setExecutor(new DebugCommand());
+//		getCommand("debug").setExecutor(new DebugCommand());
 		//Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
 		
 		gameManager.registerGames(Sudoku.class, Chess.class, ConwaysGameOfLife.class, TicTacToe.class, ConnectFour.class, Checkers.class, MineSweeper.class, Uno.class);
