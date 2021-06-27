@@ -102,7 +102,7 @@ public class BoardGames extends JavaPlugin {
 		//GameManager.loadGames();
 
 		// Add bStats
-		Metrics metrics = new Metrics(this, 10153);
+		Metrics metrics = new Metrics(this, 11839);
 		Bukkit.getLogger().info("[BoardGames] bStats: " + metrics.isEnabled() + " plugin ver: " + getDescription().getVersion());
 
 		metrics.addCustomChart(new Metrics.SimplePie("plugin_version", () -> getDescription().getVersion()));
