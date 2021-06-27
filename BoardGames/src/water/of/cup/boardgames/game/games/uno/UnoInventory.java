@@ -74,7 +74,7 @@ public class UnoInventory extends GameInventory {
 	@Override
 	protected boolean hasForfeitScreen() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 

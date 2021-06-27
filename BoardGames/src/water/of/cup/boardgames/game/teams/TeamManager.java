@@ -57,6 +57,8 @@ public class TeamManager {
     public void removeTeamByPlayer(Player player) {
         for(String team : teams.keySet()) {
             if(teams.get(team).getPlayer().equals(player)) {
+                if (team == currentTurn)
+                	nextTurn();
                 teams.remove(team);
                 return;
             }

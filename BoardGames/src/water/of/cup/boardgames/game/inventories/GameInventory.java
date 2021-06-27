@@ -373,16 +373,7 @@ public abstract class GameInventory {
             @Override
             public void onForfeit(Player player) {
                 if(game.isIngame() && game.hasPlayer(player)) {
-                    GamePlayer winner = null;
-
-                    for(GamePlayer gamePlayer : game.getGamePlayers()) {
-                        if(!gamePlayer.getPlayer().equals(player)) {
-                            winner = gamePlayer;
-                            break;
-                        }
-                    }
-
-                    game.endGame(winner);
+                    game.exitPlayer(player);
                 }
             }
         };

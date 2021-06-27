@@ -32,6 +32,19 @@ public class Uno extends Game {
 	public Uno(int rotation) {
 		super(rotation);
 	}
+	
+	@Override
+	public void exitPlayer(Player player) {
+		super.exitPlayer(player);
+		if (!this.isIngame())
+			return;
+		toggleHandButtons();
+		for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
+			setCardButtons(gamePlayer);
+		}
+		mapManager.renderBoard();
+		
+	}
 
 	@Override
 	protected void setMapInformation(int rotation) {
