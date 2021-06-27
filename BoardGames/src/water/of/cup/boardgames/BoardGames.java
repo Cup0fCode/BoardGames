@@ -209,10 +209,10 @@ public class BoardGames extends JavaPlugin {
 			}
 		}
 
-		File savedGamesDir = new File(getDataFolder(), "saved_games");
-		if (!savedGamesDir.exists()) {
-			savedGamesDir.mkdir();
-		}
+//		File savedGamesDir = new File(getDataFolder(), "saved_games");
+//		if (!savedGamesDir.exists()) {
+//			savedGamesDir.mkdir();
+//		}
 
 		this.saveConfig();
 	}
