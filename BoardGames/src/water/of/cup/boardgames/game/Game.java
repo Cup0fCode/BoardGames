@@ -24,6 +24,7 @@ import water.of.cup.boardgames.game.maps.MapData;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.maps.Screen;
 import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.game.storage.StorageType;
 import water.of.cup.boardgames.game.teams.TeamManager;
 import water.of.cup.boardgames.game.wagers.WagerManager;
 
@@ -614,7 +615,15 @@ public abstract class Game {
 			this.endGame(null);
 			return;
 		}
+
 		teamManager.removeTeamByPlayer(player);
+
+		if(hasGameStorage()) {
+			if(gameStorage.canExecute(StorageType.LOSSES)) {
+				gameStorage.updateData(player, StorageType.LOSSES, 1);
+			}
+		}
+
 		if (teamManager.getGamePlayers().size() == 1) {
 			this.endGame(teamManager.getGamePlayers().get(0));
 			return;
