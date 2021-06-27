@@ -343,7 +343,7 @@ public class Uno extends Game {
 		if (playCard(gamePlayer, card)) {
 			this.playGameSound("click");
 
-			player.sendMessage("played card");
+//			player.sendMessage("played card");
 			toggleHandButtons();
 			setCardButtons(teamManager.getTurnPlayer());
 			mapManager.renderBoard();

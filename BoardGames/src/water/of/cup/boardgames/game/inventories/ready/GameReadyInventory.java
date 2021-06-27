@@ -92,7 +92,7 @@ public class GameReadyInventory extends InventoryScreen {
         );
 
         gui.setCloseAction(close -> {
-            player.sendMessage("Closing ready game!");
+//            player.sendMessage("Closing ready game!");
             callback.onLeave(player);
             return false;
         });

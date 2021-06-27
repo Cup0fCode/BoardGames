@@ -205,7 +205,7 @@ public abstract class Game {
 		for (int x = minX; x <= maxX; x++) {
 			for (int y = minY; y <= maxY; y++) {
 				for (int z = minZ; z <= maxZ; z++) {
-					Bukkit.getLogger().info("placed");
+//					Bukkit.getLogger().info("placed");
 					for (MapData mapData : mapManager.getMapDataAtLocationOnRotatedBoard(x - t1X, z - t1Z, y - t1Y)) {
 
 						int mapVal = mapData.getMapVal();

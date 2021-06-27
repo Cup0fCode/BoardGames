@@ -148,7 +148,7 @@ public abstract class GameInventory {
 
                 // Game has been created with gameData
                 if(gameDataResult == null) {
-                    player.sendMessage("Exited creating game.");
+//                    player.sendMessage("Exited creating game.");
                     return;
                 }
 
@@ -173,7 +173,7 @@ public abstract class GameInventory {
                     game.addPlayer(player, preselectedTeam);
                 }
 
-                player.sendMessage("Creating game with gameData");
+//                player.sendMessage("Creating game with gameData");
 
                 // Set game data, open wait players
                 gameCreator = player;

@@ -68,7 +68,7 @@ public class GameJoinInventory extends InventoryScreen {
         }
 
         gui.setCloseAction(close -> {
-            player.sendMessage("Closing join game!");
+//            player.sendMessage("Closing join game!");
             callback.onLeave(player);
             return false;
         });

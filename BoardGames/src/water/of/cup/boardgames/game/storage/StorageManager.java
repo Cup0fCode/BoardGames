@@ -63,8 +63,8 @@ public class StorageManager {
 
 		String tableSql = tableSqlBuilder.toString();
 
-		Bukkit.getLogger().info("Game Storage Debug " + tableName + " debug:");
-		Bukkit.getLogger().info(tableSql);
+//		Bukkit.getLogger().info("Game Storage Debug " + tableName + " debug:");
+//		Bukkit.getLogger().info(tableSql);
 
 		try (Connection con = getConnection(); Statement statement = con.createStatement();) {
 			statement.execute(tableSql);
