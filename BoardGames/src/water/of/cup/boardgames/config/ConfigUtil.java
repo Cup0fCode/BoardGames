@@ -85,6 +85,7 @@ public enum ConfigUtil {
     CHAT_GAME_UNO_SELECT_COLOR("settings.messages.chat.unoselectcolor", "Select a color."),
     CHAT_GAME_UNO_FORCE_DRAW("settings.messages.chat.unoforcedraw", "You have no playable cards and were forced to draw a card."),
     CHAT_GAME_UNO_INVALID_CARD("settings.messages.chat.unoinvalidcard", "You can not play that card."),
+    CHAT_GAME_PLAYER_LEAVE("settings.messages.chat.gameplayerleave", "%player% has left %game%."),
 
     // CHAT MESSAGES
     CHAT_NO_DB("settings.messages.chat.nodb", "Database must be enabled to view stats."),
@@ -163,6 +164,14 @@ public enum ConfigUtil {
         String formatted = this.toString();
 
         formatted = formatted.replace("%player%", replaceWith).replace("%game%", replaceWith);
+
+        return formatted;
+    }
+
+    public String buildStringLeaveGame(String playerName, String gameName) {
+        String formatted = this.toString();
+
+        formatted = formatted.replace("%player%", playerName).replace("%game%", gameName);
 
         return formatted;
     }

@@ -348,8 +348,6 @@ public class Checkers extends Game {
 		selected = null;
 		canDeSelect = false;
 
-		updateGameStorage(gamePlayerWinner);
-
 		String message;
 		if(gamePlayerWinner != null) {
 			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
@@ -364,22 +362,6 @@ public class Checkers extends Game {
 		super.endGame(gamePlayerWinner);
 	}
 
-	private void updateGameStorage(GamePlayer gamePlayerWinner) {
-		if(!hasGameStorage()) return;
-
-		if(gamePlayerWinner == null) {
-			for(GamePlayer player : teamManager.getGamePlayers()) {
-				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
-			}
-		} else {
-			GamePlayer gamePlayerLoser = teamManager.getGamePlayers().get(0).equals(gamePlayerWinner)
-					? teamManager.getGamePlayers().get(1)
-					: teamManager.getGamePlayers().get(0);
-
-			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
-			gameStorage.updateData(gamePlayerLoser.getPlayer(), StorageType.LOSSES, 1);
-		}
-	}
 
 	private String checkGameOver() { // returns empty for game not over
 		boolean foundRed = false;

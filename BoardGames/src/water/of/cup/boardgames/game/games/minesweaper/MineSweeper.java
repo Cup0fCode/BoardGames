@@ -227,8 +227,6 @@ public class MineSweeper extends Game {
 		//buttons.clear();
 		openedTiles = 0;
 
-		this.updateGameStorage(gamePlayerWinner);
-
 		String message;
 		if(gamePlayerWinner != null) {
 			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
@@ -241,27 +239,6 @@ public class MineSweeper extends Game {
 		}
 
 		super.endGame(gamePlayerWinner);
-	}
-
-	private void updateGameStorage(GamePlayer gamePlayerWinner) {
-		if(!hasGameStorage()) return;
-
-		if(gamePlayerWinner == null) {
-			for(GamePlayer player : teamManager.getGamePlayers()) {
-				gameStorage.updateData(player.getPlayer(), StorageType.LOSSES, 1);
-			}
-		} else {
-			for(GamePlayer player : teamManager.getGamePlayers()) {
-				gameStorage.updateData(player.getPlayer(), StorageType.WINS, 1);
-				
-				Double bestTime = (Double) BoardGames.getInstance().getStorageManager()
-						.fetchPlayerStats(player.getPlayer(), getGameStore(), false).get(StorageType.BEST_TIME);
-				Double time = clock.getPlayerTimes().get(player);
-
-				if (bestTime == null || bestTime <= 0 || bestTime > time)
-					gameStorage.setData(player.getPlayer(), StorageType.BEST_TIME, time);
-			}
-		}
 	}
 
 	@Override

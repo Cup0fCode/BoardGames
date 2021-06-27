@@ -360,28 +360,13 @@ public class Uno extends Game {
 	}
 
 	public void endGame(GamePlayer gamePlayerWinner) {
-		this.updateGameStorage(gamePlayerWinner);
-
 		String message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
 
 		for(GamePlayer player : teamManager.getGamePlayers()) {
 			player.getPlayer().sendMessage(message);
 		}
-		
 
 		super.endGame(gamePlayerWinner);
-	}
-
-	private void updateGameStorage(GamePlayer gamePlayerWinner) {
-		if(!hasGameStorage()) return;
-
-		gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
-
-		for(GamePlayer player : teamManager.getGamePlayers()) {
-			if(player.getPlayer().getName().equals(gamePlayerWinner.getPlayer().getName())) continue;
-
-			gameStorage.updateData(player.getPlayer(), StorageType.LOSSES, 1);
-		}
 	}
 
 	@Override

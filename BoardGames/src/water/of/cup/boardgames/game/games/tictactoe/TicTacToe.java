@@ -139,32 +139,9 @@ public class TicTacToe extends Game {
 		mapManager.renderBoard();
 	}
 
-	private void updateGameStorage(GamePlayer gamePlayerWinner) {
-		if(!hasGameStorage()) return;
-
-		// Check if game is "ranked"
-//		if(hasGameData("ranked")
-//				&& (getGameData("ranked") + "").equals(ConfigUtil.GUI_UNRANKED_OPTION_TEXT.toRawString())) return;
-
-		if(gamePlayerWinner == null) {
-			for(GamePlayer player : teamManager.getGamePlayers()) {
-				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
-			}
-		} else {
-			GamePlayer gamePlayerLoser = teamManager.getGamePlayers().get(0).equals(gamePlayerWinner)
-					? teamManager.getGamePlayers().get(1)
-					: teamManager.getGamePlayers().get(0);
-
-			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
-			gameStorage.updateData(gamePlayerLoser.getPlayer(), StorageType.LOSSES, 1);
-		}
-	}
-
 	public void endGame(GamePlayer gamePlayerWinner) {
 		//board = null;
 		//buttons.clear();
-
-		updateGameStorage(gamePlayerWinner);
 
 		String message;
 		if(gamePlayerWinner != null) {

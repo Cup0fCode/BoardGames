@@ -269,6 +269,7 @@ public abstract class Game {
 		ingame = false;
 		wagerManager.completeWagers(winner);
 		sendGameWinMoney(winner);
+		updateGameStorage(winner);
 		clearGamePlayers();
 
 		if (clock != null)
@@ -611,6 +612,12 @@ public abstract class Game {
 	}
 
 	public void exitPlayer(Player player) {
+		for(GamePlayer gamePlayer : teamManager.getGamePlayers()) {
+			if(gamePlayer.getPlayer().isOnline()) {
+				gamePlayer.getPlayer().sendMessage(ConfigUtil.CHAT_GAME_PLAYER_LEAVE.buildStringLeaveGame(player.getDisplayName(), getName()));
+			}
+		}
+
 		if (teamManager.getGamePlayers().size() == 1) {
 			this.endGame(null);
 			return;
@@ -633,5 +640,38 @@ public abstract class Game {
 	public void rerender(Player player) {
 		mapManager.renderBoard(player);
 
+	}
+
+	private void updateGameStorage(GamePlayer gamePlayerWinner) {
+		if(!hasGameStorage()) return;
+
+		if(gamePlayerWinner == null) {
+			if(teamManager.getGamePlayers().size() == 1) {
+				gameStorage.updateData(teamManager.getGamePlayers().get(0).getPlayer(), StorageType.LOSSES, 1);
+				return;
+			}
+
+			for(GamePlayer player : teamManager.getGamePlayers()) {
+				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
+			}
+			return;
+		}
+
+		gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
+
+		if(gameStorage.canExecute(StorageType.BEST_TIME)) {
+			Double bestTime = (Double) BoardGames.getInstance().getStorageManager()
+					.fetchPlayerStats(gamePlayerWinner.getPlayer(), getGameStore(), false).get(StorageType.BEST_TIME);
+			Double time = clock.getPlayerTimes().get(gamePlayerWinner);
+
+			if (bestTime == null || bestTime <= 0 || bestTime > time)
+				gameStorage.setData(gamePlayerWinner.getPlayer(), StorageType.BEST_TIME, time);
+		}
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			if(player.getPlayer().getName().equals(gamePlayerWinner.getPlayer().getName())) continue;
+
+			gameStorage.updateData(player.getPlayer(), StorageType.LOSSES, 1);
+		}
 	}
 }

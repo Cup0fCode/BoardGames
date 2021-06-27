@@ -288,20 +288,8 @@ public class ConnectFour extends Game {
 	private void updateGameStorage(GamePlayer gamePlayerWinner, boolean crossWin) {
 		if(!hasGameStorage()) return;
 
-		if(gamePlayerWinner == null) {
-			for(GamePlayer player : teamManager.getGamePlayers()) {
-				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
-			}
-		} else {
-			GamePlayer gamePlayerLoser = teamManager.getGamePlayers().get(0).equals(gamePlayerWinner)
-					? teamManager.getGamePlayers().get(1)
-					: teamManager.getGamePlayers().get(0);
-
-			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
-			gameStorage.updateData(gamePlayerLoser.getPlayer(), StorageType.LOSSES, 1);
-
-			if(crossWin)
-				gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.CROSS_WINS, 1);
+		if(gamePlayerWinner != null && crossWin) {
+			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.CROSS_WINS, 1);
 		}
 	}
 
