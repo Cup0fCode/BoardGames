@@ -7,7 +7,5 @@ api-version: 1.16
 softdepends: [Vault]
 commands:
   bg:
-    description: All commands for the ChessBoards plugin.
+    description: All commands for the BoardGames plugin.
     aliases: [bg]
-  debug:
-    description: Debug command for BoardGames.

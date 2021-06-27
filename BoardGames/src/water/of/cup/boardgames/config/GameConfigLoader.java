@@ -77,10 +77,8 @@ public class GameConfigLoader {
 
             if (temp != null) {
                 int gameWinAmount = temp.getGameWinAmount();
-                if(gameWinAmount != 0) {
-                    String configLoc = "settings.games." + temp.getName() + ".winAmount";
-                    defaultConfig.put(configLoc, gameWinAmount);
-                }
+                String configLoc = "settings.games." + temp.getName() + ".winAmount";
+                defaultConfig.put(configLoc, gameWinAmount);
             }
         }
 
