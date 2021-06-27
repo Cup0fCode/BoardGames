@@ -224,4 +224,11 @@ public class GameManager {
 		// TODO Auto-generated method stub
 		return ++lastGameId;
 	}
+
+	public void rerender(Player player) {
+		for (Game game : games) {
+			game.rerender(player);
+		}
+		
+	}
 }

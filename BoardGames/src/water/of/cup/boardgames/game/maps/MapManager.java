@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
@@ -216,6 +217,45 @@ public class MapManager {
 					}
 				});
 			}
+	}
+	
+	public void renderBoard(Player player) {
+		for (int mapVal : getMapVals()) {
+			GameMap map = game.getGameMapByMapVal(mapVal);
+			if (map == null)
+				continue;
+			MapMeta mapMeta = map.getMapMeta();
+			MapView view = mapMeta.getMapView();
+
+			for (MapRenderer renderer : view.getRenderers())
+				if (renderer instanceof GameRenderer)
+					((GameRenderer) renderer).rerender(player);
+			Bukkit.getServer().getScheduler().runTaskAsynchronously(BoardGames.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					player.sendMap(view);
+				}
+			});
+		}
+		for (Screen screen : game.getScreens())
+			for (int mapVal : screen.getMapVals()) {
+				GameMap map = game.getGameMapByMapVal(mapVal);
+				if (map == null)
+					continue;
+				MapMeta mapMeta = map.getMapMeta();
+				MapView view = mapMeta.getMapView();
+
+				for (MapRenderer renderer : view.getRenderers())
+					if (renderer instanceof GameRenderer)
+						((GameRenderer) renderer).rerender(player);
+				Bukkit.getServer().getScheduler().runTaskAsynchronously(BoardGames.getInstance(), new Runnable() {
+					@Override
+					public void run() {
+						player.sendMap(view);
+					}
+				});
+			}
+		
 	}
 
 	public void resetRenderers() {

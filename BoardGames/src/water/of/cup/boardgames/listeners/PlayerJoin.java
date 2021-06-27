@@ -18,7 +18,8 @@ public class PlayerJoin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-
+        gameManager.rerender(player);
+        
         if(ConfigUtil.RECIPE_ENABLED.toBoolean()) {
             for (String name : gameManager.getGameNames()) {
                 Game temp = gameManager.newGame(name, 0);

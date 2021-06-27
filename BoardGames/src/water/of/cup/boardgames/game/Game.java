@@ -608,4 +608,9 @@ public abstract class Game {
 			return;
 		}	
 	}
+
+	public void rerender(Player player) {
+		mapManager.renderBoard(player);
+		
+	}
 }
