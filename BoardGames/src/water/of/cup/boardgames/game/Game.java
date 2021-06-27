@@ -73,7 +73,7 @@ public abstract class Game {
 	protected abstract void setGameName(); // set gameName
 
 	protected abstract void setBoardImage(); // set board Image
-	
+
 	protected abstract void clockOutOfTime();
 
 	protected abstract Clock getClock();
@@ -148,12 +148,11 @@ public abstract class Game {
 				}
 			}
 		}
-		
+
 		// check that bottom blocks are not empty
-		for (int x = minX; x <= maxX; x++) 
+		for (int x = minX; x <= maxX; x++)
 			for (int z = minZ; z <= maxZ; z++) {
-				if (loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY() - 1, loc.getBlockZ() + z)
-						.isEmpty())
+				if (loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY() - 1, loc.getBlockZ() + z).isEmpty())
 					return false;
 			}
 
@@ -245,7 +244,7 @@ public abstract class Game {
 						frame.setVisible(true);
 						if (removeBlock)
 							placedOn.setType(Material.AIR);
-						
+
 						frameLoc.getBlock().setType(Material.BARRIER);
 					}
 
@@ -270,10 +269,12 @@ public abstract class Game {
 		wagerManager.completeWagers(winner);
 		sendGameWinMoney(winner);
 		clearGamePlayers();
-		clock.cancel();
+
+		if (clock != null)
+			clock.cancel();
 
 		// Ensure map gets cleared
-		//renderInitial();
+		// renderInitial();
 	}
 
 	public void setInGame() {
@@ -502,7 +503,7 @@ public abstract class Game {
 			}
 		}, 20);
 	}
-	
+
 	public boolean hasGameStorage() {
 		return gameStorage != null && BoardGames.getInstance().getStorageManager() != null;
 	}
@@ -516,7 +517,7 @@ public abstract class Game {
 	}
 
 	public Object getGameData(String key) {
-		if(this.gameData.get(key) instanceof String)
+		if (this.gameData.get(key) instanceof String)
 			return ChatColor.stripColor((String) this.gameData.get(key));
 
 		return this.gameData.get(key);
@@ -531,57 +532,67 @@ public abstract class Game {
 	}
 
 	public GameRecipe getGameRecipe() {
-		if(!hasGameConfig()) return null;
+		if (!hasGameConfig())
+			return null;
 
 		return gameConfig.getGameRecipe();
 	}
 
 	public ArrayList<GameSound> getGameSounds() {
-		if(!hasGameConfig()) return null;
+		if (!hasGameConfig())
+			return null;
 
 		return gameConfig.getGameSounds();
 	}
 
 	public HashMap<String, Object> getCustomValues() {
-		if(!hasGameConfig()) return null;
+		if (!hasGameConfig())
+			return null;
 
 		return gameConfig.getCustomValues();
 	}
 
 	public int getGameWinAmount() {
-		if(!hasGameConfig()) return 0;
+		if (!hasGameConfig())
+			return 0;
 
 		return gameConfig.getWinAmount();
 	}
 
 	public void sendGameWinMoney(GamePlayer winner) {
-		if(winner == null) return;
-		if(!hasGameConfig()) return;
+		if (winner == null)
+			return;
+		if (!hasGameConfig())
+			return;
 
 		String configLoc = "settings.games." + getName() + ".winAmount";
 		int winAmount = BoardGames.getInstance().getConfig().getInt(configLoc);
 
-		if(BoardGames.getInstance().getEconomy() != null && winAmount != 0) {
+		if (BoardGames.getInstance().getEconomy() != null && winAmount != 0) {
 			BoardGames.getInstance().getEconomy().depositPlayer(winner.getPlayer(), winAmount);
 		}
 	}
 
 	@Nullable
 	public Sound getGameSound(String key) {
-		if(gameConfig.getGameSounds() == null) return null;
+		if (gameConfig.getGameSounds() == null)
+			return null;
 
 		String configLoc = "settings.games." + getName() + ".sounds";
-		if(!ConfigUtil.getBoolean(configLoc + ".enabled")) return null;
+		if (!ConfigUtil.getBoolean(configLoc + ".enabled"))
+			return null;
 
 		String soundName = BoardGames.getInstance().getConfig().getString(configLoc + "." + key);
-		if(!EnumUtils.isValidEnum(Sound.class, soundName)) return null;
+		if (!EnumUtils.isValidEnum(Sound.class, soundName))
+			return null;
 
 		return Sound.valueOf(soundName);
 	}
 
 	@Nullable
 	public Object getConfigValue(String key) {
-		if(gameConfig.getCustomValues() == null) return null;
+		if (gameConfig.getCustomValues() == null)
+			return null;
 
 		String configLoc = "settings.games." + getName() + ".misc." + key;
 
@@ -590,9 +601,10 @@ public abstract class Game {
 
 	protected void playGameSound(String soundKey) {
 		Sound sound = getGameSound(soundKey);
-		if(sound == null) return;
+		if (sound == null)
+			return;
 
-		for(GamePlayer player : teamManager.getGamePlayers()) {
+		for (GamePlayer player : teamManager.getGamePlayers()) {
 			player.getPlayer().playSound(player.getPlayer().getLocation(), sound, (float) 5.0, (float) 1.0);
 		}
 	}
@@ -606,11 +618,11 @@ public abstract class Game {
 		if (teamManager.getGamePlayers().size() == 1) {
 			this.endGame(teamManager.getGamePlayers().get(0));
 			return;
-		}	
+		}
 	}
 
 	public void rerender(Player player) {
 		mapManager.renderBoard(player);
-		
+
 	}
 }
