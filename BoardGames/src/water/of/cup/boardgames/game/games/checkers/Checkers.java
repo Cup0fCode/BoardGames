@@ -340,7 +340,9 @@ public class Checkers extends Game {
 	}
 
 	public void endGame(GamePlayer gamePlayerWinner) {
-		buttons.clear();
+		updateButtons();
+		mapManager.renderBoard();
+//		buttons.clear();
 		movesSinceCapture = 0;
 		selected = null;
 		canDeSelect = false;

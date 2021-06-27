@@ -39,6 +39,7 @@ public class MineSweeper extends Game {
 	@Override
 	protected void startGame() {
 		super.startGame();
+		buttons.clear();
 		setInGame();
 		createBoard();
 		mapManager.renderBoard();
@@ -223,7 +224,7 @@ public class MineSweeper extends Game {
 	}
 
 	public void endGame(GamePlayer gamePlayerWinner) {
-		buttons.clear();
+		//buttons.clear();
 		openedTiles = 0;
 
 		this.updateGameStorage(gamePlayerWinner);

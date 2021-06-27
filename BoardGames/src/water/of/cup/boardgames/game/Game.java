@@ -273,7 +273,7 @@ public abstract class Game {
 		clock.cancel();
 
 		// Ensure map gets cleared
-		renderInitial();
+		//renderInitial();
 	}
 
 	public void setInGame() {

@@ -231,7 +231,7 @@ public class Chess extends Game {
 				GamePlayer playerWinner = teamManager.getGamePlayerByTeam(board.checkGameOver());
 				paintBoard();
 				endGame(playerWinner);
-				Bukkit.getLogger().info(board.checkGameOver());
+				//Bukkit.getLogger().info(board.checkGameOver());
 				return;
 			}
 

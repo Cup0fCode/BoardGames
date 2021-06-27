@@ -160,8 +160,8 @@ public class TicTacToe extends Game {
 	}
 
 	public void endGame(GamePlayer gamePlayerWinner) {
-		board = null;
-		buttons.clear();
+		//board = null;
+		//buttons.clear();
 
 		updateGameStorage(gamePlayerWinner);
 
@@ -175,7 +175,7 @@ public class TicTacToe extends Game {
 		for(GamePlayer player : teamManager.getGamePlayers()) {
 			player.getPlayer().sendMessage(message);
 		}
-
+		mapManager.renderBoard();
 		super.endGame(gamePlayerWinner);
 	}
 

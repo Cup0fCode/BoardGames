@@ -39,11 +39,12 @@ public class ConnectFour extends Game {
 
 	@Override
 	protected void startGame() {
-		mapManager.renderBoard();
+		buttons.clear();
 		resetChips();
 		createChipButtons();
 		setChipImages();
 		setInGame();
+		mapManager.renderBoard();
 	}
 
 	private void resetChips() {
@@ -266,7 +267,7 @@ public class ConnectFour extends Game {
 	}
 
 	public void endGame(GamePlayer gamePlayerWinner, boolean crossWin) {
-		buttons.clear();
+		//buttons.clear();
 
 		updateGameStorage(gamePlayerWinner, crossWin);
 

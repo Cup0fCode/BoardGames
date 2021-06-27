@@ -354,6 +354,7 @@ public class Uno extends Game {
 		for(GamePlayer player : teamManager.getGamePlayers()) {
 			player.getPlayer().sendMessage(message);
 		}
+		
 
 		super.endGame(gamePlayerWinner);
 	}
