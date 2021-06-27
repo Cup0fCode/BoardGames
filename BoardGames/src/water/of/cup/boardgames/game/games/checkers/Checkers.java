@@ -279,10 +279,11 @@ public class Checkers extends Game {
 
 			// check if piece must jump
 			if (colorCanJump(teamTurn)) {
-				player.sendMessage(ConfigUtil.CHAT_GAME_FORCE_JUMP.toString());
 				// check if piece can jump
-				if (!canJump(position))
+				if (!canJump(position)) {
+					player.sendMessage(ConfigUtil.CHAT_GAME_FORCE_JUMP.toString());
 					return;
+				}
 			} else if (!canAdvance(position)) // check if piece has normal moves if no jumps available
 				return;
 			
