@@ -33,6 +33,7 @@ public enum ConfigUtil {
     GUI_LEAVE_GAME("settings.messages.gui.leavegame", "&cLeave Game"),
     GUI_READY_TEXT("settings.messages.gui.readytext", "&a&lREADY"),
     GUI_UNREADY_TEXT("settings.messages.gui.unreadytext", "&c&lCLICK TO READY"),
+    GUI_NOT_READY_TEXT("settings.messages.gui.notreadytext", "&c&lNOT READY"),
     GUI_WAGER_NEXT("settings.messages.gui.wagernext", "Next"),
     GUI_WAGER_BACK("settings.messages.gui.wagerback", "Back"),
     GUI_WAGER_CANCEL("settings.messages.gui.wagercancel", "&cCancel Wager"),

@@ -36,7 +36,7 @@ public abstract class GameStorage {
         instance.getStorageManager().updateColumn(player, getTableName(), storageType, increment, false);
     }
 
-    // Untested
+    // Sets value directly
     public void setData(Player player, StorageType storageType, Object newValue) {
         if(!canExecute(storageType)) return;
 

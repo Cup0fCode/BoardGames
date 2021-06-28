@@ -46,7 +46,7 @@ public class GameReadyInventory extends InventoryScreen {
             ItemStack playerHead = InventoryUtils.getPlayerHead(readyPlayer, isReady);
             String readyText = isReady
                     ? ConfigUtil.GUI_READY_TEXT.toString()
-                    : ConfigUtil.GUI_UNREADY_TEXT.toString();
+                    : ConfigUtil.GUI_NOT_READY_TEXT.toString();
 
             playerReadyGroup.addElement((new StaticGuiElement('g',
                     playerHead,
