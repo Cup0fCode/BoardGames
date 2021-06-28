@@ -42,6 +42,10 @@ public class BoardInteract implements Listener {
 		if (!block.getType().equals(Material.BARRIER))
 			return;
 
+		if(ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
+				&& !player.hasPermission("boardgames.interact"))
+			return;
+
 		// check hand to prevent double click
 		if (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (e.getHand().equals(EquipmentSlot.HAND)) {
@@ -104,15 +108,25 @@ public class BoardInteract implements Listener {
 			}
 		}
 
+		if(game == null && gameFrame != null) {
+			Game newGame = gameManager.newGame(map.getGameName(), map.getRotation());
+
+			if(newGame == null)
+				return;
+
+			Location loc = gameFrame.getLocation().getBlock().getLocation();
+			newGame.replace(loc, newGame.getRotation(), map.getMapVal());
+			gameManager.addGame(newGame);
+
+			game = newGame;
+		}
+
 		if (game == null) // check if a game is found
 			return;
 
 		if (gameFrame.getAttachedFace().getOppositeFace() != result.getHitBlockFace()) // check that the top of the																				// board was hit
 			return;
 
-		if(ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
-				&& !player.hasPermission("boardgames.interact"))
-			return;
 
 		if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
 			e.setCancelled(true);
