@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.commands;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -100,9 +101,9 @@ public class bgCommands implements CommandExecutor {
 					return false;
 				}
 
-				p.sendMessage(ConfigUtil.CHAT_STATS_HEADER.buildString(player.getName()));
+				p.sendMessage(ConfigUtil.CHAT_STATS_HEADER.buildStringPlayerGame(player.getName(), tempGame.getName()));
 				for(StorageType storageType : playerStats.keySet()) {
-					p.sendMessage(storageType.getKey() + " : " + playerStats.get(storageType));
+					p.sendMessage(ConfigUtil.CHAT_STATS_FORMAT.buildStatsFormat(StringUtils.capitalize(storageType.getKey()), playerStats.get(storageType) + ""));
 				}
 
 				return true;
@@ -176,7 +177,7 @@ public class bgCommands implements CommandExecutor {
 				p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_HEADER.buildString(tempGame.getName(), orderBy.getKey()) + " (" + (page + 1) + "/"
 						+ numOfPages + ")");
 				for(OfflinePlayer player : topPlayers.keySet()) {
-					p.sendMessage("#" + count + ". " + player.getName() + " - " + topPlayers.get(player).get(orderBy));
+					p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_FORMAT.buildLeaderBoardFormat(count, player.getName(),  topPlayers.get(player).get(orderBy) + ""));
 					count++;
 				}
 			} else if (args[0].equalsIgnoreCase("reload")) {

@@ -67,7 +67,7 @@ public enum ConfigUtil {
     CHAT_GUI_GAME_NO_MONEY_JOIN("settings.messages.gui.gamenomoneyjoin", "&cYou do not have enough money!"),
     CHAT_GUI_GAME_ACCEPT("settings.messages.gui.gameacceptchat", "Accepting %player%"),
     CHAT_GUI_GAME_DECLINE("settings.messages.gui.gamedeclinechat", "Declining %player%"),
-    CHAT_GUI_GAME_OWNER_LEFT("settings.messages.gui.gameownerleft", "Game owner has left"),
+    CHAT_GUI_GAME_OWNER_LEFT("settings.messages.gui.gameownerleft", "&cGame owner has left. Game cancelled."),
     CHAT_GUI_GAME_PLAYER_LEFT("settings.messages.gui.gameplayerleft", "Player left ready screen. Game cancelled."),
     CHAT_GUI_GAME_NO_AVAIL_GAME("settings.messages.gui.noavailgame", "No available game to join."),
     CHAT_GUI_GAME_FULL_QUEUE("settings.messages.gui.fullqueue", "Too many players are queuing!"),
@@ -89,19 +89,21 @@ public enum ConfigUtil {
     CHAT_GAME_PLAYER_LEAVE("settings.messages.chat.gameplayerleave", "%player% has left %game%."),
 
     // CHAT MESSAGES
-    CHAT_NO_DB("settings.messages.chat.nodb", "Database must be enabled to view stats."),
-    CHAT_NO_GAME("settings.messages.chat.nogame", "No game found with that name."),
-    CHAT_NO_PLAYER("settings.messages.chat.noplayer", "No player found with that name."),
-    CHAT_DB_ERROR("settings.messages.chat.dberror", "Error calling to database."),
-    CHAT_RELOAD("settings.messages.chat.reload", "Reloaded board games config."),
-    CHAT_GAME_NAMES("settings.messages.chat.gamenames", "Game Names: "),
-    CHAT_STATS_HEADER("settings.messages.chat.statsheader", "%player%'s stats"),
-    CHAT_LEADERBOARD_HEADER("settings.messages.chat.leaderboardheader", "%game% leaderboard sorting by %sort%"),
-    CHAT_AVAIL_COMMANDS("settings.messages.chat.availcommands", "Available commands\n/bg games - lists games\n/bg board [game name] - gives you the game's item\n/bg stats [game name] [player name]\n/bg leaderboard [game name] [order by]\n/bg reload"),
-    CHAT_PLAYER_INGAME("settings.messages.chat.playeringame", "You must finish your game before joining another."),
-    CHAT_PLACED_BOARD("settings.messages.chat.placedboard", "Placed board."),
-    CHAT_NO_BOARD_ROOM("settings.messages.chat.noboardroom", "No room to place board."),
-    CHAT_WELCOME_GAME("settings.messages.chat.welcomegame", "Welcome to %game%!");
+    CHAT_NO_DB("settings.messages.chat.nodb", "&cDatabase must be enabled to view stats."),
+    CHAT_NO_GAME("settings.messages.chat.nogame", "&cNo game found with that name."),
+    CHAT_NO_PLAYER("settings.messages.chat.noplayer", "&cNo player found with that name."),
+    CHAT_DB_ERROR("settings.messages.chat.dberror", "&cError calling to database."),
+    CHAT_RELOAD("settings.messages.chat.reload", "&aReloaded board games config."),
+    CHAT_GAME_NAMES("settings.messages.chat.gamenames", "&r&lGame Names: &r"),
+    CHAT_STATS_HEADER("settings.messages.chat.statsheader", "&r&l%game% &r&7%player%&r's stats"),
+    CHAT_STATS_FORMAT("settings.messages.chat.statsformat", "&7%statName% - &r%statVal%"),
+    CHAT_LEADERBOARD_HEADER("settings.messages.chat.leaderboardheader", "&r&l%game% &rLeaderboard &7(%sort%)&r"),
+    CHAT_LEADERBOARD_FORMAT("settings.messages.chat.leaderboardformat", "&7#%num%.&r %player% - %statVal%"),
+    CHAT_AVAIL_COMMANDS("settings.messages.chat.availcommands", "&f&lBoard&9&lGames &rAvailable commands\n&r/bg games &7- lists games\n&r/bg board [game name] &7- gives you the game's item\n/&rbg stats [game name] [player name]\n/bg leaderboard [game name] [order by]\n/bg reload &7- reloads config"),
+    CHAT_PLAYER_INGAME("settings.messages.chat.playeringame", "&cYou must finish your game before joining another."),
+    CHAT_PLACED_BOARD("settings.messages.chat.placedboard", "&aPlaced board."),
+    CHAT_NO_BOARD_ROOM("settings.messages.chat.noboardroom", "&cNo room to place board."),
+    CHAT_WELCOME_GAME("settings.messages.chat.welcomegame", "&aWelcome to %game%!");
 
     private final String path;
     private final String defaultValue;
@@ -189,6 +191,22 @@ public enum ConfigUtil {
         String formatted = this.toString();
 
         formatted = formatted.replace("%num%", num + "");
+
+        return formatted;
+    }
+
+    public String buildStatsFormat(String statName, String statVal) {
+        String formatted = this.toString();
+
+        formatted = formatted.replace("%statName%", statName).replace("%statVal%", statVal);
+
+        return formatted;
+    }
+
+    public String buildLeaderBoardFormat(int num, String playerName, String statVal) {
+        String formatted = this.toString();
+
+        formatted = formatted.replace("%num%", num + "").replace("%player%", playerName).replace("%statVal%", statVal);
 
         return formatted;
     }

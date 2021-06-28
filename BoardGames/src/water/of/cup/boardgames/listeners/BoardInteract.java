@@ -117,8 +117,7 @@ public class BoardInteract implements Listener {
 			Location loc = gameFrame.getLocation().getBlock().getLocation();
 			newGame.replace(loc, newGame.getRotation(), map.getMapVal());
 			gameManager.addGame(newGame);
-
-			game = newGame;
+			return;
 		}
 
 		if (game == null) // check if a game is found
