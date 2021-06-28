@@ -17,54 +17,60 @@ import java.util.List;
 
 public class bgCommandsTabCompleter implements TabCompleter {
 
-    private final BoardGames instance = BoardGames.getInstance();
-    private final GameManager gameManager = instance.getGameManager();
+	private final BoardGames instance = BoardGames.getInstance();
+	private final GameManager gameManager = instance.getGameManager();
 
-    @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        ArrayList<String> args = new ArrayList<>();
-        if(strings.length == 1) {
-            args.add("games");
-            args.add("board");
-            args.add("stats");
-            args.add("leaderboard");
-            args.add("reload");
-        } else if(strings.length == 2) {
-            if (strings[0].equalsIgnoreCase("leaderboard")
-                    || strings[0].equalsIgnoreCase("stats")
-                    || strings[0].equalsIgnoreCase("board")) {
-                Collections.addAll(args, gameManager.getGameNames());
-            }
-        } else if(strings.length == 3) {
-            if (strings[0].equalsIgnoreCase("leaderboard")) {
-                String gameName = strings[1];
-                Game tempGame = gameManager.newGame(gameName, 0);
+	@Override
+	public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+		ArrayList<String> args = new ArrayList<>();
+		if (strings.length == 1) {
+			args.add("games");
+			args.add("board");
+			args.add("stats");
+			args.add("leaderboard");
+			args.add("reload");
+		} else if (strings.length == 2) {
+			if (strings[0].equalsIgnoreCase("leaderboard") || strings[0].equalsIgnoreCase("stats")
+					|| strings[0].equalsIgnoreCase("board")) {
+				Collections.addAll(args, gameManager.getGameNames());
+			}
+		} else if (strings.length == 3) {
+			if (strings[0].equalsIgnoreCase("leaderboard")) {
+				String gameName = strings[1];
+				Game tempGame = gameManager.newGame(gameName, 0);
 
-                if(tempGame != null) {
-                    GameStorage gameStorage = tempGame.getGameStore();
-                    for(StorageType storageType : gameStorage.getStorageTypes()) {
-                        args.add(storageType.getKey());
-                    }
-                }
-            } else if (strings[0].equalsIgnoreCase("stats")) {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    args.add(player.getName());
-                }
-            }
-        } else if(strings.length == 4) {
-            if (strings[0].equalsIgnoreCase("leaderboard")) {
-                String gameName = strings[1];
-                Game tempGame = gameManager.newGame(gameName, 0);
+				if (tempGame != null) {
+					GameStorage gameStorage = tempGame.getGameStore();
+					for (StorageType storageType : gameStorage.getStorageTypes()) {
+						args.add(storageType.getKey());
+					}
+				}
+			} else if (strings[0].equalsIgnoreCase("stats")) {
+				for (Player player : Bukkit.getOnlinePlayers()) {
+					args.add(player.getName());
+				}
+			}
+		} else if (strings.length == 4) {
+			if (strings[0].equalsIgnoreCase("leaderboard")) {
+				String gameName = strings[1];
+				Game tempGame = gameManager.newGame(gameName, 0);
 
-                if(tempGame != null) {
-                    GameStorage gameStorage = tempGame.getGameStore();
-                    int extraPages = (instance.getStorageManager().getGamePlayerTotal(gameStorage) / 10);
-                    for (int i = 0; i < extraPages; i++) {
-                        args.add((i + 2) + "");
-                    }
-                }
-            }
-        }
-        return args;
-    }
+				if (tempGame != null) {
+					GameStorage gameStorage = tempGame.getGameStore();
+					int extraPages = (instance.getStorageManager().getGamePlayerTotal(gameStorage) / 10);
+					for (int i = 0; i < extraPages; i++) {
+						args.add((i + 2) + "");
+					}
+				}
+			}
+		}
+
+		ArrayList<String> finalArgs = new ArrayList<>();
+		String start = strings[strings.length - 1];
+		for (String arg : args)
+			if (arg.startsWith(start))
+				finalArgs.add(arg);
+
+		return finalArgs;
+	}
 }

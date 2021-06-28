@@ -19,15 +19,18 @@ public class UnoConfig extends GameConfig {
     protected GameRecipe getGameRecipe() {
         HashMap<String, String> recipe = new HashMap<>();
         recipe.put("B", Material.BLUE_DYE.toString());
-        recipe.put("W", Material.WHITE_DYE.toString());
+        recipe.put("G", Material.GREEN_DYE.toString());
         recipe.put("R", Material.RED_DYE.toString());
+        recipe.put("Y", Material.YELLOW_DYE.toString());
         recipe.put("L", Material.LEATHER.toString());
+        recipe.put("I", Material.INK_SAC.toString());
+        recipe.put("P", Material.PAPER.toString());
 
         ArrayList<String> shape = new ArrayList<String>() {
             {
-                add("WB");
-                add("RW");
-                add("LL");
+                add("BIR");
+                add("GPY");
+                add("LLL");
             }
         };
 

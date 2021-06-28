@@ -19,15 +19,16 @@ public class TicTacToeConfig extends GameConfig {
     @Override
     protected GameRecipe getGameRecipe() {
         HashMap<String, String> recipe = new HashMap<>();
-        recipe.put("I", Material.IRON_INGOT.toString());
-        recipe.put("G", Material.GOLD_INGOT.toString());
-        recipe.put("R", Material.REDSTONE.toString());
+        recipe.put("P", Material.PAPER.toString());
+        recipe.put("B", Material.BLUE_DYE.toString());
+        recipe.put("R", Material.RED_DYE.toString());
+        recipe.put("L", Material.LEATHER.toString());
 
         ArrayList<String> shape = new ArrayList<String>() {
             {
-                add("III");
-                add("RGR");
-                add("RRR");
+                add("PPP");
+                add("BPR");
+                add("LLL");
             }
         };
 
