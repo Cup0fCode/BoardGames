@@ -18,14 +18,16 @@ public class ConnectFourConfig extends GameConfig {
     @Override
     protected GameRecipe getGameRecipe() {
         HashMap<String, String> recipe = new HashMap<>();
-        recipe.put("I", Material.IRON_INGOT.toString());
-        recipe.put("W", Material.OAK_WOOD.toString());
+        recipe.put("R", Material.RED_DYE.toString());
+        recipe.put("B", Material.BLUE_DYE.toString());
+        recipe.put("P", Material.PAPER.toString());
+        recipe.put("L", Material.LEATHER.toString());
 
         ArrayList<String> shape = new ArrayList<String>() {
             {
-                add("III");
-                add("WWW");
-                add("III");
+                add("RPB");
+                add("RPB");
+                add("LLL");
             }
         };
 

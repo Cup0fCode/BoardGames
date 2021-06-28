@@ -18,15 +18,15 @@ public class MineSweeperConfig extends GameConfig {
     @Override
     protected GameRecipe getGameRecipe() {
         HashMap<String, String> recipe = new HashMap<>();
-        recipe.put("B", Material.BLACK_DYE.toString());
+        recipe.put("S", Material.SAND.toString());
         recipe.put("T", Material.TNT.toString());
         recipe.put("L", Material.LEATHER.toString());
 
         ArrayList<String> shape = new ArrayList<String>() {
             {
-                add("LL");
-                add("BT");
-                add("LL");
+                add("SSS");
+                add("STS");
+                add("LLL");
             }
         };
 

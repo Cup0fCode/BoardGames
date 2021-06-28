@@ -19,15 +19,15 @@ public class ConwaysGameOfLifeConfig extends GameConfig {
     @Override
     protected GameRecipe getGameRecipe() {
         HashMap<String, String> recipe = new HashMap<>();
-        recipe.put("B", Material.BLACK_DYE.toString());
-        recipe.put("W", Material.WHITE_DYE.toString());
-        recipe.put("L", Material.LEATHER.toString());
+       
+        recipe.put("Q", Material.QUARTZ.toString());
+        recipe.put("H", Material.WITHER_SKELETON_SKULL.toString());
 
         ArrayList<String> shape = new ArrayList<String>() {
             {
-                add("BW");
-                add("WB");
-                add("LL");
+                add("QQQ");
+                add("QHQ");
+                add("QQQ");
             }
         };
 

@@ -18,15 +18,15 @@ public class SudokuConfig extends GameConfig {
     @Override
     protected GameRecipe getGameRecipe() {
         HashMap<String, String> recipe = new HashMap<>();
-        recipe.put("B", Material.BLACK_DYE.toString());
-        recipe.put("W", Material.WHITE_DYE.toString());
+        recipe.put("F", Material.FEATHER.toString());
+        recipe.put("I", Material.INK_SAC.toString());
         recipe.put("L", Material.LEATHER.toString());
 
         ArrayList<String> shape = new ArrayList<String>() {
             {
-                add("WB");
-                add("BW");
-                add("LL");
+                add(" F ");
+                add(" I ");
+                add("LLL");
             }
         };
 

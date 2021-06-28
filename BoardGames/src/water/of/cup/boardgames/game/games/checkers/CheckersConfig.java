@@ -18,14 +18,17 @@ public class CheckersConfig extends GameConfig {
     @Override
     protected GameRecipe getGameRecipe() {
         HashMap<String, String> recipe = new HashMap<>();
-        recipe.put("I", Material.IRON_INGOT.toString());
-        recipe.put("W", Material.OAK_WOOD.toString());
+        recipe.put("B", Material.BLACK_DYE.toString());
+        recipe.put("W", Material.WHITE_DYE.toString());
+        recipe.put("N", Material.QUARTZ.toString());
+        recipe.put("P", Material.PAPER.toString());
+        recipe.put("L", Material.LEATHER.toString());
 
         ArrayList<String> shape = new ArrayList<String>() {
             {
-                add("WWW");
-                add("WIW");
-                add("WWW");
+                add("B W");
+                add("NPN");
+                add("LLL");
             }
         };
 
