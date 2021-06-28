@@ -143,16 +143,6 @@ public class TicTacToe extends Game {
 		//board = null;
 		//buttons.clear();
 
-		String message;
-		if(gamePlayerWinner != null) {
-			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
-		} else {
-			message = ConfigUtil.CHAT_GAME_TIE.toString();
-		}
-
-		for(GamePlayer player : teamManager.getGamePlayers()) {
-			player.getPlayer().sendMessage(message);
-		}
 		mapManager.renderBoard();
 		super.endGame(gamePlayerWinner);
 	}

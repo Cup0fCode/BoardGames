@@ -269,6 +269,7 @@ public abstract class Game {
 		ingame = false;
 		wagerManager.completeWagers(winner);
 		sendGameWinMoney(winner);
+		sendEndGameMessage(winner);
 		updateGameStorage(winner);
 		clearGamePlayers();
 
@@ -614,7 +615,7 @@ public abstract class Game {
 	public void exitPlayer(Player player) {
 		for(GamePlayer gamePlayer : teamManager.getGamePlayers()) {
 			if(gamePlayer.getPlayer().isOnline()) {
-				gamePlayer.getPlayer().sendMessage(ConfigUtil.CHAT_GAME_PLAYER_LEAVE.buildStringLeaveGame(player.getDisplayName(), getName()));
+				gamePlayer.getPlayer().sendMessage(ConfigUtil.CHAT_GAME_PLAYER_LEAVE.buildStringPlayerGame(player.getDisplayName(), getName()));
 			}
 		}
 
@@ -672,6 +673,23 @@ public abstract class Game {
 			if(player.getPlayer().getName().equals(gamePlayerWinner.getPlayer().getName())) continue;
 
 			gameStorage.updateData(player.getPlayer(), StorageType.LOSSES, 1);
+		}
+	}
+
+	private void sendEndGameMessage(GamePlayer gamePlayerWinner) {
+		String message;
+		if(gamePlayerWinner == null) {
+			if(teamManager.getGamePlayers().size() == 1) {
+				message = ConfigUtil.CHAT_GAME_PLAYER_LOSE.buildString(getName());
+			} else {
+				message = ConfigUtil.CHAT_GAME_TIE.buildString(getName());
+			}
+		} else {
+			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildStringPlayerGame(gamePlayerWinner.getPlayer().getDisplayName(), getName());
+		}
+
+		for(GamePlayer player : teamManager.getGamePlayers()) {
+			player.getPlayer().sendMessage(message);
 		}
 	}
 }

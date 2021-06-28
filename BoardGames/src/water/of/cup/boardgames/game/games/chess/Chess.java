@@ -280,21 +280,6 @@ public class Chess extends Game {
 		return new ChessStorage(this);
 	}
 
-	public void endGame(GamePlayer gamePlayerWinner) {
-		String message;
-		if(gamePlayerWinner != null) {
-			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
-		} else {
-			message = ConfigUtil.CHAT_GAME_TIE.toString();
-		}
-
-		for(GamePlayer player : teamManager.getGamePlayers()) {
-			player.getPlayer().sendMessage(message);
-		}
-
-		super.endGame(gamePlayerWinner);
-	}
-
 	@Override
 	protected void clockOutOfTime() {
 	}

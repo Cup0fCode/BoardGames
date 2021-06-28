@@ -227,17 +227,6 @@ public class MineSweeper extends Game {
 		//buttons.clear();
 		openedTiles = 0;
 
-		String message;
-		if(gamePlayerWinner != null) {
-			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
-		} else {
-			message = ConfigUtil.CHAT_GAME_PLAYER_LOSE.toString();
-		}
-
-		for(GamePlayer player : teamManager.getGamePlayers()) {
-			player.getPlayer().sendMessage(message);
-		}
-
 		super.endGame(gamePlayerWinner);
 	}
 

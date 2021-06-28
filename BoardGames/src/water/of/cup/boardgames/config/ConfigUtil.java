@@ -75,9 +75,9 @@ public enum ConfigUtil {
     CHAT_GUI_WAGER_ACCEPTED("settings.messages.gui.chatwageraccept", "You have accepted %player%'s wager!"),
 
     // GAME CHAT MESSAGES
-    CHAT_GAME_PLAYER_WIN("settings.messages.chat.playerwin", "%player% has won the game!"),
-    CHAT_GAME_PLAYER_LOSE("settings.messages.chat.playerlose", "&aYou lost!"),
-    CHAT_GAME_TIE("settings.messages.chat.gametie", "&aTie game!"),
+    CHAT_GAME_PLAYER_WIN("settings.messages.chat.playerwin", "%player% has won the %game% game!"),
+    CHAT_GAME_PLAYER_LOSE("settings.messages.chat.playerlose", "&aYou lost the %game% game!"),
+    CHAT_GAME_TIE("settings.messages.chat.gametie", "&aTie %game% game!"),
     CHAT_GAME_FORCE_JUMP("settings.messages.chat.forcejump", "You must select a piece that can jump if a jump is possible."),
     CHAT_GAME_UNO_FORCE_2("settings.messages.chat.unoforce2", "You were forced to draw 2 cards."),
     CHAT_GAME_UNO_FORCE_4("settings.messages.chat.unoforce4", "You were forced to draw 4 cards."),
@@ -169,7 +169,7 @@ public enum ConfigUtil {
         return formatted;
     }
 
-    public String buildStringLeaveGame(String playerName, String gameName) {
+    public String buildStringPlayerGame(String playerName, String gameName) {
         String formatted = this.toString();
 
         formatted = formatted.replace("%player%", playerName).replace("%game%", gameName);

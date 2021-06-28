@@ -359,16 +359,6 @@ public class Uno extends Game {
 //		mapManager.renderBoard();
 	}
 
-	public void endGame(GamePlayer gamePlayerWinner) {
-		String message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildString(gamePlayerWinner.getPlayer().getDisplayName());
-
-		for(GamePlayer player : teamManager.getGamePlayers()) {
-			player.getPlayer().sendMessage(message);
-		}
-
-		super.endGame(gamePlayerWinner);
-	}
-
 	@Override
 	protected void gamePlayerOutOfTime(GamePlayer turn) {
 		// TODO Auto-generated method stub
