@@ -33,8 +33,8 @@ public class bgCommands implements CommandExecutor {
 		Player p = (Player) sender;
 		boolean permissions = ConfigUtil.PERMISSIONS_ENABLED.toBoolean();
 
-		if (cmd.getName().equalsIgnoreCase("bg")) {
-			if(permissions && !p.hasPermission("boardgames.command"))
+		if (cmd.getName().equalsIgnoreCase("chessboards")) {
+			if(permissions && !p.hasPermission("chessboard.command"))
 				return false;
 
 			if (args.length == 0) {
@@ -42,29 +42,19 @@ public class bgCommands implements CommandExecutor {
 				return true;
 			}
 
-			if (args[0].equalsIgnoreCase("games")) {
-				if(permissions && !p.hasPermission("boardgames.command.games"))
+			if (args[0].equalsIgnoreCase("give")) {
+				if(permissions && !p.hasPermission("chessboard.command.give"))
 					return false;
 
-				p.sendMessage(ConfigUtil.CHAT_GAME_NAMES.toString());
-				for (String name : gameManager.getGameNames()) 
-					p.sendMessage(name);
-				
-			} else if (args[0].equalsIgnoreCase("board")) {
-				if(permissions && !p.hasPermission("boardgames.command.board"))
-					return false;
-
-				if (args.length == 2) {
-					Game game = gameManager.newGame(args[1], 0);
-					if (game != null) {
-						p.getWorld().dropItem(p.getLocation(), game.getBoardItem());
-					}
+				Game game = gameManager.newGame("Chess", 0);
+				if (game != null) {
+					p.getWorld().dropItem(p.getLocation(), game.getBoardItem());
 				}
 			} else if (args[0].equalsIgnoreCase("stats")) {
-				if(permissions && !p.hasPermission("boardgames.command.stats"))
+				if(permissions && !p.hasPermission("chessboard.command.stats"))
 					return false;
 
-				if(args.length != 3) {
+				if(args.length != 2) {
 					sendHelpMessage(p);
 					return false;
 				}
@@ -74,8 +64,8 @@ public class bgCommands implements CommandExecutor {
 					return false;
 				}
 
-				String gameName = args[1];
-				String playerName = args[2];
+				String gameName = "Chess";
+				String playerName = args[1];
 
 				Game tempGame = gameManager.newGame(gameName, 0);
 				OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
@@ -108,20 +98,15 @@ public class bgCommands implements CommandExecutor {
 
 				return true;
 			} else if (args[0].equalsIgnoreCase("leaderboard")) {
-				if(permissions && !p.hasPermission("boardgames.command.leaderboard"))
+				if(permissions && !p.hasPermission("chessboard.command.leaderboard"))
 					return false;
-
-				if(args.length < 2) {
-					sendHelpMessage(p);
-					return false;
-				}
 
 				if(!instance.hasStorage()) {
 					p.sendMessage(ConfigUtil.CHAT_NO_DB.toString());
 					return false;
 				}
 
-				String gameName = args[1];
+				String gameName = "Chess";
 				Game tempGame = gameManager.newGame(gameName, 0);
 
 				if(tempGame == null) {
@@ -137,8 +122,8 @@ public class bgCommands implements CommandExecutor {
 				GameStorage gameStorage = tempGame.getGameStore();
 				StorageType orderBy = gameStorage.getStorageTypes().get(0);
 
-				if(args.length > 2) {
-					String orderByType = args[2];
+				if(args.length == 2) {
+					String orderByType = args[1];
 					for(StorageType storageType : StorageType.values()) {
 						if(storageType.getKey().equalsIgnoreCase(orderByType)) {
 							orderBy = storageType;
@@ -150,9 +135,9 @@ public class bgCommands implements CommandExecutor {
 				int numGamePlayers = instance.getStorageManager().getGamePlayerTotal(gameStorage);
 
 				int page = 0;
-				if(args.length > 3) {
+				if(args.length == 3) {
 					try {
-						page = Integer.parseInt(args[3]) - 1;
+						page = Integer.parseInt(args[2]) - 1;
 					} catch (NumberFormatException e) {
 					}
 				}
@@ -181,7 +166,7 @@ public class bgCommands implements CommandExecutor {
 					count++;
 				}
 			} else if (args[0].equalsIgnoreCase("reload")) {
-				if(permissions && !p.hasPermission("boardgames.command.reload"))
+				if(permissions && !p.hasPermission("chessboard.command.reload"))
 					return false;
 
 				p.sendMessage(ConfigUtil.CHAT_RELOAD.toString());

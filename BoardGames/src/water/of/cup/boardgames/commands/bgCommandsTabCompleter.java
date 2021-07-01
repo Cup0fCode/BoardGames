@@ -24,19 +24,13 @@ public class bgCommandsTabCompleter implements TabCompleter {
 	public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
 		ArrayList<String> args = new ArrayList<>();
 		if (strings.length == 1) {
-			args.add("games");
-			args.add("board");
+			args.add("give");
 			args.add("stats");
 			args.add("leaderboard");
 			args.add("reload");
 		} else if (strings.length == 2) {
-			if (strings[0].equalsIgnoreCase("leaderboard") || strings[0].equalsIgnoreCase("stats")
-					|| strings[0].equalsIgnoreCase("board")) {
-				Collections.addAll(args, gameManager.getGameNames());
-			}
-		} else if (strings.length == 3) {
 			if (strings[0].equalsIgnoreCase("leaderboard")) {
-				String gameName = strings[1];
+				String gameName = "Chess";
 				Game tempGame = gameManager.newGame(gameName, 0);
 
 				if (tempGame != null) {
@@ -50,9 +44,9 @@ public class bgCommandsTabCompleter implements TabCompleter {
 					args.add(player.getName());
 				}
 			}
-		} else if (strings.length == 4) {
+		} else if (strings.length == 3) {
 			if (strings[0].equalsIgnoreCase("leaderboard")) {
-				String gameName = strings[1];
+				String gameName = "Chess";
 				Game tempGame = gameManager.newGame(gameName, 0);
 
 				if (tempGame != null) {

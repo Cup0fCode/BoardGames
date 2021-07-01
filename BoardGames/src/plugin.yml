@@ -1,11 +1,11 @@
 main: water.of.cup.boardgames.BoardGames
-name: BoardGames
+name: ChessBoards
 version: '1.0'
-description: Adds board games to Minecraft.
+description: Adds chess games to Minecraft.
 author: Nicholas Kopiwoda & Matt C.
 api-version: 1.16
 softdepends: [Vault]
 commands:
-  bg:
-    description: All commands for the BoardGames plugin.
-    aliases: [bg]
+  chessboards:
+    description: All commands for the ChessBoards plugin.
+    aliases: [cb]

@@ -46,7 +46,7 @@ public class BlockPlace implements Listener {
 			return;
 
 		if(ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
-				&& !player.hasPermission("boardgames.place")) {
+				&& !player.hasPermission("chessboard.place")) {
 			event.setCancelled(true);
 			return;
 		}

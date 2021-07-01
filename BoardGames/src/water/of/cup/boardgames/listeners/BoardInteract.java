@@ -26,6 +26,7 @@ import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
+import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
 import water.of.cup.boardgames.game.maps.GameMap;
 
 public class BoardInteract implements Listener {
@@ -43,7 +44,7 @@ public class BoardInteract implements Listener {
 			return;
 
 		if(ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
-				&& !player.hasPermission("boardgames.interact"))
+				&& !player.hasPermission("chessboard.interact"))
 			return;
 
 		// check hand to prevent double click
@@ -64,6 +65,7 @@ public class BoardInteract implements Listener {
 		ItemFrame gameFrame = null;
 		Game game = null;
 		GameMap map = null;
+		boolean isChessBoardsMap = false;
 
 		double minDistance = 100; //used to find the closest map clicked
 		for (Entity entity : nearbyEntities) {
@@ -72,7 +74,7 @@ public class BoardInteract implements Listener {
 				continue;
 			ItemFrame frame = (ItemFrame) entity;
 			ItemStack item = frame.getItem();
-			if (GameMap.isGameMap(item)) {
+			if (GameMap.isGameMap(item) || ChessBoardsUtil.isChessBoardsMap(item)) {
 				// Game found
 
 				GameMap gameMap = new GameMap(item);
@@ -103,9 +105,25 @@ public class BoardInteract implements Listener {
 					gameFrame = frame;
 					map = gameMap;
 					game = gameMap.getGame();
+					isChessBoardsMap = ChessBoardsUtil.isChessBoardsMap(item);
 					continue;
 				}
 			}
+		}
+
+		// Loads in old ChessBoards as new BoardGames
+		if(isChessBoardsMap) {
+			Game newGame = gameManager.newGame("Chess", 0);
+
+			if(newGame == null)
+				return;
+
+			ChessBoardsUtil.removeChessBoard(gameFrame);
+
+			Location loc = gameFrame.getLocation().getBlock().getLocation();
+			newGame.replace(loc, newGame.getRotation(), 1);
+			gameManager.addGame(newGame);
+			return;
 		}
 
 		if(game == null && gameFrame != null) {
@@ -137,7 +155,7 @@ public class BoardInteract implements Listener {
 			}
 
 			if(ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
-					&& !player.hasPermission("boardgames.destroy"))
+					&& !player.hasPermission("chessboard.destroy"))
 				return;
 
 			if (!game.isIngame() && game.destroy(gameFrame)) {

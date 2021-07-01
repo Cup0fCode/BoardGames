@@ -9,7 +9,7 @@ public class ChessStorage extends GameStorage {
     public ChessStorage(Game game) {
         super(game);
     }
-
+    //TODO: might want to change to chess_players
     @Override
     protected String getTableName() {
         return "chess";

@@ -23,7 +23,7 @@ public class GameConfigLoader {
             Game temp = instance.getGameManager().newGame(name, 0);
 
             if(temp != null) {
-                Bukkit.getLogger().info("[BoardGames] Loading game " + temp.getName());
+                Bukkit.getLogger().info("[ChessBoards] Loading game " + temp.getName());
                 GAMES.put(temp.getName(), temp);
             }
         }

@@ -19,15 +19,8 @@ import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameConfigLoader;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
-import water.of.cup.boardgames.game.games.uno.Uno;
 import water.of.cup.boardgames.commands.bgCommands;
-import water.of.cup.boardgames.game.games.checkers.Checkers;
 import water.of.cup.boardgames.game.games.chess.Chess;
-import water.of.cup.boardgames.game.games.connectfour.ConnectFour;
-import water.of.cup.boardgames.game.games.conways_game_of_life.ConwaysGameOfLife;
-import water.of.cup.boardgames.game.games.minesweaper.MineSweeper;
-import water.of.cup.boardgames.game.games.sudoku.Sudoku;
-import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.storage.StorageManager;
 import water.of.cup.boardgames.listeners.BlockBreak;
@@ -77,10 +70,10 @@ public class BoardGames extends JavaPlugin {
 //		getCommand("debug").setExecutor(new DebugCommand());
 		//Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
 		
-		gameManager.registerGames(Sudoku.class, Chess.class, ConwaysGameOfLife.class, TicTacToe.class, ConnectFour.class, Checkers.class, MineSweeper.class, Uno.class);
+		gameManager.registerGames(Chess.class);
 		
-		getCommand("bg").setExecutor(new bgCommands());
-		getCommand("bg").setTabCompleter(new bgCommandsTabCompleter());
+		getCommand("chessboards").setExecutor(new bgCommands());
+		getCommand("chessboards").setTabCompleter(new bgCommandsTabCompleter());
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());
 
 //		registerListeners(new BoardInteract(), new BlockPlace(), new InventoryClose(), new InventoryClick(), new HangingBreakByEntity(), new EntityDamageByEntity(), new HangingBreak(), new ChessPlayerJoin(), new BlockBreak());
@@ -103,7 +96,7 @@ public class BoardGames extends JavaPlugin {
 
 		// Add bStats
 		Metrics metrics = new Metrics(this, 11839);
-		Bukkit.getLogger().info("[BoardGames] bStats: " + metrics.isEnabled() + " plugin ver: " + getDescription().getVersion());
+		Bukkit.getLogger().info("[ChessBoards] bStats: " + metrics.isEnabled() + " plugin ver: " + getDescription().getVersion());
 
 		metrics.addCustomChart(new Metrics.SimplePie("plugin_version", () -> getDescription().getVersion()));
 	}
