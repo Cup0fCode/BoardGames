@@ -21,6 +21,9 @@ public class ChessStorage extends GameStorage {
                 StorageType.WINS,
                 StorageType.LOSSES,
                 StorageType.TIES,
+                StorageType.Rating,
+                StorageType.RatingDeviation,
+                StorageType.RatingVolatility,
         };
     }
 }

@@ -2,6 +2,8 @@ package water.of.cup.boardgames.game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.UUID;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -18,6 +20,9 @@ import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameRecipe;
 import water.of.cup.boardgames.config.GameSound;
+import water.of.cup.boardgames.game.glicko2.Rating;
+import water.of.cup.boardgames.game.glicko2.RatingCalculator;
+import water.of.cup.boardgames.game.glicko2.RatingPeriodResults;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.MapData;
@@ -613,9 +618,10 @@ public abstract class Game {
 	}
 
 	public void exitPlayer(Player player) {
-		for(GamePlayer gamePlayer : teamManager.getGamePlayers()) {
-			if(gamePlayer.getPlayer().isOnline()) {
-				gamePlayer.getPlayer().sendMessage(ConfigUtil.CHAT_GAME_PLAYER_LEAVE.buildStringPlayerGame(player.getDisplayName(), getName()));
+		for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
+			if (gamePlayer.getPlayer().isOnline()) {
+				gamePlayer.getPlayer().sendMessage(
+						ConfigUtil.CHAT_GAME_PLAYER_LEAVE.buildStringPlayerGame(player.getDisplayName(), getName()));
 			}
 		}
 
@@ -623,11 +629,18 @@ public abstract class Game {
 			this.endGame(null);
 			return;
 		}
+		
+		if (teamManager.getGamePlayers().size() == 2) {
+			if (teamManager.getTurnPlayer().getPlayer() == player)
+				teamManager.nextTurn();
+			this.endGame(teamManager.getTurnPlayer());
+			return;
+		}
 
 		teamManager.removeTeamByPlayer(player);
 
-		if(hasGameStorage()) {
-			if(gameStorage.canExecute(StorageType.LOSSES)) {
+		if (hasGameStorage()) {
+			if (gameStorage.canExecute(StorageType.LOSSES)) {
 				gameStorage.updateData(player, StorageType.LOSSES, 1);
 			}
 		}
@@ -644,15 +657,31 @@ public abstract class Game {
 	}
 
 	private void updateGameStorage(GamePlayer gamePlayerWinner) {
-		if(!hasGameStorage()) return;
+		if (!hasGameStorage())
+			return;
 
-		if(gamePlayerWinner == null) {
-			if(teamManager.getGamePlayers().size() == 1) {
+		// update ratings
+		if (gameStorage.canExecute(StorageType.Rating)) {
+			if (teamManager.getGamePlayers().size() == 2) {
+
+				GamePlayer winner = teamManager.getGamePlayers().get(0);
+				GamePlayer loser = teamManager.getGamePlayers().get(1);
+				if (gamePlayerWinner != winner && gamePlayerWinner != null) {
+					loser = winner;
+					winner = gamePlayerWinner;
+				}
+
+				updateRatings(winner, loser, gamePlayerWinner == null);
+			}
+		}
+
+		if (gamePlayerWinner == null) {
+			if (teamManager.getGamePlayers().size() == 1) {
 				gameStorage.updateData(teamManager.getGamePlayers().get(0).getPlayer(), StorageType.LOSSES, 1);
 				return;
 			}
 
-			for(GamePlayer player : teamManager.getGamePlayers()) {
+			for (GamePlayer player : teamManager.getGamePlayers()) {
 				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
 			}
 			return;
@@ -660,7 +689,7 @@ public abstract class Game {
 
 		gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
 
-		if(gameStorage.canExecute(StorageType.BEST_TIME)) {
+		if (gameStorage.canExecute(StorageType.BEST_TIME)) {
 			Double bestTime = (Double) BoardGames.getInstance().getStorageManager()
 					.fetchPlayerStats(gamePlayerWinner.getPlayer(), getGameStore(), false).get(StorageType.BEST_TIME);
 			Double time = clock.getPlayerTimes().get(gamePlayerWinner);
@@ -669,8 +698,9 @@ public abstract class Game {
 				gameStorage.setData(gamePlayerWinner.getPlayer(), StorageType.BEST_TIME, time);
 		}
 
-		for(GamePlayer player : teamManager.getGamePlayers()) {
-			if(player.getPlayer().getName().equals(gamePlayerWinner.getPlayer().getName())) continue;
+		for (GamePlayer player : teamManager.getGamePlayers()) {
+			if (player.getPlayer().getName().equals(gamePlayerWinner.getPlayer().getName()))
+				continue;
 
 			gameStorage.updateData(player.getPlayer(), StorageType.LOSSES, 1);
 		}
@@ -678,18 +708,73 @@ public abstract class Game {
 
 	private void sendEndGameMessage(GamePlayer gamePlayerWinner) {
 		String message;
-		if(gamePlayerWinner == null) {
-			if(teamManager.getGamePlayers().size() == 1) {
+		if (gamePlayerWinner == null) {
+			if (teamManager.getGamePlayers().size() == 1) {
 				message = ConfigUtil.CHAT_GAME_PLAYER_LOSE.buildString(getName());
 			} else {
 				message = ConfigUtil.CHAT_GAME_TIE.buildString(getName());
 			}
 		} else {
-			message = ConfigUtil.CHAT_GAME_PLAYER_WIN.buildStringPlayerGame(gamePlayerWinner.getPlayer().getDisplayName(), getName());
+			message = ConfigUtil.CHAT_GAME_PLAYER_WIN
+					.buildStringPlayerGame(gamePlayerWinner.getPlayer().getDisplayName(), getName());
 		}
 
-		for(GamePlayer player : teamManager.getGamePlayers()) {
+		for (GamePlayer player : teamManager.getGamePlayers()) {
 			player.getPlayer().sendMessage(message);
 		}
+	}
+
+	private void updateRatings(GamePlayer winner, GamePlayer loser, boolean tie) {
+		// get winner / loser
+		if (!getGameData("ranked").equals(ConfigUtil.GUI_RANKED_OPTION_TEXT.toRawString()))
+			return;
+		RatingCalculator rc = new RatingCalculator();
+
+		String winnerUUID = winner.getPlayer().getUniqueId().toString();
+		String loserUUID = loser.getPlayer().getUniqueId().toString();
+
+		Rating ratingWinner;
+		Rating ratingLoser;
+
+		LinkedHashMap<StorageType, Object> winnerStats = BoardGames.getInstance().getStorageManager()
+				.fetchPlayerStats(winner.getPlayer(), getGameStore(), false);
+		LinkedHashMap<StorageType, Object> loserStats = BoardGames.getInstance().getStorageManager()
+				.fetchPlayerStats(loser.getPlayer(), getGameStore(), false);
+
+		if ((double) winnerStats.get(StorageType.Rating) <= 0.1) {
+			ratingWinner = new Rating(winnerUUID, rc);
+		} else {
+			ratingWinner = new Rating(winnerUUID, rc, (double) winnerStats.get(StorageType.Rating),
+					(double) winnerStats.get(StorageType.RatingDeviation),
+					(double) winnerStats.get(StorageType.RatingVolatility));
+		}
+
+		if ((double) loserStats.get(StorageType.Rating) <= 0.1) {
+			ratingLoser = new Rating(loserUUID, rc);
+		} else {
+			ratingLoser = new Rating(loserUUID, rc, (double) loserStats.get(StorageType.Rating),
+					(double) loserStats.get(StorageType.RatingDeviation),
+					(double) loserStats.get(StorageType.RatingVolatility));
+		}
+
+		water.of.cup.boardgames.game.glicko2.RatingPeriodResults rpr = new RatingPeriodResults();
+
+		if (tie) {
+			// Tied game
+			rpr.addDraw(ratingWinner, ratingLoser);
+		} else {
+			// Won game
+			rpr.addResult(ratingWinner, ratingLoser);
+		}
+		rc.updateRatings(rpr);
+
+		gameStorage.setData(winner.getPlayer(), StorageType.Rating, ratingWinner.getRating());
+		gameStorage.setData(winner.getPlayer(), StorageType.RatingDeviation, ratingWinner.getRatingDeviation());
+		gameStorage.setData(winner.getPlayer(), StorageType.RatingVolatility, ratingWinner.getVolatility());
+
+		gameStorage.setData(loser.getPlayer(), StorageType.Rating, ratingLoser.getRating());
+		gameStorage.setData(loser.getPlayer(), StorageType.RatingDeviation, ratingLoser.getRatingDeviation());
+		gameStorage.setData(loser.getPlayer(), StorageType.RatingVolatility, ratingLoser.getVolatility());
+
 	}
 }
