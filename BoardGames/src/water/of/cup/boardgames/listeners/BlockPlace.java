@@ -1,9 +1,6 @@
 package water.of.cup.boardgames.listeners;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Rotation;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -55,6 +52,12 @@ public class BlockPlace implements Listener {
 		event.setCancelled(true);
 
 		Location loc = event.getBlock().getLocation();
+
+		if(finalGame.canPlaceBoard(loc, rotation) && player.getGameMode() != GameMode.CREATIVE) {
+			player.getInventory().getItemInMainHand()
+					.setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
+		}
+
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(instance, new Runnable() {
 			@Override
 			public void run() {

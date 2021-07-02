@@ -221,17 +221,18 @@ public class StorageManager {
 				String columnName = storageType.getKey();
 
 				String updateSql = "INSERT INTO `" + tableName + "` (uuid,username," + columnName
-						+ ") VALUES (?,?,?) ON DUPLICATE KEY ";
+						+ ") VALUES (?,?,?) ON DUPLICATE KEY UPDATE username = ?,";
 
-				updateSql += (replace) ? "UPDATE " + columnName + " = ?;"
-						: "UPDATE " + columnName + " = " + columnName + " + ?;";
+				updateSql += (replace) ? columnName + " = ?;"
+						: columnName + " = " + columnName + " + ?;";
 
 				try (Connection con = getConnection();
 						PreparedStatement updateQuery = con.prepareStatement(updateSql)) {
 					updateQuery.setString(1, playerUUID);
 					updateQuery.setString(2, playerName);
 					updateQuery.setObject(3, updated, storageType.getDataType());
-					updateQuery.setObject(4, updated, storageType.getDataType());
+					updateQuery.setString(4, playerName);
+					updateQuery.setObject(5, updated, storageType.getDataType());
 
 					updateQuery.execute();
 				}
