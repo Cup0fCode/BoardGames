@@ -74,10 +74,15 @@ public class BoardInteract implements Listener {
 				continue;
 			ItemFrame frame = (ItemFrame) entity;
 			ItemStack item = frame.getItem();
-			if (GameMap.isGameMap(item) || ChessBoardsUtil.isChessBoardsMap(item)) {
+			boolean isGameMap = GameMap.isGameMap(item);
+			if (isGameMap || ChessBoardsUtil.isChessBoardsMap(item)) {
 				// Game found
 
-				GameMap gameMap = new GameMap(item);
+				GameMap gameMap = null;
+
+				if(isGameMap) {
+					gameMap = new GameMap(item);
+				}
 				// Game testGame = gameMap.getGame();
 
 				Vector pos = frame.getLocation().toVector();
@@ -103,10 +108,13 @@ public class BoardInteract implements Listener {
 					minDistance = distance;
 					result = tempResult;
 					gameFrame = frame;
-					map = gameMap;
-					game = gameMap.getGame();
-					isChessBoardsMap = ChessBoardsUtil.isChessBoardsMap(item);
-					continue;
+
+					if(!isGameMap) {
+						isChessBoardsMap = true;
+					} else {
+						map = gameMap;
+						game = gameMap.getGame();
+					}
 				}
 			}
 		}

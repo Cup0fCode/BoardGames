@@ -3,10 +3,12 @@ package water.of.cup.boardgames.game.games.chess;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
+import org.bukkit.persistence.PersistentDataType;
 import water.of.cup.boardgames.BoardGames;
 
 import java.io.BufferedReader;
@@ -44,6 +46,12 @@ public class ChessBoardsUtil {
         return OLD_MAP_IDS.contains(gameId);
     }
 
+    public static boolean isChessBoardsItem(ItemStack itemStack) {
+        if(itemStack.getItemMeta() == null) return false;
+        NamespacedKey key = new NamespacedKey(BoardGames.getInstance(), "chess_board");
+        return itemStack.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.DOUBLE);
+    }
+
     public static void removeChessBoard(ItemFrame itemFrame) {
         Location location = itemFrame.getLocation();
         itemFrame.remove();
@@ -58,7 +66,7 @@ public class ChessBoardsUtil {
 
         int mapId = mapMeta.getMapView().getId();
 
-        OLD_MAP_IDS.remove(mapId);
+        OLD_MAP_IDS.remove(Integer.valueOf(mapId));
 
         deleteChessBoardsGame(mapId);
     }
