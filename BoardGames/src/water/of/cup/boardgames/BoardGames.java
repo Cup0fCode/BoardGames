@@ -21,6 +21,7 @@ import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.commands.bgCommands;
 import water.of.cup.boardgames.game.games.chess.Chess;
+import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.storage.StorageManager;
 import water.of.cup.boardgames.listeners.BlockBreak;
@@ -91,6 +92,9 @@ public class BoardGames extends JavaPlugin {
 				Bukkit.getLogger().info("Server must have Vault in order to place wagers on games.");
 			}
 		}
+
+		// Load in old chess games
+		ChessBoardsUtil.loadGames();
 
 		//GameManager.loadGames();
 
