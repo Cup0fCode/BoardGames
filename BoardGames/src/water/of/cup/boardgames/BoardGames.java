@@ -19,6 +19,7 @@ import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameConfigLoader;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
+import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
 import water.of.cup.boardgames.game.games.uno.Uno;
 import water.of.cup.boardgames.commands.bgCommands;
 import water.of.cup.boardgames.game.games.checkers.Checkers;
@@ -101,6 +102,9 @@ public class BoardGames extends JavaPlugin {
 		}
 
 		setupPlaceholders();
+
+		// Load in old chess games
+		ChessBoardsUtil.loadGames();
 
 		//GameManager.loadGames();
 

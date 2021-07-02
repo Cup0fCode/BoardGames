@@ -26,6 +26,7 @@ import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
+import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
 import water.of.cup.boardgames.game.maps.GameMap;
 
 public class BoardInteract implements Listener {
@@ -64,6 +65,7 @@ public class BoardInteract implements Listener {
 		ItemFrame gameFrame = null;
 		Game game = null;
 		GameMap map = null;
+		boolean isChessBoardsMap = false;
 
 		double minDistance = 100; //used to find the closest map clicked
 		for (Entity entity : nearbyEntities) {
@@ -72,10 +74,15 @@ public class BoardInteract implements Listener {
 				continue;
 			ItemFrame frame = (ItemFrame) entity;
 			ItemStack item = frame.getItem();
-			if (GameMap.isGameMap(item)) {
+			boolean isGameMap = GameMap.isGameMap(item);
+			if (isGameMap || ChessBoardsUtil.isChessBoardsMap(item)) {
 				// Game found
 
-				GameMap gameMap = new GameMap(item);
+				GameMap gameMap = null;
+
+				if(isGameMap) {
+					gameMap = new GameMap(item);
+				}
 				// Game testGame = gameMap.getGame();
 
 				Vector pos = frame.getLocation().toVector();
@@ -101,11 +108,30 @@ public class BoardInteract implements Listener {
 					minDistance = distance;
 					result = tempResult;
 					gameFrame = frame;
-					map = gameMap;
-					game = gameMap.getGame();
-					continue;
+
+					if(!isGameMap) {
+						isChessBoardsMap = true;
+					} else {
+						map = gameMap;
+						game = gameMap.getGame();
+					}
 				}
 			}
+		}
+
+		// Loads in old ChessBoards as new BoardGames
+		if(isChessBoardsMap) {
+			Game newGame = gameManager.newGame("Chess", 0);
+
+			if(newGame == null)
+				return;
+
+			ChessBoardsUtil.removeChessBoard(gameFrame);
+
+			Location loc = gameFrame.getLocation().getBlock().getLocation();
+			newGame.replace(loc, newGame.getRotation(), 1);
+			gameManager.addGame(newGame);
+			return;
 		}
 
 		if(game == null && gameFrame != null) {
