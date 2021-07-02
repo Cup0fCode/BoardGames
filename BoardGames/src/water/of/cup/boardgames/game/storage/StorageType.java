@@ -53,5 +53,13 @@ public enum StorageType {
 
         return false;
     }
+
+    public static StorageType getStorageTypeByKey(String key) {
+        for(StorageType storageType : StorageType.values()) {
+            if(storageType.getKey().equals(key)) return storageType;
+        }
+
+        return null;
+    }
 }
 

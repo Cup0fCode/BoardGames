@@ -19,6 +19,7 @@ import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameConfigLoader;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
+import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
 import water.of.cup.boardgames.game.games.uno.Uno;
 import water.of.cup.boardgames.commands.bgCommands;
 import water.of.cup.boardgames.game.games.checkers.Checkers;
@@ -37,6 +38,7 @@ import water.of.cup.boardgames.listeners.ChunkLoad;
 import water.of.cup.boardgames.listeners.PlayerJoin;
 import water.of.cup.boardgames.listeners.PlayerQuit;
 import water.of.cup.boardgames.metrics.Metrics;
+import water.of.cup.boardgames.placeholder.BoardGamesPlaceholder;
 
 public class BoardGames extends JavaPlugin {
 	
@@ -99,6 +101,11 @@ public class BoardGames extends JavaPlugin {
 			}
 		}
 
+		setupPlaceholders();
+
+		// Load in old chess games
+		ChessBoardsUtil.loadGames();
+
 		//GameManager.loadGames();
 
 		// Add bStats
@@ -144,6 +151,12 @@ public class BoardGames extends JavaPlugin {
         economy = rsp.getProvider();
         return economy != null;
     }
+
+    private void setupPlaceholders() {
+		if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
+			new BoardGamesPlaceholder(this).register();
+		}
+	}
 	
 	public void addGameRecipes() {
 //		ItemStack chessboard = ChessUtils.getChessBoardItem();
