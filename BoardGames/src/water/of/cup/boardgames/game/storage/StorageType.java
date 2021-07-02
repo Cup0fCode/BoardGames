@@ -11,7 +11,12 @@ public enum StorageType {
 
     // Specific type example
     CROSS_WINS("cross_wins", "int default 0", JDBCType.INTEGER, true),
-    BEST_TIME("best_time", "double default 0", JDBCType.DOUBLE, false);
+    BEST_TIME("best_time", "double default 0", JDBCType.DOUBLE, false),
+    
+    // Glicko2 Ratings
+    Rating("rating", "double default 0", JDBCType.DOUBLE, true),
+    RatingDeviation("rating_deviation", "double default 0", JDBCType.DOUBLE, true),
+    RatingVolatility("rating_volatility", "double default 0", JDBCType.DOUBLE, true);
 
     private final String key;
     private final JDBCType dataType;
