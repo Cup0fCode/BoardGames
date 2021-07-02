@@ -17,6 +17,7 @@ import net.milkbowl.vault.economy.Economy;
 import water.of.cup.boardgames.commands.bgCommandsTabCompleter;
 import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameConfigLoader;
+import water.of.cup.boardgames.extension.ExtensionManager;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
@@ -51,6 +52,7 @@ public class BoardGames extends JavaPlugin {
 	//private DataSource dataStore;
 
 	private StorageManager storageManager;
+	private ExtensionManager extensionManager;
 
 	@SuppressWarnings("unchecked") // for register games
 	@Override
@@ -80,7 +82,10 @@ public class BoardGames extends JavaPlugin {
 		//Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
 		
 		gameManager.registerGames(Sudoku.class, Chess.class, ConwaysGameOfLife.class, TicTacToe.class, ConnectFour.class, Checkers.class, MineSweeper.class, Uno.class);
-		
+
+		// Register extension board games
+		loadExtensionManager();
+
 		getCommand("bg").setExecutor(new bgCommands());
 		getCommand("bg").setTabCompleter(new bgCommandsTabCompleter());
 //		getCommand("chessboards").setTabCompleter(new ChessBoardCommandsTabCompleter());
@@ -269,6 +274,11 @@ public class BoardGames extends JavaPlugin {
 
 	public boolean hasStorage() {
 		return this.storageManager != null && ConfigUtil.DB_ENABLED.toBoolean();
+	}
+
+	private void loadExtensionManager() {
+		this.extensionManager = new ExtensionManager();
+		this.extensionManager.loadExtensions();
 	}
 	
 //	public DataSource getDataStore() {

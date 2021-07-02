@@ -4,6 +4,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.imageio.ImageIO;
 import org.bukkit.Bukkit;
 
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.BoardGamesExtension;
 
 public class ImageManager {
 
@@ -37,5 +39,9 @@ public class ImageManager {
 		} catch (IOException e) {
 			return null;
 		}
+	}
+
+	public static void addImage(String name, BufferedImage image) {
+		images.put(name, image);
 	}
 }
