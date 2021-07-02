@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 import org.bukkit.Bukkit;
 
 import water.of.cup.boardgames.BoardGames;
-import water.of.cup.boardgames.BoardGamesExtension;
+import water.of.cup.boardgames.extension.BoardGamesExtension;
 
 public class ImageManager {
 

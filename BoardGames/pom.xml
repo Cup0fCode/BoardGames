@@ -10,11 +10,8 @@
 	<build>
 		<resources>
 			<resource>
-				<directory>src/water/of/cup/boardgames/images</directory>
-				<includes>
-					<include>*.png</include>
-				</includes>
-				<targetPath>water/of/cup/boardgames/images</targetPath>
+				<directory>src/main/resources</directory>
+                <filtering>true</filtering>
 			</resource>
 		</resources>
 

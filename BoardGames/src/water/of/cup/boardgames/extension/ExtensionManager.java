@@ -2,7 +2,6 @@ package water.of.cup.boardgames.extension;
 
 import org.bukkit.Bukkit;
 import water.of.cup.boardgames.BoardGames;
-import water.of.cup.boardgames.BoardGamesExtension;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.image_handling.ImageManager;
 

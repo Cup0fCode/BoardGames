@@ -1,4 +1,4 @@
-package water.of.cup.boardgames;
+package water.of.cup.boardgames.extension;
 
 import java.util.ArrayList;
 
