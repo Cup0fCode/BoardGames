@@ -30,8 +30,14 @@ public class BlockPlace implements Listener {
 		// check if itemStack is boardItem
 		if (!BoardItem.isBoardItem(itemStack) && !ChessBoardsUtil.isChessBoardsItem(itemStack))
 			return;
-		
-		Game game = gameManager.newGame("Chess", rotation);
+
+		Game game;
+		if(ChessBoardsUtil.isChessBoardsItem(itemStack)) {
+			game = gameManager.newGame("Chess", rotation);
+		} else {
+			game = gameManager.newGame(new BoardItem(itemStack), rotation);
+		}
+
 		
 //		if (itemStack.getType() == Material.OAK_SAPLING)
 //			game = new TicTacToe(rotation);
@@ -44,7 +50,7 @@ public class BlockPlace implements Listener {
 			return;
 
 		if(ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
-				&& !player.hasPermission("chessboard.place")) {
+				&& !player.hasPermission("boardgames.place")) {
 			event.setCancelled(true);
 			return;
 		}

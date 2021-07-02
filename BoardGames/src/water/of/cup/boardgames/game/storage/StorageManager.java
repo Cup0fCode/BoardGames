@@ -75,7 +75,9 @@ public class StorageManager {
 
 		this.refreshGameStorageColumns(gameStorage);
 
-		this.transferChessBoardsData();
+		if(gameStorage.getTableName().equals("chess")) {
+			this.transferChessBoardsData();
+		}
 	}
 
 	private void refreshGameStorageColumns(GameStorage gameStorage) {
