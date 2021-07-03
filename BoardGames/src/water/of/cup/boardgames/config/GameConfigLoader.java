@@ -32,6 +32,7 @@ public class GameConfigLoader {
         loadGameSounds();
         loadCustomConfigValues();
         loadGameWinAmounts();
+        loadDefaults();
     }
 
     private static void loadRecipes() {
@@ -99,6 +100,21 @@ public class GameConfigLoader {
                         defaultConfig.put(configLoc + "." + key, customValues.get(key));
                     }
                 }
+            }
+        }
+
+        instance.addToConfig(defaultConfig);
+    }
+
+    private static void loadDefaults() {
+        HashMap<String, Object> defaultConfig = new HashMap<>();
+
+        for (String gameName : GAMES.keySet()) {
+            Game temp = GAMES.get(gameName);
+
+            if (temp != null) {
+                String configLoc = "settings.games." + temp.getName() + ".enabled";
+                defaultConfig.put(configLoc, "true");
             }
         }
 
