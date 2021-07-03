@@ -29,7 +29,7 @@ public class GameNumberInventory extends InventoryScreen {
         this.game = gameInventory.getGame();
     }
 
-    public void build(Player player, GameNumberInventoryCallback callback) {
+    public void build(Player player, GameNumberInventoryCallback callback, String dataKey) {
         char[][] guiSetup = getGuiSetup();
         String[] guiSetupString = formatGuiSetup(guiSetup);
 
@@ -86,17 +86,17 @@ public class GameNumberInventory extends InventoryScreen {
         );
 
         gui.addElement(new StaticGuiElement('y', new ItemStack(Material.LIME_STAINED_GLASS_PANE), click -> {
-                    gui.close(true); // TODO: gonna want to return to previous screen
-                    callback.onSubmit(getFinalNum(numAmounts));
+                    gui.close(false);
+                    callback.onSubmit(dataKey, getFinalNum(numAmounts));
                     return true;
                 },
-                        this.gameInventory.getCreateGameText()
+                        ConfigUtil.GUI_DONE_TEXT.toString()
                 )
         );
 
         gui.setCloseAction(close -> {
-//            callback.onLeave(player);
-            return false;
+            callback.onSubmit(dataKey, getFinalNum(numAmounts));
+            return true;
         });
 
         gui.show(player);

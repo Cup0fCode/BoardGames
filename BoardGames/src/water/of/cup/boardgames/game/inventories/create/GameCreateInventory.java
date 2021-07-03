@@ -14,6 +14,8 @@ import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.MathUtils;
 import water.of.cup.boardgames.game.inventories.*;
 import water.of.cup.boardgames.game.inventories.create.CreateInventoryCallback;
+import water.of.cup.boardgames.game.inventories.number.GameNumberInventory;
+import water.of.cup.boardgames.game.inventories.number.GameNumberInventoryCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,10 +116,20 @@ public class GameCreateInventory extends InventoryScreen {
                     // Add icon
                     String label = gameOption.getLabel() == null ? "" : gameOption.getLabel();
 
-                    gui.addElement(new DynamicGuiElement(curr, () ->
-                            new StaticGuiElement(curr, new ItemStack(gameOption.getMaterial()), click -> true,
-                                    label + ChatColor.GREEN + ConfigUtil.translateTeamName(gameData.get(gameOption.getKey()).toString())// gameData.get(gameOption.getKey())
-                            )));
+                    if(gameOption.getOptionType() == GameOptionType.COUNT && gameOption.getCustomValues() == null) {
+                        gui.addElement(new DynamicGuiElement(curr, () ->
+                                new StaticGuiElement(curr, new ItemStack(gameOption.getMaterial()), click -> {
+                                    new GameNumberInventory(this.gameInventory).build(player, gameData::put, gameOption.getKey());
+                                    return true;
+                                },
+                                        label + ChatColor.GREEN + ConfigUtil.translateTeamName(gameData.get(gameOption.getKey()).toString())// gameData.get(gameOption.getKey())
+                                )));
+                    } else {
+                        gui.addElement(new DynamicGuiElement(curr, () ->
+                                new StaticGuiElement(curr, new ItemStack(gameOption.getMaterial()), click -> true,
+                                        label + ChatColor.GREEN + ConfigUtil.translateTeamName(gameData.get(gameOption.getKey()).toString())// gameData.get(gameOption.getKey())
+                                )));
+                    }
 
                     // Add toggle buttons
                     switch (gameOption.getOptionType()) {

@@ -17,6 +17,7 @@ import water.of.cup.boardgames.game.inventories.ingame.GameForfeitInventory;
 import water.of.cup.boardgames.game.inventories.join.GameJoinInventory;
 import water.of.cup.boardgames.game.inventories.join.JoinGameCallback;
 import water.of.cup.boardgames.game.inventories.number.GameNumberInventory;
+import water.of.cup.boardgames.game.inventories.number.GameNumberInventoryCallback;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyCallback;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyInventory;
 import water.of.cup.boardgames.game.inventories.wager.GameWagerCallback;
@@ -377,6 +378,18 @@ public abstract class GameInventory {
             public void onForfeit(Player player) {
                 if(game.isIngame() && game.hasPlayer(player)) {
                     game.exitPlayer(player);
+                }
+            }
+        };
+    }
+
+    // TODO: Remove:
+    private GameNumberInventoryCallback handleGameNumbers() {
+        return new GameNumberInventoryCallback() {
+            @Override
+            public void onSubmit(String dataKey, int num) {
+                if(gameData.containsKey(dataKey)) {
+                    gameData.put(dataKey, num);
                 }
             }
         };

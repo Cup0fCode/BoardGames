@@ -49,6 +49,7 @@ public enum ConfigUtil {
     GUI_UP_ARROW("settings.messages.gui.uparrow", "&a/\\"),
     GUI_DOWN_ARROW("settings.messages.gui.downarrow", "&a\\/"),
     GUI_RESET_NUMBERS("settings.messages.gui.resetnumbers", "&cRESET"),
+    GUI_DONE_TEXT("settings.messages.gui.donetext", "&aSAVE"),
 
     // GUI GAME OPTIONS
     GUI_WAGER_LABEL("settings.messages.gui.wagerlabel", "&2Wager: "),
