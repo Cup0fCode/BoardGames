@@ -528,4 +528,8 @@ public abstract class GameInventory {
         return 0;
     }
 
+    public String getCreateGameText() {
+        return ConfigUtil.GUI_CREATE_GAME.toString();
+    }
+
 }

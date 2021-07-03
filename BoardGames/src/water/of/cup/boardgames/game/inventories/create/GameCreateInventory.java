@@ -23,11 +23,13 @@ public class GameCreateInventory extends InventoryScreen {
 
     private final ArrayList<GameOption> gameOptions;
     private final Game game;
+    private final GameInventory gameInventory;
 
     public GameCreateInventory(GameInventory gameInventory) {
         super(gameInventory);
         this.gameOptions = gameInventory.getGameOptions();
         this.game = gameInventory.getGame();
+        this.gameInventory = gameInventory;
     }
 
     public void build(Player player, final int page, HashMap<String, Object> cachedGameData, CreateInventoryCallback callback) {
@@ -99,7 +101,7 @@ public class GameCreateInventory extends InventoryScreen {
                     callback.onCreateGame(gameData);
                     return true;
                 },
-                ConfigUtil.GUI_CREATE_GAME.toString()
+                this.gameInventory.getCreateGameText()
                 )
         );
 
