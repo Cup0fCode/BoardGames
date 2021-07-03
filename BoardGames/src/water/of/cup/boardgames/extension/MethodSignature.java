@@ -1,5 +1,8 @@
 package water.of.cup.boardgames.extension;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class MethodSignature {
     private final String name;
     private final Class<?>[] params;
@@ -15,5 +18,20 @@ public class MethodSignature {
 
     public Class<?>[] getParams() {
         return params;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MethodSignature that = (MethodSignature) o;
+        return Objects.equals(name, that.name) && Arrays.equals(params, that.params);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(name);
+        result = 31 * result + Arrays.hashCode(params);
+        return result;
     }
 }

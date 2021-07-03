@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -42,7 +43,7 @@ public class ExtensionManager {
         if(!didLoad)
             return;
 
-        this.loadExtensionImages();
+        ExtensionUtil.loadExtensionImages();
 
         for(BoardGamesExtension boardGamesExtension : extensions.values()) {
             for(Class<? extends Game> boardGame : boardGamesExtension.getGames()) {
@@ -50,51 +51,6 @@ public class ExtensionManager {
             }
         }
     }
-
-    private void loadExtensionImages() {
-        for(BoardGamesExtension boardGamesExtension : extensions.values()) {
-            File boardFile = getFileFromURL(boardGamesExtension);
-            if(boardFile == null) {
-                Bukkit.getLogger().warning("[BoardGames] Error while loading images.");
-                continue;
-            }
-
-            File[] listOfFiles = boardFile.listFiles();
-
-            if(listOfFiles == null) {
-                Bukkit.getLogger().warning("[BoardGames] Error while loading images.");
-                continue;
-            }
-
-            for(File file : listOfFiles) {
-                try {
-                    BufferedImage image = ImageIO.read(file);
-                    ImageManager.addImage(file.getName(), image);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-//        getFileFromURL
-    }
-
-//    private void loadExtensionImages() {
-//        File[] listOfFiles = this.imageFolder.listFiles();
-//
-//        if(listOfFiles == null) return;
-//
-//        for (File file : listOfFiles) {
-//            if(file.exists()) {
-//                try {
-//                    BufferedImage image = ImageIO.read(file);
-//                    ImageManager.addImage(file.getName(), image);
-//                } catch (IOException e) {
-//                    Bukkit.getLogger().warning("[BoardGames] Error while reading extension image " + file.getName());
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
 
     private List<Class<? extends BoardGamesExtension>> findExtensions() {
         return Arrays.stream(folder.listFiles((dir, name) -> name.endsWith(".jar")))
@@ -168,18 +124,6 @@ public class ExtensionManager {
 
             Bukkit.getLogger().warning("[BoardGames] Error while loading the extensions.");
             return null;
-        }
-    }
-
-    private File getFileFromURL(BoardGamesExtension boardGamesExtension) {
-        URL url = this.getClass().getClassLoader().getResource(boardGamesExtension.getResourcePath());
-        File file = null;
-        try {
-            file = new File(url.toURI());
-        } catch (URISyntaxException e) {
-            file = new File(url.getPath());
-        } finally {
-            return file;
         }
     }
 }

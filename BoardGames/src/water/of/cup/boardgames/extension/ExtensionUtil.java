@@ -1,16 +1,26 @@
 package water.of.cup.boardgames.extension;
 
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.image_handling.ImageManager;
 
-import java.io.File;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
+
+import static java.util.stream.Collectors.toList;
 
 public class ExtensionUtil {
 
@@ -54,4 +64,38 @@ public class ExtensionUtil {
         }
         return classes.get(0);
     }
+
+    public static void loadExtensionImages() {
+        File extensionFolder = new File(BoardGames.getInstance().getDataFolder(), "extensions");
+        List<File> extensionJars = Arrays.stream(extensionFolder.listFiles((dir, name) -> name.endsWith(".jar"))).collect(toList());
+
+        for (File file : extensionJars) {
+            try (JarFile jarFile = new JarFile(file)) {
+                Enumeration<JarEntry> entries = jarFile.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry je = entries.nextElement();
+                    if (je.getName().endsWith(".png")) {
+                        JarEntry fileEntry = jarFile.getJarEntry(je.getName());
+                        InputStream is = jarFile.getInputStream(fileEntry);
+                        BufferedImage image = ImageIO.read(is);
+
+                        String fileName = getFileName(je.getName());
+                        ImageManager.addImage(fileName, image);
+
+                        Bukkit.getLogger().info("[BoardGames] Loaded extension image: " + fileName);
+                    }
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private static String getFileName(String name) {
+        String[] split = name.split("/");
+        if(split.length == 0) return "";
+        String newName = split[split.length - 1];
+        return newName.substring(0, newName.indexOf('.'));
+    }
+
 }
