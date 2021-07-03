@@ -104,7 +104,10 @@ public class ExtensionManager {
     private Optional<BoardGamesExtension> register(final Class<? extends BoardGamesExtension> clazz) {
         try {
             BoardGamesExtension boardGamesExtension = createExtensionInstance(clazz);
-            extensions.put("test", boardGamesExtension);
+            if(boardGamesExtension == null)
+                return Optional.empty();
+
+            extensions.put(boardGamesExtension.getExtensionName(), boardGamesExtension);
             return Optional.of(boardGamesExtension);
         } catch (LinkageError | NullPointerException ex) {
             Bukkit.getLogger().warning("[BoardGames] Error while loading extension");

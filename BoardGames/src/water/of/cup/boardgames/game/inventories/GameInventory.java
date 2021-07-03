@@ -16,6 +16,7 @@ import water.of.cup.boardgames.game.inventories.ingame.GameForfeitCallback;
 import water.of.cup.boardgames.game.inventories.ingame.GameForfeitInventory;
 import water.of.cup.boardgames.game.inventories.join.GameJoinInventory;
 import water.of.cup.boardgames.game.inventories.join.JoinGameCallback;
+import water.of.cup.boardgames.game.inventories.number.GameNumberInventory;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyCallback;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyInventory;
 import water.of.cup.boardgames.game.inventories.wager.GameWagerCallback;
@@ -47,6 +48,7 @@ public abstract class GameInventory {
     private final GameReadyInventory gameReadyInventory;
     private final GameWagerInventory gameWagerInventory;
     private final GameForfeitInventory gameForfeitInventory;
+    private final GameNumberInventory gameNumberInventory;
 
     private final BoardGames instance = BoardGames.getInstance();
     private final ArrayList<GameOption> gameOptions;
@@ -104,6 +106,7 @@ public abstract class GameInventory {
         this.gameReadyInventory = new GameReadyInventory(this);
         this.gameWagerInventory = new GameWagerInventory(this);
         this.gameForfeitInventory = new GameForfeitInventory(this);
+        this.gameNumberInventory = new GameNumberInventory(this);
     }
 
     public void build(Player player) {
