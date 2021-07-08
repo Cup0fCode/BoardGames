@@ -12,6 +12,7 @@ import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.MathUtils;
 import water.of.cup.boardgames.game.inventories.GameInventory;
+import water.of.cup.boardgames.game.inventories.GameOption;
 import water.of.cup.boardgames.game.inventories.InventoryScreen;
 import water.of.cup.boardgames.game.inventories.InventoryUtils;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyCallback;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 
 public class GameNumberInventory extends InventoryScreen {
 
+    private final BoardGames instance = BoardGames.getInstance();
     private final GameInventory gameInventory;
     private final Game game;
 
@@ -29,11 +31,12 @@ public class GameNumberInventory extends InventoryScreen {
         this.game = gameInventory.getGame();
     }
 
-    public void build(Player player, GameNumberInventoryCallback callback, String dataKey) {
+    public void build(Player player, GameNumberInventoryCallback callback, GameOption gameOption, int currVal) {
         char[][] guiSetup = getGuiSetup();
         String[] guiSetupString = formatGuiSetup(guiSetup);
 
-        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, game.getGameName(), guiSetupString);
+        String invName = gameOption.getLabel() != null ? gameOption.getLabel() : game.getGameName();
+        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, invName, guiSetupString);
 
         gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1));
 
@@ -56,9 +59,7 @@ public class GameNumberInventory extends InventoryScreen {
                     )));
 
             gui.addElement(new StaticGuiElement(aboveChar, upButton, click -> {
-                numAmounts[numIndex] = numAmounts[numIndex] + 1;
-                if(numAmounts[numIndex] > 9)
-                    numAmounts[numIndex] = 9;
+                incrementNumAmounts(numAmounts, numIndex, 1, gameOption);
 
                 click.getGui().draw();
                 return true;
@@ -66,9 +67,7 @@ public class GameNumberInventory extends InventoryScreen {
                 ConfigUtil.GUI_UP_ARROW.toString()));
 
             gui.addElement(new StaticGuiElement(belowChar, downButton, click -> {
-                numAmounts[numIndex] = numAmounts[numIndex] - 1;
-                if(numAmounts[numIndex] < 0)
-                    numAmounts[numIndex] = 0;
+                incrementNumAmounts(numAmounts, numIndex, -1, gameOption);
 
                 click.getGui().draw();
                 return true;
@@ -76,8 +75,8 @@ public class GameNumberInventory extends InventoryScreen {
                     ConfigUtil.GUI_DOWN_ARROW.toString()));
         }
 
-        gui.addElement(new StaticGuiElement('x', new ItemStack(Material.RED_STAINED_GLASS_PANE), click -> {
-                    Arrays.fill(numAmounts, 0);
+        gui.addElement(new StaticGuiElement('z', new ItemStack(Material.RED_STAINED_GLASS_PANE), click -> {
+                    setNumAmounts(numAmounts, gameOption.getMinIntValue());
                     click.getGui().draw();
                     return true;
                 },
@@ -87,19 +86,85 @@ public class GameNumberInventory extends InventoryScreen {
 
         gui.addElement(new StaticGuiElement('y', new ItemStack(Material.LIME_STAINED_GLASS_PANE), click -> {
                     gui.close(false);
-                    callback.onSubmit(dataKey, getFinalNum(numAmounts));
+                    callback.onSubmit(gameOption.getKey(), getFinalNum(numAmounts));
                     return true;
                 },
                         ConfigUtil.GUI_DONE_TEXT.toString()
                 )
         );
 
+        // Half amount
+        gui.addElement(new StaticGuiElement('a', new ItemStack(Material.BLUE_STAINED_GLASS_PANE), click -> {
+                    int currAmount = getFinalNum(numAmounts);
+                    setNumAmounts(numAmounts, currAmount / 2);
+                    normalizeNumAmounts(numAmounts, gameOption);
+                    click.getGui().draw();
+                    return true;
+                },
+                        ConfigUtil.GUI_NUMBERS_HALF.toString()
+                )
+        );
+
+        // Double amount
+        gui.addElement(new StaticGuiElement('b', new ItemStack(Material.BLUE_STAINED_GLASS_PANE), click -> {
+                    int currAmount = getFinalNum(numAmounts);
+                    setNumAmounts(numAmounts, currAmount * 2);
+                    normalizeNumAmounts(numAmounts, gameOption);
+                    click.getGui().draw();
+                    return true;
+                },
+                        ConfigUtil.GUI_NUMBERS_DOUBLE.toString()
+                )
+        );
+
+        // Max amount
+        gui.addElement(new StaticGuiElement('c', new ItemStack(Material.BLUE_STAINED_GLASS_PANE), click -> {
+                    int maxAmount = gameOption.requiresEconomy() ? (int) instance.getEconomy().getBalance(player) : gameOption.getMaxIntValue();
+                    setNumAmounts(numAmounts, maxAmount);
+                    normalizeNumAmounts(numAmounts, gameOption);
+                    click.getGui().draw();
+                    return true;
+                },
+                        ConfigUtil.GUI_NUMBERS_MAX.toString()
+                )
+        );
+
         gui.setCloseAction(close -> {
-            callback.onSubmit(dataKey, getFinalNum(numAmounts));
+            callback.onSubmit(gameOption.getKey(), currVal);
             return true;
         });
 
         gui.show(player);
+    }
+
+    private void incrementNumAmounts(int[] numAmounts, int numIndex, int amount, GameOption gameOption) {
+        numAmounts[numIndex] = numAmounts[numIndex] + amount;
+        if(numAmounts[numIndex] < 0) {
+            numAmounts[numIndex] = 0;
+        } else if(numAmounts[numIndex] > 9) {
+            numAmounts[numIndex] = 9;
+        }
+
+        normalizeNumAmounts(numAmounts, gameOption);
+    }
+
+    private void setNumAmounts(int[] numAmounts, int newNum) {
+        Arrays.fill(numAmounts, 0);
+
+        int num = newNum;
+        for(int i = numAmounts.length - 1; i >= 0; i--) {
+            numAmounts[i] = num % 10;
+            num /= 10;
+        }
+    }
+
+    private void normalizeNumAmounts(int[] numAmounts, GameOption gameOption) {
+        int currAmount = getFinalNum(numAmounts);
+        if(currAmount > gameOption.getMaxIntValue()) {
+            setNumAmounts(numAmounts, gameOption.getMaxIntValue());
+        } else if(currAmount < gameOption.getMinIntValue()) {
+            setNumAmounts(numAmounts, gameOption.getMinIntValue());
+        }
     }
 
     private char[][] getGuiSetup() {
@@ -121,11 +186,18 @@ public class GameNumberInventory extends InventoryScreen {
         guiSetup[5][4] = 'y';
 
         // Define clear
-        guiSetup[2][0] = 'x';
+        guiSetup[2][0] = 'z';
+
+        // Define 1/2
+        guiSetup[4][3] = 'a';
+        // Define 2x
+        guiSetup[4][4] = 'b';
+        // Define max
+        guiSetup[4][5] = 'c';
 
         int[] startPos = new int[] {1, 2};
 
-        char startChar = 'a';
+        char startChar = 'd';
 
         for(int i = 0; i < 7; i++) {
             guiSetup[startPos[1]][startPos[0]] = startChar;

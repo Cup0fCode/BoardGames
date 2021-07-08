@@ -98,6 +98,16 @@ public abstract class GameInventory {
             this.gameOptions.add(0, GameOption.getWagerGameOption());
         }
 
+        // Remove economy required options if no economy is found
+        ArrayList<GameOption> toBeRemoved = new ArrayList<>();
+        for(GameOption gameOption : this.gameOptions) {
+            if(gameOption.requiresEconomy() && instance.getEconomy() == null) {
+                toBeRemoved.add(gameOption);
+            }
+        }
+
+        this.gameOptions.removeAll(toBeRemoved);
+
         // When gameData is null, no game has been created
         this.gameData = null;
 

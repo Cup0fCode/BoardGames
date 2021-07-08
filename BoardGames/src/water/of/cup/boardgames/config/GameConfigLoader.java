@@ -129,6 +129,8 @@ public class GameConfigLoader {
 
             Game temp = instance.getGameManager().newGame(recipeKey, 0);
 
+            if(temp.getGameRecipe() == null) continue;
+
             ItemStack boardItemStack = temp.getBoardItem();
             NamespacedKey key = new NamespacedKey(instance, recipeKey);
             ShapedRecipe recipe = new ShapedRecipe(key, boardItemStack);

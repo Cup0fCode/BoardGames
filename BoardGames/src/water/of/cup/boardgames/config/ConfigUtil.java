@@ -7,7 +7,7 @@ import water.of.cup.boardgames.game.storage.StorageType;
 
 import java.util.HashMap;
 
-public enum ConfigUtil {
+public enum ConfigUtil implements ConfigInterface {
 
     // PLUGIN SETTINGS
     PERMISSIONS_ENABLED("settings.permissions", "true"),
@@ -50,6 +50,9 @@ public enum ConfigUtil {
     GUI_DOWN_ARROW("settings.messages.gui.downarrow", "&a\\/"),
     GUI_RESET_NUMBERS("settings.messages.gui.resetnumbers", "&cRESET"),
     GUI_DONE_TEXT("settings.messages.gui.donetext", "&aSAVE"),
+    GUI_NUMBERS_HALF("settings.messages.gui.numhalf", "&a1/2"),
+    GUI_NUMBERS_DOUBLE("settings.messages.gui.numdouble", "&a2x"),
+    GUI_NUMBERS_MAX("settings.messages.gui.nummax", "&aMax"),
 
     // GUI GAME OPTIONS
     GUI_WAGER_LABEL("settings.messages.gui.wagerlabel", "&2Wager: "),
@@ -141,10 +144,12 @@ public enum ConfigUtil {
         return this.toString().equals("true");
     }
 
+    @Override
     public String getPath() {
         return this.path;
     }
 
+    @Override
     public String getDefaultValue() {
         return this.defaultValue;
     }

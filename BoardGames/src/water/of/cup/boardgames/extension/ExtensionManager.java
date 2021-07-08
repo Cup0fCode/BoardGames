@@ -46,6 +46,8 @@ public class ExtensionManager {
         ExtensionUtil.loadExtensionImages();
 
         for(BoardGamesExtension boardGamesExtension : extensions.values()) {
+            this.loadExtensionConfig(boardGamesExtension.getExtensionConfig());
+
             for(Class<? extends Game> boardGame : boardGamesExtension.getGames()) {
                 BoardGames.getInstance().getGameManager().registerGames(boardGame);
             }
@@ -128,5 +130,13 @@ public class ExtensionManager {
             Bukkit.getLogger().warning("[BoardGames] Error while loading the extensions.");
             return null;
         }
+    }
+
+    private void loadExtensionConfig(ArrayList<BoardGamesConfigOption> configOptions) {
+        HashMap<String, Object> defaultConfig = new HashMap<>();
+        for(BoardGamesConfigOption boardGamesConfigOption : configOptions) {
+            defaultConfig.put(boardGamesConfigOption.getPath(), boardGamesConfigOption.getDefaultValue());
+        }
+        BoardGames.getInstance().addToConfig(defaultConfig);
     }
 }
