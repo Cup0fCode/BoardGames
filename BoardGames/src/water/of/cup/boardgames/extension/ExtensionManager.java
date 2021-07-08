@@ -133,6 +133,8 @@ public class ExtensionManager {
     }
 
     private void loadExtensionConfig(ArrayList<BoardGamesConfigOption> configOptions) {
+        if(configOptions == null) return;
+
         HashMap<String, Object> defaultConfig = new HashMap<>();
         for(BoardGamesConfigOption boardGamesConfigOption : configOptions) {
             defaultConfig.put(boardGamesConfigOption.getPath(), boardGamesConfigOption.getDefaultValue());
