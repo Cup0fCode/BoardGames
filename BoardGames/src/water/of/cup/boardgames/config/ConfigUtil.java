@@ -19,6 +19,7 @@ public enum ConfigUtil implements ConfigInterface {
     DB_USERNAME("settings.database.username", "root"),
     DB_PASS("settings.database.password", " "),
     DB_ENABLED("settings.database.enabled", "false"),
+    DB_TRANSFERRED("settings.database.chesstransfer", "false"),
 
     // GUI MESSAGES
     GUI_NEXT_PAGE("settings.messages.gui.nextpage", "&aNext Page"),
@@ -216,5 +217,10 @@ public enum ConfigUtil implements ConfigInterface {
         formatted = formatted.replace("%num%", num + "").replace("%player%", playerName).replace("%statVal%", statVal);
 
         return formatted;
+    }
+
+    public void setValue(String value) {
+        instance.getConfig().set(this.path, value);
+        instance.saveConfig();
     }
 }
