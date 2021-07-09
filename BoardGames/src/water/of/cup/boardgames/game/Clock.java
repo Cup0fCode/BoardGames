@@ -69,6 +69,7 @@ public class Clock extends BukkitRunnable {
 		if (playerTimes.get(turn) < 0) {
 			// player out of time
 			game.clockOutOfTime();
+			game.gamePlayerOutOfTime(turn);
 			return;
 		}
 
