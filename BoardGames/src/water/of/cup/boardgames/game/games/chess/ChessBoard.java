@@ -204,7 +204,7 @@ public class ChessBoard {
 			if (structure[7][i] == ChessPiece.BLACK_PAWN && teamTurn.equals("BLACK")) {
 				structure[7][i] = piece;
 				return;
-			} else if (structure[0][i] == ChessPiece.WHITE_PAWN && teamTurn.equals("BLACK")) {
+			} else if (structure[0][i] == ChessPiece.WHITE_PAWN && teamTurn.equals("WHITE")) {
 				structure[0][i] = piece;
 				return;
 			}

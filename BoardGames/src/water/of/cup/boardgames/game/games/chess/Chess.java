@@ -58,6 +58,15 @@ public class Chess extends Game {
 		buttons.clear();
 		board = new ChessBoard();
 		boardButtons = new Button[8][8];
+		promotionButtons = new Button[4];
+		
+		for (int i = 0; i < 4; i++) {
+			Button b = new Button(this, "CHESS_EMPTY", new int[] { 24 + i * 16, 56 }, 0, "PROMOTION");
+			b.setClickable(false);
+			promotionButtons[i] = b;
+			buttons.add(b);
+		}
+		
 		for (int x = 0; x < 8; x++)
 			for (int y = 0; y < 8; y++) {
 				Button b = new Button(this, "CHESS_EMPTY", new int[] { x * 16, y * 16 }, 0, "PIECE");
@@ -65,14 +74,6 @@ public class Chess extends Game {
 				boardButtons[y][x] = b;
 				buttons.add(b);
 			}
-
-		promotionButtons = new Button[4];
-		for (int i = 0; i < 4; i++) {
-			Button b = new Button(this, "CHESS_EMPTY", new int[] { 24 + i * 16, 56 }, 0, "PROMOTION");
-			b.setClickable(false);
-			promotionButtons[i] = b;
-			buttons.add(b);
-		}
 	}
 
 	private void togglePromotionButtons() {
@@ -189,7 +190,7 @@ public class Chess extends Game {
 		GamePlayer gamePlayer = getGamePlayer(player);
 		if (!teamManager.getTurnPlayer().equals(gamePlayer))
 			return;
-
+		
 		int[] clickLoc = mapManager.getClickLocation(loc, map);
 		Button b = getClickedButton(gamePlayer, clickLoc);
 
