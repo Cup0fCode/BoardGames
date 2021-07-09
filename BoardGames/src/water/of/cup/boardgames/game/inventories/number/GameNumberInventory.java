@@ -46,6 +46,7 @@ public class GameNumberInventory extends InventoryScreen {
         ItemStack upButton = InventoryUtils.getCustomTextureHead(InventoryUtils.UP_ARROW);
 
         int[] numAmounts = new int[7];
+        setNumAmounts(numAmounts, currVal);
 
         for(int x = 1; x <= 7; x++) {
             char curr = guiSetup[2][x];
@@ -150,6 +151,9 @@ public class GameNumberInventory extends InventoryScreen {
 
     private void setNumAmounts(int[] numAmounts, int newNum) {
         Arrays.fill(numAmounts, 0);
+
+        if(newNum > 9999999)
+            newNum = 9999999;
 
         int num = newNum;
         for(int i = numAmounts.length - 1; i >= 0; i--) {

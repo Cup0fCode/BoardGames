@@ -131,6 +131,11 @@ public abstract class GameInventory {
             return;
         }
 
+        if(hasCustomInGameInventory() && game.isIngame() && game.hasPlayer(player)) {
+            openCustomInGameInventory(player);
+            return;
+        }
+
         if(game.isIngame()) return;
 
         if(gameData == null) {
@@ -558,4 +563,10 @@ public abstract class GameInventory {
         return ConfigUtil.GUI_CREATE_GAME.toString();
     }
 
+    public boolean hasCustomInGameInventory() {
+        return false;
+    }
+
+    public void openCustomInGameInventory(Player player) {
+    }
 }
