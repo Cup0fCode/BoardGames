@@ -567,6 +567,14 @@ public abstract class Game {
 		return gameConfig.getWinAmount();
 	}
 
+	public boolean isEnabled() {
+		String configLoc = "settings.games." + getName() + ".enabled";
+		if(BoardGames.getInstance().getConfig().getString(configLoc) == null)
+			return true;
+
+		return ConfigUtil.getBoolean(configLoc);
+	}
+
 	public void sendGameWinMoney(GamePlayer winner) {
 		if (winner == null)
 			return;

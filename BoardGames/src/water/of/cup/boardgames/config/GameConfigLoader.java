@@ -32,6 +32,7 @@ public class GameConfigLoader {
         loadGameSounds();
         loadCustomConfigValues();
         loadGameWinAmounts();
+        loadDefaults();
     }
 
     private static void loadRecipes() {
@@ -105,6 +106,21 @@ public class GameConfigLoader {
         instance.addToConfig(defaultConfig);
     }
 
+    private static void loadDefaults() {
+        HashMap<String, Object> defaultConfig = new HashMap<>();
+
+        for (String gameName : GAMES.keySet()) {
+            Game temp = GAMES.get(gameName);
+
+            if (temp != null) {
+                String configLoc = "settings.games." + temp.getName() + ".enabled";
+                defaultConfig.put(configLoc, "true");
+            }
+        }
+
+        instance.addToConfig(defaultConfig);
+    }
+
     private static void addBukkitRecipes() {
         FileConfiguration config = instance.getConfig();
 
@@ -112,6 +128,8 @@ public class GameConfigLoader {
             if(!instance.getGameManager().isValidGame(recipeKey)) continue;
 
             Game temp = instance.getGameManager().newGame(recipeKey, 0);
+
+            if(temp.getGameRecipe() == null) continue;
 
             ItemStack boardItemStack = temp.getBoardItem();
             NamespacedKey key = new NamespacedKey(instance, recipeKey);

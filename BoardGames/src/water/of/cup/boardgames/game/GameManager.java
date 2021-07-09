@@ -39,7 +39,8 @@ public class GameManager {
 			try {
 				cons = gameType.getConstructor(int.class);
 				Game game = cons.newInstance(0);
-				nameToGameTypes.put(game.getName(), gameType);
+				if(game.isEnabled())
+					nameToGameTypes.put(game.getName(), gameType);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

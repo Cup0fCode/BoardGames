@@ -60,15 +60,15 @@ public class BlockPlace implements Listener {
 
 		Location loc = event.getBlock().getLocation();
 
-		if(finalGame.canPlaceBoard(loc, rotation) && player.getGameMode() != GameMode.CREATIVE) {
-			player.getInventory().getItemInMainHand()
-					.setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
-		}
-
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(instance, new Runnable() {
 			@Override
 			public void run() {
 				if (finalGame.canPlaceBoard(loc, rotation)) {
+					if(player.getGameMode() != GameMode.CREATIVE) {
+						player.getInventory().getItemInMainHand()
+								.setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
+					}
+
 					finalGame.placeBoard(loc, rotation);
 					gameManager.addGame(finalGame);
 					player.sendMessage(ConfigUtil.CHAT_PLACED_BOARD.toString());

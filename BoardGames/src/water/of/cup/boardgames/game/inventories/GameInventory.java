@@ -16,6 +16,8 @@ import water.of.cup.boardgames.game.inventories.ingame.GameForfeitCallback;
 import water.of.cup.boardgames.game.inventories.ingame.GameForfeitInventory;
 import water.of.cup.boardgames.game.inventories.join.GameJoinInventory;
 import water.of.cup.boardgames.game.inventories.join.JoinGameCallback;
+import water.of.cup.boardgames.game.inventories.number.GameNumberInventory;
+import water.of.cup.boardgames.game.inventories.number.GameNumberInventoryCallback;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyCallback;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyInventory;
 import water.of.cup.boardgames.game.inventories.wager.GameWagerCallback;
@@ -47,6 +49,7 @@ public abstract class GameInventory {
     private final GameReadyInventory gameReadyInventory;
     private final GameWagerInventory gameWagerInventory;
     private final GameForfeitInventory gameForfeitInventory;
+    private final GameNumberInventory gameNumberInventory;
 
     private final BoardGames instance = BoardGames.getInstance();
     private final ArrayList<GameOption> gameOptions;
@@ -95,6 +98,16 @@ public abstract class GameInventory {
             this.gameOptions.add(0, GameOption.getWagerGameOption());
         }
 
+        // Remove economy required options if no economy is found
+        ArrayList<GameOption> toBeRemoved = new ArrayList<>();
+        for(GameOption gameOption : this.gameOptions) {
+            if(gameOption.requiresEconomy() && instance.getEconomy() == null) {
+                toBeRemoved.add(gameOption);
+            }
+        }
+
+        this.gameOptions.removeAll(toBeRemoved);
+
         // When gameData is null, no game has been created
         this.gameData = null;
 
@@ -104,6 +117,7 @@ public abstract class GameInventory {
         this.gameReadyInventory = new GameReadyInventory(this);
         this.gameWagerInventory = new GameWagerInventory(this);
         this.gameForfeitInventory = new GameForfeitInventory(this);
+        this.gameNumberInventory = new GameNumberInventory(this);
     }
 
     public void build(Player player) {
@@ -114,6 +128,11 @@ public abstract class GameInventory {
 
         if(hasForfeitScreen() && game.isIngame() && game.hasPlayer(player)) {
             this.gameForfeitInventory.build(player, handleForfeit());
+            return;
+        }
+
+        if(hasCustomInGameInventory() && game.isIngame() && game.hasPlayer(player)) {
+            openCustomInGameInventory(player);
             return;
         }
 
@@ -379,6 +398,18 @@ public abstract class GameInventory {
         };
     }
 
+    // TODO: Remove:
+    private GameNumberInventoryCallback handleGameNumbers() {
+        return new GameNumberInventoryCallback() {
+            @Override
+            public void onSubmit(String dataKey, int num) {
+                if(gameData.containsKey(dataKey)) {
+                    gameData.put(dataKey, num);
+                }
+            }
+        };
+    }
+
     private void updateWaitPlayersInventory() {
         gameWaitPlayersInventory.build(gameCreator, handleWaitPlayers());
     }
@@ -528,4 +559,14 @@ public abstract class GameInventory {
         return 0;
     }
 
+    public String getCreateGameText() {
+        return ConfigUtil.GUI_CREATE_GAME.toString();
+    }
+
+    public boolean hasCustomInGameInventory() {
+        return false;
+    }
+
+    public void openCustomInGameInventory(Player player) {
+    }
 }

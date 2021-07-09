@@ -16,14 +16,32 @@ public class GameOption {
     private final String defaultValue;
     private final List<String> customValues;
     private final String label;
+    private final boolean requiresEconomy;
+    private final int minIntValue;
+    private final int maxIntValue;
 
-    public GameOption(String key, Material material, GameOptionType optionType, String label, String defaultValue) {
+    public GameOption(String key, Material material, GameOptionType optionType, String label, String defaultValue, boolean requiresEconomy, int minIntValue, int maxIntValue) {
         this.key = key;
         this.material = material;
         this.optionType = optionType;
         this.label = label;
         this.defaultValue = defaultValue;
         this.customValues = null;
+        this.requiresEconomy = requiresEconomy;
+        this.minIntValue = minIntValue;
+        this.maxIntValue = maxIntValue;
+    }
+
+    public GameOption(String key, Material material, GameOptionType optionType, String label, String defaultValue, boolean requiresEconomy) {
+        this.key = key;
+        this.material = material;
+        this.optionType = optionType;
+        this.label = label;
+        this.defaultValue = defaultValue;
+        this.customValues = null;
+        this.requiresEconomy = requiresEconomy;
+        this.minIntValue = 0;
+        this.maxIntValue = Integer.MAX_VALUE;
     }
 
     public GameOption(String key, Material material, GameOptionType optionType, String label, String defaultValue, List<String> customValues) {
@@ -33,6 +51,9 @@ public class GameOption {
         this.label = label;
         this.defaultValue = defaultValue;
         this.customValues = customValues;
+        this.requiresEconomy = false;
+        this.minIntValue = 0;
+        this.maxIntValue = 0;
     }
 
     public String getKey() {
@@ -60,8 +81,20 @@ public class GameOption {
         return this.label;
     }
 
+    public boolean requiresEconomy() {
+        return requiresEconomy;
+    }
+
+    public int getMinIntValue() {
+        return minIntValue;
+    }
+
+    public int getMaxIntValue() {
+        return maxIntValue;
+    }
+
     public static GameOption getWagerGameOption() {
-        return new GameOption("wager", Material.GOLD_INGOT, GameOptionType.COUNT, ConfigUtil.GUI_WAGER_LABEL.toString(), "0");
+        return new GameOption("wager", Material.GOLD_INGOT, GameOptionType.COUNT, ConfigUtil.GUI_WAGER_LABEL.toString(), "0", true);
     }
 
     public static GameOption getTeamSelectGameOption(ArrayList<String> teams) {

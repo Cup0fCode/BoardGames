@@ -14,6 +14,8 @@ import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.MathUtils;
 import water.of.cup.boardgames.game.inventories.*;
 import water.of.cup.boardgames.game.inventories.create.CreateInventoryCallback;
+import water.of.cup.boardgames.game.inventories.number.GameNumberInventory;
+import water.of.cup.boardgames.game.inventories.number.GameNumberInventoryCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +25,13 @@ public class GameCreateInventory extends InventoryScreen {
 
     private final ArrayList<GameOption> gameOptions;
     private final Game game;
+    private final GameInventory gameInventory;
 
     public GameCreateInventory(GameInventory gameInventory) {
         super(gameInventory);
         this.gameOptions = gameInventory.getGameOptions();
         this.game = gameInventory.getGame();
+        this.gameInventory = gameInventory;
     }
 
     public void build(Player player, final int page, HashMap<String, Object> cachedGameData, CreateInventoryCallback callback) {
@@ -99,7 +103,7 @@ public class GameCreateInventory extends InventoryScreen {
                     callback.onCreateGame(gameData);
                     return true;
                 },
-                ConfigUtil.GUI_CREATE_GAME.toString()
+                this.gameInventory.getCreateGameText()
                 )
         );
 
@@ -112,10 +116,23 @@ public class GameCreateInventory extends InventoryScreen {
                     // Add icon
                     String label = gameOption.getLabel() == null ? "" : gameOption.getLabel();
 
-                    gui.addElement(new DynamicGuiElement(curr, () ->
-                            new StaticGuiElement(curr, new ItemStack(gameOption.getMaterial()), click -> true,
-                                    label + ChatColor.GREEN + ConfigUtil.translateTeamName(gameData.get(gameOption.getKey()).toString())// gameData.get(gameOption.getKey())
-                            )));
+                    if(gameOption.getOptionType() == GameOptionType.COUNT && gameOption.getCustomValues() == null) {
+                        gui.addElement(new DynamicGuiElement(curr, () ->
+                                new StaticGuiElement(curr, new ItemStack(gameOption.getMaterial()), click -> {
+                                    new GameNumberInventory(this.gameInventory).build(player, (dataKey, num) -> {
+                                        gameData.put(dataKey, num);
+                                        click.getGui().draw();
+                                    }, gameOption, (int) gameData.get(gameOption.getKey()));
+                                    return true;
+                                },
+                                        label + ChatColor.GREEN + ConfigUtil.translateTeamName(gameData.get(gameOption.getKey()).toString())// gameData.get(gameOption.getKey())
+                                )));
+                    } else {
+                        gui.addElement(new DynamicGuiElement(curr, () ->
+                                new StaticGuiElement(curr, new ItemStack(gameOption.getMaterial()), click -> true,
+                                        label + ChatColor.GREEN + ConfigUtil.translateTeamName(gameData.get(gameOption.getKey()).toString())// gameData.get(gameOption.getKey())
+                                )));
+                    }
 
                     // Add toggle buttons
                     switch (gameOption.getOptionType()) {
@@ -165,7 +182,10 @@ public class GameCreateInventory extends InventoryScreen {
                                             int increment = 1;
                                             if(click.getType().isShiftClick()) increment = 10;
 
-                                            gameData.put(gameOption.getKey(), (int) gameData.get(gameOption.getKey()) + increment);
+                                            int newValue = (int) gameData.get(gameOption.getKey()) + increment;
+
+                                            if(newValue <= gameOption.getMaxIntValue())
+                                                gameData.put(gameOption.getKey(), newValue);
                                         } else {
                                             String currItem = gameData.get(gameOption.getKey()) + "";
                                             int currIndex = gameOption.getCustomValues().indexOf(currItem);
@@ -196,7 +216,7 @@ public class GameCreateInventory extends InventoryScreen {
 
                                             int newValue = ((int) gameData.get(gameOption.getKey())) - decrement;
 
-                                            if(newValue < 0) newValue = 0;
+                                            if(newValue < (gameOption).getMinIntValue()) newValue = gameOption.getMinIntValue();
 
                                             gameData.put(gameOption.getKey(), newValue);
                                         } else {
