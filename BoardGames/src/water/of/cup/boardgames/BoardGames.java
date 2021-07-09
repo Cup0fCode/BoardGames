@@ -199,6 +199,7 @@ public class BoardGames extends JavaPlugin {
 
 		// Load in defaults from ConfigUtil
 		for(ConfigUtil configUtil : ConfigUtil.values()) {
+			if(configUtil.name().contains("UNO")) continue;
 			defaultConfig.put(configUtil.getPath(), configUtil.getDefaultValue());
 		}
 
