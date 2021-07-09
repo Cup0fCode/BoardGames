@@ -75,7 +75,7 @@ public class StorageManager {
 
 		this.refreshGameStorageColumns(gameStorage);
 
-		if(gameStorage.getTableName().equals("chess")) {
+		if(gameStorage.getTableName().equals("chess") && !ConfigUtil.DB_TRANSFERRED.toBoolean()) {
 			this.transferChessBoardsData();
 		}
 	}
@@ -482,5 +482,7 @@ public class StorageManager {
 		for(OldChessPlayer oldChessPlayer : oldChessPlayers) {
 			insertOldChessPlayer(oldChessPlayer);
 		}
+
+		ConfigUtil.DB_TRANSFERRED.setValue("true");
 	}
 }
