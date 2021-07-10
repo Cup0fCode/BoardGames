@@ -749,7 +749,8 @@ public abstract class Game {
 		LinkedHashMap<StorageType, Object> loserStats = BoardGames.getInstance().getStorageManager()
 				.fetchPlayerStats(loser.getPlayer(), getGameStore(), false);
 
-		if (winnerStats.get(StorageType.Rating) == null || (double) winnerStats.get(StorageType.Rating) <= 0.1) {
+		boolean isFirstWinner = winnerStats == null || winnerStats.get(StorageType.Rating) == null;
+		if (isFirstWinner || (double) winnerStats.get(StorageType.Rating) <= 0.1) {
 			ratingWinner = new Rating(winnerUUID, rc);
 		} else {
 			ratingWinner = new Rating(winnerUUID, rc, (double) winnerStats.get(StorageType.Rating),
@@ -757,7 +758,8 @@ public abstract class Game {
 					(double) winnerStats.get(StorageType.RatingVolatility));
 		}
 
-		if (loserStats.get(StorageType.Rating) == null || (double) loserStats.get(StorageType.Rating) <= 0.1) {
+		boolean isFirstLoser = loserStats == null || loserStats.get(StorageType.Rating) == null;
+		if (isFirstLoser || (double) loserStats.get(StorageType.Rating) <= 0.1) {
 			ratingLoser = new Rating(loserUUID, rc);
 		} else {
 			ratingLoser = new Rating(loserUUID, rc, (double) loserStats.get(StorageType.Rating),
