@@ -47,15 +47,17 @@ public class bgCommands implements CommandExecutor {
 					return false;
 
 				p.sendMessage(ConfigUtil.CHAT_GAME_NAMES.toString());
-				for (String name : gameManager.getGameNames()) 
+				for (String name : instance.getGameManager().getAltGameNames()) {
 					p.sendMessage(name);
+				}
 				
 			} else if (args[0].equalsIgnoreCase("board")) {
 				if(permissions && !p.hasPermission("boardgames.command.board"))
 					return false;
 
 				if (args.length == 2) {
-					Game game = gameManager.newGame(args[1], 0);
+					String gameName = gameManager.getGameNameByAlt(args[1]);
+					Game game = gameManager.newGame(gameName, 0);
 					if (game != null) {
 						p.getWorld().dropItem(p.getLocation(), game.getBoardItem());
 					}
@@ -74,7 +76,7 @@ public class bgCommands implements CommandExecutor {
 					return false;
 				}
 
-				String gameName = args[1];
+				String gameName = gameManager.getGameNameByAlt(args[1]);;
 				String playerName = args[2];
 
 				Game tempGame = gameManager.newGame(gameName, 0);
@@ -101,7 +103,7 @@ public class bgCommands implements CommandExecutor {
 					return false;
 				}
 
-				p.sendMessage(ConfigUtil.CHAT_STATS_HEADER.buildStringPlayerGame(player.getName(), tempGame.getName()));
+				p.sendMessage(ConfigUtil.CHAT_STATS_HEADER.buildStringPlayerGame(player.getName(), tempGame.getAltName()));
 				for(StorageType storageType : playerStats.keySet()) {
 					p.sendMessage(ConfigUtil.CHAT_STATS_FORMAT.buildStatsFormat(StringUtils.capitalize(storageType.getKey()), playerStats.get(storageType) + ""));
 				}
@@ -121,7 +123,7 @@ public class bgCommands implements CommandExecutor {
 					return false;
 				}
 
-				String gameName = args[1];
+				String gameName = gameManager.getGameNameByAlt(args[1]);;
 				Game tempGame = gameManager.newGame(gameName, 0);
 
 				if(tempGame == null) {
@@ -174,7 +176,7 @@ public class bgCommands implements CommandExecutor {
 
 				int count = 1 + (page * 10);;
 
-				p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_HEADER.buildString(tempGame.getName(), orderBy.getKey()) + " (" + (page + 1) + "/"
+				p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_HEADER.buildString(tempGame.getAltName(), orderBy.getKey()) + " (" + (page + 1) + "/"
 						+ numOfPages + ")");
 				for(OfflinePlayer player : topPlayers.keySet()) {
 					p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_FORMAT.buildLeaderBoardFormat(count, player.getName(),  topPlayers.get(player).get(orderBy) + ""));

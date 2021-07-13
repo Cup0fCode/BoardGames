@@ -469,6 +469,14 @@ public abstract class Game {
 		return gameName + "";
 	}
 
+	public String getAltName() {
+		String configLoc = "settings.games." + getName() + ".altName";
+		if(BoardGames.getInstance().getConfig().getString(configLoc) == null)
+			return getName();
+
+		return BoardGames.getInstance().getConfig().getString(configLoc);
+	}
+
 	public static NamespacedKey getGameNameKey() {
 		return gameNameKey;
 	}
@@ -629,7 +637,7 @@ public abstract class Game {
 		for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
 			if (gamePlayer.getPlayer().isOnline()) {
 				gamePlayer.getPlayer().sendMessage(
-						ConfigUtil.CHAT_GAME_PLAYER_LEAVE.buildStringPlayerGame(player.getDisplayName(), getName()));
+						ConfigUtil.CHAT_GAME_PLAYER_LEAVE.buildStringPlayerGame(player.getDisplayName(), getAltName()));
 			}
 		}
 
@@ -718,13 +726,13 @@ public abstract class Game {
 		String message;
 		if (gamePlayerWinner == null) {
 			if (teamManager.getGamePlayers().size() == 1) {
-				message = ConfigUtil.CHAT_GAME_PLAYER_LOSE.buildString(getName());
+				message = ConfigUtil.CHAT_GAME_PLAYER_LOSE.buildString(getAltName());
 			} else {
-				message = ConfigUtil.CHAT_GAME_TIE.buildString(getName());
+				message = ConfigUtil.CHAT_GAME_TIE.buildString(getAltName());
 			}
 		} else {
 			message = ConfigUtil.CHAT_GAME_PLAYER_WIN
-					.buildStringPlayerGame(gamePlayerWinner.getPlayer().getDisplayName(), getName());
+					.buildStringPlayerGame(gamePlayerWinner.getPlayer().getDisplayName(), getAltName());
 		}
 
 		for (GamePlayer player : teamManager.getGamePlayers()) {

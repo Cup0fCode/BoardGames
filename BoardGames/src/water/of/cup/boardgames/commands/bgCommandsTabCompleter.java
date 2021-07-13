@@ -32,7 +32,7 @@ public class bgCommandsTabCompleter implements TabCompleter {
 		} else if (strings.length == 2) {
 			if (strings[0].equalsIgnoreCase("leaderboard") || strings[0].equalsIgnoreCase("stats")
 					|| strings[0].equalsIgnoreCase("board")) {
-				Collections.addAll(args, gameManager.getGameNames());
+				Collections.addAll(args, gameManager.getAltGameNames().toArray(new String[0]));
 			}
 		} else if (strings.length == 3) {
 			if (strings[0].equalsIgnoreCase("leaderboard")) {

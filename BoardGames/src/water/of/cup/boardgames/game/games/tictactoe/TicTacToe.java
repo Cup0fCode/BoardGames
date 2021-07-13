@@ -92,7 +92,7 @@ public class TicTacToe extends Game {
 
 	@Override
 	public BoardItem getBoardItem() {
-		return new BoardItem(gameName, new ItemStack(Material.OAK_TRAPDOOR, 1));
+		return new BoardItem(getAltName(), new ItemStack(Material.OAK_TRAPDOOR, 1));
 	}
 
 	@Override

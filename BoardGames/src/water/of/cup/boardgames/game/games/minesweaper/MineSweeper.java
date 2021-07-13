@@ -238,7 +238,7 @@ public class MineSweeper extends Game {
 
 	@Override
 	public ItemStack getBoardItem() {
-		return new BoardItem(gameName, new ItemStack(Material.OAK_TRAPDOOR, 1));
+		return new BoardItem(getAltName(), new ItemStack(Material.OAK_TRAPDOOR, 1));
 	}
 
 	@Override

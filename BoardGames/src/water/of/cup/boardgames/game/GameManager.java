@@ -71,6 +71,34 @@ public class GameManager {
 		return nameToGameTypes.keySet().toArray(new String[nameToGameTypes.keySet().size()]);
 	}
 
+	public ArrayList<String> getAltGameNames() {
+		ArrayList<String> altNames = new ArrayList<>();
+		for (String name : getGameNames()) {
+			Game temp = newGame(name, 0);
+
+			if (temp != null) {
+				altNames.add(temp.getAltName());
+			}
+		}
+		return altNames;
+	}
+
+	public String getGameNameByAlt(String altName) {
+		if(nameToGameTypes.containsKey(altName)) {
+			return altName;
+		}
+
+		for (String name : getGameNames()) {
+			Game temp = newGame(name, 0);
+
+			if (temp != null && temp.getAltName().equals(altName)) {
+				return name;
+			}
+		}
+
+		return "";
+	}
+
 	public boolean isValidGame(String name) {
 		for(String gameName : getGameNames()) {
 			if(gameName.equals(name)) return true;

@@ -31,7 +31,7 @@ public class GameReadyInventory extends InventoryScreen {
     public void build(Player player, GameReadyCallback callback) {
         String[] guiSetup = getGuiSetup();
 
-        String inventoryName = game.getGameName() + " (" + gameInventory.getNumReady() + "/" + (gameInventory.getReadyPlayers().size()) + ")";
+        String inventoryName = ConfigUtil.GUI_GAME_READY_TITLE.buildString(game.getAltName()) + " (" + gameInventory.getNumReady() + "/" + (gameInventory.getReadyPlayers().size()) + ")";
 
         InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, inventoryName, guiSetup);
 

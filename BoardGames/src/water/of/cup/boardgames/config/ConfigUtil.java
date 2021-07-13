@@ -54,6 +54,12 @@ public enum ConfigUtil implements ConfigInterface {
     GUI_NUMBERS_HALF("settings.messages.gui.numhalf", "&a1/2"),
     GUI_NUMBERS_DOUBLE("settings.messages.gui.numdouble", "&a2x"),
     GUI_NUMBERS_MAX("settings.messages.gui.nummax", "&aMax"),
+    GUI_GAME_CREATE_TITLE("settings.messages.gui.gamecreatetitle", "%game% | Create Game"),
+    GUI_GAME_FORFEIT_TITLE("settings.messages.gui.gameforfeittitle", "%game% | Forfeit Game"),
+    GUI_GAME_JOIN_TITLE("settings.messages.gui.gamejointitle", "%game% | Join Game"),
+    GUI_GAME_READY_TITLE("settings.messages.gui.gamereadytitle", "%game% | Ready Game"),
+    GUI_GAME_WAGER_TITLE("settings.messages.gui.gamewagertitle", "%game% | Wagers"),
+    GUI_CREATE_GAME_DATA_COLOR("settings.messages.gui.creategamedatacolor", "&a"),
 
     // GUI GAME OPTIONS
     GUI_WAGER_LABEL("settings.messages.gui.wagerlabel", "&2Wager: "),
