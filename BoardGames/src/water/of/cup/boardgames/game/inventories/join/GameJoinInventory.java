@@ -33,7 +33,7 @@ public class GameJoinInventory extends InventoryScreen {
     public void build(Player player, JoinGameCallback callback) {
         String[] guiSetup = getGuiSetup();
 
-        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, game.getGameName(), guiSetup);
+        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, ConfigUtil.GUI_GAME_JOIN_TITLE.buildString(game.getAltName()), guiSetup);
 
         gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
 
@@ -47,7 +47,7 @@ public class GameJoinInventory extends InventoryScreen {
         } else if(gameInventory.getAcceptedPlayers().contains(player)) {
             renderJoinStatus(gui, Material.LIME_WOOL, ConfigUtil.GUI_WAIT_PLAYERS.toString());
         } else {
-            gui.addElement(new StaticGuiElement('z', InventoryUtils.getPlayerHead(player), ChatColor.GREEN + player.getDisplayName()));
+            gui.addElement(new StaticGuiElement('z', InventoryUtils.getPlayerHead(player), ConfigUtil.GUI_CREATE_GAME_DATA_COLOR.toString() + player.getDisplayName()));
 
             gui.addElement(new StaticGuiElement('a', new ItemStack(Material.LIME_STAINED_GLASS_PANE), click -> {
                         callback.onJoin(player);
@@ -77,7 +77,7 @@ public class GameJoinInventory extends InventoryScreen {
     }
 
     private void renderJoinStatus(InventoryGui gui, Material material, String status) {
-        gui.addElement(new StaticGuiElement('z', new ItemStack(material), ChatColor.GREEN + status));
+        gui.addElement(new StaticGuiElement('z', new ItemStack(material), ConfigUtil.GUI_CREATE_GAME_DATA_COLOR.toString() + status));
         gui.addElement(new StaticGuiElement('a', new ItemStack(Material.WHITE_STAINED_GLASS_PANE), " "));
         gui.addElement(new StaticGuiElement('d', new ItemStack(Material.WHITE_STAINED_GLASS_PANE),  " "));
     }

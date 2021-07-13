@@ -113,8 +113,9 @@ public class GameConfigLoader {
             Game temp = GAMES.get(gameName);
 
             if (temp != null) {
-                String configLoc = "settings.games." + temp.getName() + ".enabled";
-                defaultConfig.put(configLoc, "true");
+                String configLoc = "settings.games." + temp.getName();
+                defaultConfig.put(configLoc + ".enabled", "true");
+                defaultConfig.put(configLoc + ".altName", temp.getName());
             }
         }
 

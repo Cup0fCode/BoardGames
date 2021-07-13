@@ -61,7 +61,7 @@ public class GameWagerInventory extends InventoryScreen {
     private void renderCreateWager(Player player, GameWagerCallback callback) {
         String[] guiSetup = getCreateWagerViewSetup();
 
-        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, game.getGameName(), guiSetup);
+        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, ConfigUtil.GUI_GAME_WAGER_TITLE.buildString(game.getAltName()), guiSetup);
 
         gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
 
@@ -132,7 +132,7 @@ public class GameWagerInventory extends InventoryScreen {
 
         String[] guiSetup = getAcceptWagerViewSetup();
 
-        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, game.getGameName(), guiSetup);
+        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, ConfigUtil.GUI_GAME_WAGER_TITLE.buildString(game.getAltName()), guiSetup);
 
         gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
 
@@ -277,7 +277,7 @@ public class GameWagerInventory extends InventoryScreen {
     private void renderJoinWager(Player player, GameWagerCallback callback) {
         String[] guiSetup = getJoinGuiSetup();
 
-        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, game.getGameName(), guiSetup);
+        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, ConfigUtil.GUI_GAME_WAGER_TITLE.buildString(game.getAltName()), guiSetup);
 
         gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
 

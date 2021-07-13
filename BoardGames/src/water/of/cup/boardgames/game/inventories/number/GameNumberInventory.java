@@ -35,7 +35,7 @@ public class GameNumberInventory extends InventoryScreen {
         char[][] guiSetup = getGuiSetup();
         String[] guiSetupString = formatGuiSetup(guiSetup);
 
-        String invName = gameOption.getLabel() != null ? gameOption.getLabel() : game.getGameName();
+        String invName = gameOption.getLabel() != null ? gameOption.getLabel() : game.getAltName();
         InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, invName, guiSetupString);
 
         gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1));
