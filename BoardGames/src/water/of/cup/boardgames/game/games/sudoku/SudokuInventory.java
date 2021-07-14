@@ -60,7 +60,7 @@ public class SudokuInventory extends GameInventory {
     @Override
     protected void onGameCreate(HashMap<String, Object> gameData, ArrayList<GamePlayer> players) {
         for(GamePlayer player : players) {
-            player.getPlayer().sendMessage(ConfigUtil.CHAT_WELCOME_GAME.buildString("Sudoku"));
+            player.getPlayer().sendMessage(ConfigUtil.CHAT_WELCOME_GAME.buildString(game.getAltName()));
         }
 
         game.startGame();
