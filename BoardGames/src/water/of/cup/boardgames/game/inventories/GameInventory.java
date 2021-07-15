@@ -83,7 +83,8 @@ public abstract class GameInventory {
         this.playerReadyMap = new HashMap<>();
         this.wagerViewPlayers = new HashMap<>();
         this.wagerManager = game.getWagerManager();
-        this.gameOptions = getOptions();
+
+        this.gameOptions = getOptions() == null ? new ArrayList<>() : getOptions();
         this.maxPlayers = getMaxGame();
         this.minPlayers = getMinGame();
         this.hasWagers = hasGameWagers() && (instance.getEconomy() != null);
