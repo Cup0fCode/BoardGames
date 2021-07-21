@@ -294,7 +294,7 @@ public abstract class GameInventory {
 
                 // Check if they have enough money
                 if(!hasMoneyToAccept(player)) {
-                    player.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_ACCEPT.toString());
+                    player.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_JOIN.toString());
                     return;
                 }
 
