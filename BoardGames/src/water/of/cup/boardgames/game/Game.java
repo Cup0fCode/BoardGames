@@ -795,4 +795,8 @@ public abstract class Game {
 		gameStorage.setData(loser.getPlayer(), StorageType.RatingVolatility, ratingLoser.getVolatility());
 
 	}
+
+	public boolean allowOutsideClicks() {
+		return false;
+	}
 }
