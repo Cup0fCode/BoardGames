@@ -74,7 +74,7 @@ public class GameCreateInventory extends InventoryScreen {
         String[] guiSetupString = formatGuiSetup(guiSetup);
 
         // Parse each icon into buttons
-        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, game.getGameName(), guiSetupString);
+        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, ConfigUtil.GUI_GAME_CREATE_TITLE.buildString(game.getAltName()), guiSetupString);
 
         gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1));
 
@@ -125,12 +125,12 @@ public class GameCreateInventory extends InventoryScreen {
                                     }, gameOption, (int) gameData.get(gameOption.getKey()));
                                     return true;
                                 },
-                                        label + ChatColor.GREEN + ConfigUtil.translateTeamName(gameData.get(gameOption.getKey()).toString())// gameData.get(gameOption.getKey())
+                                        label + ConfigUtil.GUI_CREATE_GAME_DATA_COLOR.toString() + ConfigUtil.translateTeamName(gameData.get(gameOption.getKey()).toString())// gameData.get(gameOption.getKey())
                                 )));
                     } else {
                         gui.addElement(new DynamicGuiElement(curr, () ->
                                 new StaticGuiElement(curr, new ItemStack(gameOption.getMaterial()), click -> true,
-                                        label + ChatColor.GREEN + ConfigUtil.translateTeamName(gameData.get(gameOption.getKey()).toString())// gameData.get(gameOption.getKey())
+                                        label + ConfigUtil.GUI_CREATE_GAME_DATA_COLOR.toString() + ConfigUtil.translateTeamName(gameData.get(gameOption.getKey()).toString())// gameData.get(gameOption.getKey())
                                 )));
                     }
 

@@ -30,7 +30,7 @@ public class GameForfeitInventory extends InventoryScreen {
     public void build(Player player, GameForfeitCallback callback) {
         String[] guiSetup = getGuiSetup();
 
-        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, game.getGameName(), guiSetup);
+        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, ConfigUtil.GUI_GAME_FORFEIT_TITLE.buildString(game.getAltName()), guiSetup);
 
         gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
 

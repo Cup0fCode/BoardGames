@@ -195,7 +195,7 @@ public class Sudoku extends Game {
 	@Override
 	public ItemStack getBoardItem() {
 		// TODO Auto-generated method stub
-		return new BoardItem(gameName, new ItemStack(Material.BIRCH_TRAPDOOR, 1));
+		return new BoardItem(getAltName(), new ItemStack(Material.BIRCH_TRAPDOOR, 1));
 	}
 
 	@Override

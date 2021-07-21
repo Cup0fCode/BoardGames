@@ -102,7 +102,7 @@ public class BoardGames extends JavaPlugin {
 		if(ConfigUtil.WAGERS_ENABLED.toBoolean()) {
 			boolean hasEconomy = setupEconomy();
 			if (!hasEconomy) {
-				Bukkit.getLogger().info("Server must have Vault in order to place wagers on games.");
+				Bukkit.getLogger().info("[BoardGames] Server must have Vault in order to place wagers on games.");
 			}
 		}
 

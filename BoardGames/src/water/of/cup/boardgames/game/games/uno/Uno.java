@@ -367,7 +367,7 @@ public class Uno extends Game {
 
 	@Override
 	public BoardItem getBoardItem() {
-		return new BoardItem(gameName, new ItemStack(Material.SPRUCE_TRAPDOOR, 1));
+		return new BoardItem(getAltName(), new ItemStack(Material.SPRUCE_TRAPDOOR, 1));
 	}
 
 	@Override
