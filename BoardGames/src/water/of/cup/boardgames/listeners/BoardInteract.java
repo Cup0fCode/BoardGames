@@ -207,6 +207,7 @@ public class BoardInteract implements Listener {
 //			int loc[] = ChessUtils.getChessBoardClickLocation(hitx, hity, gameFrame.getRotation(), direction);
 
 			// Temp dbeug
+			// Might want to only allow outside clicks if the game is ingame
 			if(game.hasPlayer(player) || !game.hasGameInventory() || game.allowOutsideClicks()) {
 				Vector pos = result.getHitPosition();
 				double[] loc = new double[] { pos.getX(), pos.getZ() };

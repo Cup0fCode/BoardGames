@@ -375,6 +375,8 @@ public class StorageManager {
 
 			if (result != null) {
 				playerStats.put(storageType, result);
+			} else {
+				playerStats.put(storageType, 0);
 			}
 		}
 
@@ -396,6 +398,8 @@ public class StorageManager {
 					result = (int) ((double) result / 60) + ":" + (int) ((double) result % 60);
 				}
 				playerStats.put(storageType, result.toString());
+			} else {
+				playerStats.put(storageType, 0);
 			}
 		}
 

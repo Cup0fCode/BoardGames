@@ -16,12 +16,24 @@ import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.storage.StorageType;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class bgCommands implements CommandExecutor {
 
 	private final BoardGames instance = BoardGames.getInstance();
 	private final GameManager gameManager = instance.getGameManager();
+
+	// perm check
+	public static final HashMap<String, String> ARG_PERMS = new HashMap<>();
+
+	static {
+		ARG_PERMS.put("games", "boardgames.command.games");
+		ARG_PERMS.put("board", "boardgames.command.board");
+		ARG_PERMS.put("stats", "boardgames.command.stats");
+		ARG_PERMS.put("leaderboard", "boardgames.command.leaderboard");
+		ARG_PERMS.put("reload", "boardgames.command.reload");
+	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
@@ -43,7 +55,7 @@ public class bgCommands implements CommandExecutor {
 			}
 
 			if (args[0].equalsIgnoreCase("games")) {
-				if(permissions && !p.hasPermission("boardgames.command.games"))
+				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
 					return false;
 
 				p.sendMessage(ConfigUtil.CHAT_GAME_NAMES.toString());
@@ -52,7 +64,7 @@ public class bgCommands implements CommandExecutor {
 				}
 				
 			} else if (args[0].equalsIgnoreCase("board")) {
-				if(permissions && !p.hasPermission("boardgames.command.board"))
+				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
 					return false;
 
 				if (args.length == 2) {
@@ -63,7 +75,7 @@ public class bgCommands implements CommandExecutor {
 					}
 				}
 			} else if (args[0].equalsIgnoreCase("stats")) {
-				if(permissions && !p.hasPermission("boardgames.command.stats"))
+				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
 					return false;
 
 				if(args.length != 3) {
@@ -110,7 +122,7 @@ public class bgCommands implements CommandExecutor {
 
 				return true;
 			} else if (args[0].equalsIgnoreCase("leaderboard")) {
-				if(permissions && !p.hasPermission("boardgames.command.leaderboard"))
+				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
 					return false;
 
 				if(args.length < 2) {
@@ -183,7 +195,7 @@ public class bgCommands implements CommandExecutor {
 					count++;
 				}
 			} else if (args[0].equalsIgnoreCase("reload")) {
-				if(permissions && !p.hasPermission("boardgames.command.reload"))
+				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
 					return false;
 
 				p.sendMessage(ConfigUtil.CHAT_RELOAD.toString());
