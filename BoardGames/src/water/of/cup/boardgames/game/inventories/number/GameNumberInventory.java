@@ -131,7 +131,7 @@ public class GameNumberInventory extends InventoryScreen {
         );
 
         gui.setCloseAction(close -> {
-            callback.onSubmit(gameOption.getKey(), currVal);
+//            callback.onSubmit(gameOption.getKey(), currVal);
             return true;
         });
 
