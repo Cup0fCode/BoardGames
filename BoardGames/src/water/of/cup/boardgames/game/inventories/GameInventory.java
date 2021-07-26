@@ -455,6 +455,9 @@ public abstract class GameInventory {
 
     // Reset method, kicks everyone out, called when create game or game owner leaves
     private void resetGameInventory(String message, boolean clearGamePlayer) {
+        if(gameCreator == null)
+            return;
+
         // Close players out of inventory
         closePlayers(joinPlayerQueue, message);
 
