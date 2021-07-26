@@ -178,7 +178,12 @@ public class Button {
 	}
 
 	public int getRotation() {
-		// TODO Auto-generated method stub
 		return rotation;
+	}
+
+	public void setRotation(int rot) {
+		rotation = rot;
+		image.setRotation(rot);
+		
 	}
 }
