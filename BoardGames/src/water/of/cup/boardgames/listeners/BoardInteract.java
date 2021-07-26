@@ -207,7 +207,8 @@ public class BoardInteract implements Listener {
 //			int loc[] = ChessUtils.getChessBoardClickLocation(hitx, hity, gameFrame.getRotation(), direction);
 
 			// Temp dbeug
-			if(game.hasPlayer(player) || !game.hasGameInventory()) {
+			// Might want to only allow outside clicks if the game is ingame
+			if(game.hasPlayer(player) || !game.hasGameInventory() || (game.allowOutsideClicks() && game.isIngame())) {
 				Vector pos = result.getHitPosition();
 				double[] loc = new double[] { pos.getX(), pos.getZ() };
 				if (gameFrame.getAttachedFace() == BlockFace.WEST || gameFrame.getAttachedFace() == BlockFace.EAST) {

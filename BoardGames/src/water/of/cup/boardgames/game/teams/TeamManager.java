@@ -93,6 +93,8 @@ public class TeamManager {
 
     public GamePlayer nextTurn() {
         ArrayList<String> teamList = new ArrayList<>(teams.keySet());
+        if(teamList.size() == 0) return null;
+
         int nextTurnIndex = teamList.indexOf(currentTurn) + turnDirection;
         if(nextTurnIndex >= teamList.size()) {
             currentTurn = teamList.get(0);

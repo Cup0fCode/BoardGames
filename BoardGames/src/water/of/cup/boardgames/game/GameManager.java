@@ -64,7 +64,7 @@ public class GameManager {
 	}
 	
 	public Game newGame(BoardItem item, int rotation) {
-		return newGame(item.getName(), rotation);
+		return newGame(getGameNameByAlt(item.getName()), rotation);
 	}
 	
 	public String[] getGameNames() {

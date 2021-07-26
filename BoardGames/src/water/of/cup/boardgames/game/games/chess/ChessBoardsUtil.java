@@ -24,6 +24,11 @@ public class ChessBoardsUtil {
 
     public static void loadGames() {
         File folder = new File(BoardGames.getInstance().getDataFolder() + "/saved_games");
+
+        if(!folder.exists() && BoardGames.getInstance().getDataFolder().getParentFile() != null) {
+            folder = new File(BoardGames.getInstance().getDataFolder().getParentFile() + "/ChessBoards/saved_games");
+        }
+
         File[] listOfFiles = folder.listFiles();
 
         if(listOfFiles == null) return;

@@ -83,7 +83,8 @@ public abstract class GameInventory {
         this.playerReadyMap = new HashMap<>();
         this.wagerViewPlayers = new HashMap<>();
         this.wagerManager = game.getWagerManager();
-        this.gameOptions = getOptions();
+
+        this.gameOptions = getOptions() == null ? new ArrayList<>() : getOptions();
         this.maxPlayers = getMaxGame();
         this.minPlayers = getMinGame();
         this.hasWagers = hasGameWagers() && (instance.getEconomy() != null);
@@ -177,13 +178,21 @@ public abstract class GameInventory {
                 }
 
                 // Check if they have enough money
+                for(GameOption gameOption : gameOptions) {
+                    if (gameOption.requiresEconomy()) {
+                        String stringVal = gameDataResult.get(gameOption.getKey()) + "";
+                        if(!MathUtils.isNumeric(stringVal)) continue;
+
+                        double value = Double.parseDouble(stringVal);
+                        if(instance.getEconomy().getBalance(player) < value) {
+                            player.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_CREATE.toString());
+                            return;
+                        }
+                    }
+                }
+
                 if(hasWagers) {
                     double wagerAmount = Double.parseDouble(gameDataResult.get("wager") + "");
-                    if(instance.getEconomy().getBalance(player) < wagerAmount) {
-                        player.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_CREATE.toString());
-                        return;
-                    }
-
                     GamePlayer gamePlayer = game.addPlayer(player, preselectedTeam);
 
                     // Add game wagers
@@ -215,7 +224,7 @@ public abstract class GameInventory {
             @Override
             public void onAccept(Player player) {
                 // Check if they have enough money
-                if(hasWagers && (instance.getEconomy().getBalance(player) < getGameWagerAmount())) {
+                if(!hasMoneyToAccept(player)) {
                     gameCreator.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_ACCEPT.toString());
                     player.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_JOIN.toString());
 
@@ -284,8 +293,8 @@ public abstract class GameInventory {
                 }
 
                 // Check if they have enough money
-                if(hasWagers && (instance.getEconomy().getBalance(player) < getGameWagerAmount())) {
-                    player.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_ACCEPT.toString());
+                if(!hasMoneyToAccept(player)) {
+                    player.sendMessage(ConfigUtil.CHAT_GUI_GAME_NO_MONEY_JOIN.toString());
                     return;
                 }
 
@@ -446,6 +455,9 @@ public abstract class GameInventory {
 
     // Reset method, kicks everyone out, called when create game or game owner leaves
     private void resetGameInventory(String message, boolean clearGamePlayer) {
+        if(gameCreator == null)
+            return;
+
         // Close players out of inventory
         closePlayers(joinPlayerQueue, message);
 
@@ -559,6 +571,17 @@ public abstract class GameInventory {
         return 0;
     }
 
+    private double getGameDataNum(String key) {
+        if(gameData != null && gameData.containsKey(key)) {
+            String value = gameData.get(key) + "";
+            if(MathUtils.isNumeric(value)) {
+                return Double.parseDouble(value);
+            }
+        }
+
+        return 0;
+    }
+
     public String getCreateGameText() {
         return ConfigUtil.GUI_CREATE_GAME.toString();
     }
@@ -568,5 +591,21 @@ public abstract class GameInventory {
     }
 
     public void openCustomInGameInventory(Player player) {
+    }
+
+    private boolean hasMoneyToAccept(Player player) {
+        double playerBal = instance.getEconomy().getBalance(player);
+        if(hasWagers && (playerBal < getGameWagerAmount())) {
+            return false;
+        }
+
+        for(GameOption gameOption : gameOptions) {
+            if(gameOption.requiresEconomy()) {
+                double num = getGameDataNum(gameOption.getKey());
+                if(playerBal < num) return false;
+            }
+        }
+
+        return true;
     }
 }
