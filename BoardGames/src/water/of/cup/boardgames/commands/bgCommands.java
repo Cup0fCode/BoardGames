@@ -16,13 +16,23 @@ import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.storage.StorageType;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class bgCommands implements CommandExecutor {
 
 	private final BoardGames instance = BoardGames.getInstance();
 	private final GameManager gameManager = instance.getGameManager();
-	
+
+	public static final HashMap<String, String> ARG_PERMS = new HashMap<>();
+
+	static {
+		ARG_PERMS.put("give", "chessboard.command.give");
+		ARG_PERMS.put("stats", "chessboard.command.stats");
+		ARG_PERMS.put("leaderboard", "chessboard.command.leaderboard");
+		ARG_PERMS.put("reload", "chessboard.command.reload");
+	}
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 
@@ -43,7 +53,7 @@ public class bgCommands implements CommandExecutor {
 			}
 
 			if (args[0].equalsIgnoreCase("give")) {
-				if(permissions && !p.hasPermission("chessboard.command.give"))
+				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
 					return false;
 
 				Game game = gameManager.newGame("Chess", 0);
@@ -51,7 +61,7 @@ public class bgCommands implements CommandExecutor {
 					p.getWorld().dropItem(p.getLocation(), game.getBoardItem());
 				}
 			} else if (args[0].equalsIgnoreCase("stats")) {
-				if(permissions && !p.hasPermission("chessboard.command.stats"))
+				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
 					return false;
 
 				if(args.length != 2) {
@@ -98,7 +108,7 @@ public class bgCommands implements CommandExecutor {
 
 				return true;
 			} else if (args[0].equalsIgnoreCase("leaderboard")) {
-				if(permissions && !p.hasPermission("chessboard.command.leaderboard"))
+				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
 					return false;
 
 				if(!instance.hasStorage()) {
@@ -166,7 +176,7 @@ public class bgCommands implements CommandExecutor {
 					count++;
 				}
 			} else if (args[0].equalsIgnoreCase("reload")) {
-				if(permissions && !p.hasPermission("chessboard.command.reload"))
+				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
 					return false;
 
 				p.sendMessage(ConfigUtil.CHAT_RELOAD.toString());

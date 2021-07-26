@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.storage.GameStorage;
@@ -23,11 +24,16 @@ public class bgCommandsTabCompleter implements TabCompleter {
 	@Override
 	public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
 		ArrayList<String> args = new ArrayList<>();
+		boolean permissions = ConfigUtil.PERMISSIONS_ENABLED.toBoolean();
 		if (strings.length == 1) {
-			args.add("give");
-			args.add("stats");
-			args.add("leaderboard");
-			args.add("reload");
+			if(permissions) {
+				for(String arg : bgCommands.ARG_PERMS.keySet()) {
+					if(commandSender.hasPermission(bgCommands.ARG_PERMS.get(arg)))
+						args.add(arg);
+				}
+			} else {
+				Collections.addAll(bgCommands.ARG_PERMS.keySet());
+			}
 		} else if (strings.length == 2) {
 			if (strings[0].equalsIgnoreCase("leaderboard")) {
 				String gameName = "Chess";
