@@ -151,6 +151,10 @@ public class Button {
 	public ArrayList<GamePlayer> getVisablePlayers() {
 		return visiblePlayers;
 	}
+	
+	public void clearVisablePlayers() {
+		visiblePlayers.clear();
+	}
 
 	public String getName() {
 		return "" + name;
