@@ -14,8 +14,8 @@ import water.of.cup.boardgames.game.MathUtils;
 
 public class ImageUtils {
 	public static BufferedImage rotateImage(BufferedImage image, int rotation) {
-		int w = image.getWidth();
-		int h = image.getHeight();
+		double w = image.getWidth();
+		double h = image.getHeight();
 
 		if (rotation % 2 == 1) {
 			w = image.getHeight();
@@ -34,33 +34,6 @@ public class ImageUtils {
 		AffineTransformOp scaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
 		return scaleOp.filter(image, null);
 
-//		if (rotation == 0)
-//			return copyImage(image);
-//		
-//		double theta = (Math.PI * 2) / 4 * rotation;
-//	    int width = image.getWidth();
-//	    int height = image.getHeight();
-//	    BufferedImage dest;
-//	    if (rotation % 2 == 1) {
-//	        dest = new BufferedImage(height, width, image.getType());
-//	    } else {
-//	        dest = new BufferedImage(width, width, image.getType());
-//	    }
-//
-//	    Graphics2D graphics2D = dest.createGraphics();
-//
-//	    if (rotation == 3) {
-//	        graphics2D.translate((height - width) / 2, (height - width) / 2);
-//	        graphics2D.rotate(theta, height / 2, width / 2);
-//	    } else if (rotation == 1) {
-//	        graphics2D.translate((width - height) / 2, (width - height) / 2);
-//	        graphics2D.rotate(theta, height / 2, width / 2);
-//	    } else {
-//	        graphics2D.translate(0, 0);
-//	        graphics2D.rotate(theta, width / 2, height / 2);
-//	    }
-//	    graphics2D.drawRenderedImage(image, null);
-//	    return dest;
 	}
 
 	// from
