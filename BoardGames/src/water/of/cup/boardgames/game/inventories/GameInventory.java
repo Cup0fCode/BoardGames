@@ -594,15 +594,14 @@ public abstract class GameInventory {
     }
 
     private boolean hasMoneyToAccept(Player player) {
-        double playerBal = instance.getEconomy().getBalance(player);
-        if(hasWagers && (playerBal < getGameWagerAmount())) {
+        if(hasWagers && (instance.getEconomy().getBalance(player) < getGameWagerAmount())) {
             return false;
         }
 
         for(GameOption gameOption : gameOptions) {
             if(gameOption.requiresEconomy()) {
                 double num = getGameDataNum(gameOption.getKey());
-                if(playerBal < num) return false;
+                if(instance.getEconomy().getBalance(player) < num) return false;
             }
         }
 
