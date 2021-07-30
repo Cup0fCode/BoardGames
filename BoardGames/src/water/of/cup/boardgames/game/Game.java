@@ -161,8 +161,20 @@ public abstract class Game {
 		// check that bottom blocks are not empty
 		for (int x = minX; x <= maxX; x++)
 			for (int z = minZ; z <= maxZ; z++) {
+				
+				// don't check positions where no map is placed
+				boolean hasBoard = false;
+				for (MapData mapData : mapManager.getMapDataAtLocationOnRotatedBoard(x - t1X, z - t1Z, 0)) 
+					if (mapData.getMapVal() > 0) {
+						hasBoard = true;
+						break;
+					}
+				if (!hasBoard)
+					continue;
+				
 				if (loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY() - 1, loc.getBlockZ() + z).isEmpty())
 					return false;
+				
 			}
 
 		return true;
