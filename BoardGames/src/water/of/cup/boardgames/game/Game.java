@@ -28,6 +28,7 @@ import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.MapData;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.maps.Screen;
+import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.storage.StorageType;
 import water.of.cup.boardgames.game.teams.TeamManager;
@@ -53,6 +54,7 @@ public abstract class Game {
 	protected GameInventory gameInventory;
 	protected TeamManager teamManager;
 	protected GameStorage gameStorage;
+	protected GameNPC gameNPC;
 
 	protected ArrayList<GameMap> gameMaps; // game maps for the game
 	// public HashMap<Integer, Integer> mapValMapIds; // <mapval, mapid>
@@ -114,6 +116,7 @@ public abstract class Game {
 		gameInventory = getGameInventory();
 		gameStorage = getGameStorage();
 		gameConfig = getGameConfig();
+		gameNPC = getGameNPC();
 
 		gameData = new HashMap<>();
 	}
@@ -258,6 +261,11 @@ public abstract class Game {
 			}
 		}
 
+		//create npc
+		if (hasGameNPC())
+			gameNPC.setMapValLoc(new Location(loc.getWorld(), loc.getBlockX(), loc.getBlockY(),
+					loc.getBlockZ()), rotation);
+
 		// Debug
 		if (!hasGameInventory()) {
 			startGame();
@@ -280,6 +288,9 @@ public abstract class Game {
 
 		if (clock != null)
 			clock.cancel();
+
+		if(hasGameNPC())
+			gameNPC.removeNPC();
 
 		// Ensure map gets cleared
 		// renderInitial();
@@ -798,5 +809,13 @@ public abstract class Game {
 
 	public boolean allowOutsideClicks() {
 		return false;
+	}
+
+	public GameNPC getGameNPC() {
+		return null;
+	}
+
+	public boolean hasGameNPC() {
+		return gameNPC != null && BoardGames.hasCitizens();
 	}
 }

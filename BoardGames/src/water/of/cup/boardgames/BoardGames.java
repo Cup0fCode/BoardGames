@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
 
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -53,6 +55,8 @@ public class BoardGames extends JavaPlugin {
 
 	private StorageManager storageManager;
 	private ExtensionManager extensionManager;
+
+	private static boolean hasCitizens;
 
 	@SuppressWarnings("unchecked") // for register games
 	@Override
@@ -106,6 +110,8 @@ public class BoardGames extends JavaPlugin {
 			}
 		}
 
+		setupCitizens();
+
 		setupPlaceholders();
 
 		// Load in old chess games
@@ -156,6 +162,17 @@ public class BoardGames extends JavaPlugin {
         economy = rsp.getProvider();
         return economy != null;
     }
+
+    // TODO: remove old citizens
+    private void setupCitizens() {
+		if(getServer().getPluginManager().getPlugin("Citizens") == null || !getServer().getPluginManager().getPlugin("Citizens").isEnabled()) {
+			getLogger().log(Level.SEVERE, "[BoardGames] Citizens 2.0 not found or not enabled, NPCS disabled.");
+			hasCitizens = false;
+			return;
+		}
+
+		hasCitizens = true;
+	}
 
     private void setupPlaceholders() {
 		if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
@@ -279,6 +296,10 @@ public class BoardGames extends JavaPlugin {
 	private void loadExtensionManager() {
 		this.extensionManager = new ExtensionManager();
 		this.extensionManager.loadExtensions();
+	}
+
+	public static boolean hasCitizens() {
+		return hasCitizens;
 	}
 	
 //	public DataSource getDataStore() {

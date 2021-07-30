@@ -4,7 +4,7 @@ version: '1.0.4'
 description: Adds board games to Minecraft.
 author: Nicholas Kopiwoda & Matt C.
 api-version: 1.16
-softdepends: [Vault, PlaceholderAPI]
+softdepend: [Vault, PlaceholderAPI, Citizens]
 commands:
   bg:
     description: All commands for the BoardGames plugin.
