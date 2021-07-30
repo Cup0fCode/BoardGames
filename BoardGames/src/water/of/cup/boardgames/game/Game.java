@@ -116,7 +116,7 @@ public abstract class Game {
 		gameInventory = getGameInventory();
 		gameStorage = getGameStorage();
 		gameConfig = getGameConfig();
-		gameNPC = getGameNPC();
+		gameNPC = BoardGames.hasCitizens() ? getGameNPC() : null;
 
 		gameData = new HashMap<>();
 	}
