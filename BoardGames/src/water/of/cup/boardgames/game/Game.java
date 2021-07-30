@@ -199,6 +199,8 @@ public abstract class Game {
 
 		int maxZ = Math.max(t1Z, t2Z);
 		int minZ = Math.min(t1Z, t2Z);
+		
+		int[] npcLoc = {0,0,0};
 
 ////		// remove frames:
 //		for (int x = minX; x <= maxX; x++)
@@ -217,6 +219,10 @@ public abstract class Game {
 					for (MapData mapData : mapManager.getMapDataAtLocationOnRotatedBoard(x - t1X, z - t1Z, y - t1Y)) {
 
 						int mapVal = mapData.getMapVal();
+						
+						if (mapVal == getPlacedMapVal())
+							npcLoc = new int[]{x,y,z};
+						
 						// skip maps with value 0
 						if (mapVal <= 0)
 							continue;
@@ -263,8 +269,8 @@ public abstract class Game {
 
 		//create npc
 		if (hasGameNPC())
-			gameNPC.setMapValLoc(new Location(loc.getWorld(), loc.getBlockX(), loc.getBlockY(),
-					loc.getBlockZ()), rotation);
+			gameNPC.setMapValLoc(new Location(loc.getWorld(), loc.getBlockX() + npcLoc[0], loc.getBlockY() + npcLoc[1],
+					loc.getBlockZ() + npcLoc[2]), rotation);
 
 		// Debug
 		if (!hasGameInventory()) {
