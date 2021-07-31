@@ -17,6 +17,7 @@ public abstract class GameNPC {
     private Location npcLocation;
     private double[] loc;
     protected abstract String getName();
+    protected abstract NPCSkin getSkin();
 
     public static final NPCRegistry REGISTRY = CitizensAPI.createAnonymousNPCRegistry(new GameNPCRegistry());
 
@@ -31,6 +32,9 @@ public abstract class GameNPC {
             return;
 
         gameNPC = REGISTRY.createNPC(EntityType.PLAYER, getName());
+
+        if(getSkin() != null)
+            gameNPC.getOrAddTrait(SkinTrait.class).setSkinPersistent(getName(), getSkin().getSkinSig(), getSkin().getSkinData());
 
         if(!gameNPC.isSpawned())
             gameNPC.spawn(npcLocation);
