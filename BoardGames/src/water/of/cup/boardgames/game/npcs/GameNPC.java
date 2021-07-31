@@ -3,6 +3,7 @@ package water.of.cup.boardgames.game.npcs;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,7 +20,6 @@ public abstract class GameNPC {
     protected abstract String getName();
     protected abstract NPCSkin getSkin();
 
-    public static final NPCRegistry REGISTRY = CitizensAPI.createAnonymousNPCRegistry(new GameNPCRegistry());
 
     public GameNPC(double[] loc) {
        this.loc = loc;
@@ -31,7 +31,9 @@ public abstract class GameNPC {
         if(gameNPC != null)
             return;
 
-        gameNPC = REGISTRY.createNPC(EntityType.PLAYER, getName());
+        gameNPC = BoardGames.REGISTRY.createNPC(EntityType.PLAYER, getName());
+
+        gameNPC.getOrAddTrait(Gravity.class).gravitate(true);
 
         if(getSkin() != null)
             gameNPC.getOrAddTrait(SkinTrait.class).setSkinPersistent(getName(), getSkin().getSkinSig(), getSkin().getSkinData());

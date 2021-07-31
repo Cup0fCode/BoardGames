@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -34,6 +35,7 @@ import water.of.cup.boardgames.game.games.sudoku.Sudoku;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.npcs.GameNPC;
+import water.of.cup.boardgames.game.npcs.GameNPCRegistry;
 import water.of.cup.boardgames.game.storage.StorageManager;
 import water.of.cup.boardgames.listeners.BlockBreak;
 import water.of.cup.boardgames.listeners.BlockPlace;
@@ -58,6 +60,7 @@ public class BoardGames extends JavaPlugin {
 	private ExtensionManager extensionManager;
 
 	private static boolean hasCitizens;
+	public static NPCRegistry REGISTRY;
 
 	@SuppressWarnings("unchecked") // for register games
 	@Override
@@ -141,7 +144,7 @@ public class BoardGames extends JavaPlugin {
 			storageManager.closeConnection();
 
 		if(hasCitizens())
-			GameNPC.REGISTRY.deregisterAll();
+			REGISTRY.deregisterAll();
 
 		/* Disable all current async tasks */
 		Bukkit.getScheduler().cancelTasks(this);
@@ -175,6 +178,7 @@ public class BoardGames extends JavaPlugin {
 			return;
 		}
 
+		REGISTRY = CitizensAPI.createAnonymousNPCRegistry(new GameNPCRegistry());
 		hasCitizens = true;
 	}
 
