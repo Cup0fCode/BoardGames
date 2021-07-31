@@ -20,8 +20,12 @@ public abstract class GameNPC {
     protected abstract String getName();
     protected abstract NPCSkin getSkin();
 
+    public static NPCRegistry REGISTRY = null;
 
     public GameNPC(double[] loc) {
+        if(REGISTRY == null && BoardGames.hasCitizens())
+            REGISTRY = CitizensAPI.createAnonymousNPCRegistry(new GameNPCRegistry());
+
        this.loc = loc;
     }
 
@@ -31,7 +35,7 @@ public abstract class GameNPC {
         if(gameNPC != null)
             return;
 
-        gameNPC = BoardGames.REGISTRY.createNPC(EntityType.PLAYER, getName());
+        gameNPC = REGISTRY.createNPC(EntityType.PLAYER, getName());
 
         gameNPC.getOrAddTrait(Gravity.class).gravitate(true);
 

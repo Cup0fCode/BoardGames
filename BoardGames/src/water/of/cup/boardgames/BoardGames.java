@@ -60,7 +60,6 @@ public class BoardGames extends JavaPlugin {
 	private ExtensionManager extensionManager;
 
 	private static boolean hasCitizens;
-	public static NPCRegistry REGISTRY;
 
 	@SuppressWarnings("unchecked") // for register games
 	@Override
@@ -88,7 +87,9 @@ public class BoardGames extends JavaPlugin {
 		// Debug:
 //		getCommand("debug").setExecutor(new DebugCommand());
 		//Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
-		
+
+		setupCitizens();
+
 		gameManager.registerGames(Sudoku.class, Chess.class, ConwaysGameOfLife.class, TicTacToe.class, ConnectFour.class, Checkers.class, MineSweeper.class, Uno.class);
 
 		// Register extension board games
@@ -114,7 +115,6 @@ public class BoardGames extends JavaPlugin {
 			}
 		}
 
-		setupCitizens();
 
 		setupPlaceholders();
 
@@ -143,8 +143,8 @@ public class BoardGames extends JavaPlugin {
 		if(storageManager != null)
 			storageManager.closeConnection();
 
-		if(hasCitizens())
-			REGISTRY.deregisterAll();
+		if(hasCitizens() && GameNPC.REGISTRY != null)
+			GameNPC.REGISTRY.deregisterAll();
 
 		/* Disable all current async tasks */
 		Bukkit.getScheduler().cancelTasks(this);
@@ -178,7 +178,6 @@ public class BoardGames extends JavaPlugin {
 			return;
 		}
 
-		REGISTRY = CitizensAPI.createAnonymousNPCRegistry(new GameNPCRegistry());
 		hasCitizens = true;
 	}
 

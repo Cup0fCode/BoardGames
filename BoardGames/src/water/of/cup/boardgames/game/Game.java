@@ -54,7 +54,7 @@ public abstract class Game {
 	protected GameInventory gameInventory;
 	protected TeamManager teamManager;
 	protected GameStorage gameStorage;
-	protected GameNPC gameNPC;
+	private final GameNPC gameNPC;
 
 	protected ArrayList<GameMap> gameMaps; // game maps for the game
 	// public HashMap<Integer, Integer> mapValMapIds; // <mapval, mapid>
@@ -116,7 +116,7 @@ public abstract class Game {
 		gameInventory = getGameInventory();
 		gameStorage = getGameStorage();
 		gameConfig = getGameConfig();
-		gameNPC = getGameNPC();
+		gameNPC = BoardGames.hasCitizens() ? getGameNPC() : null;
 
 		gameData = new HashMap<>();
 	}
@@ -835,5 +835,15 @@ public abstract class Game {
 
 	public boolean hasGameNPC() {
 		return gameNPC != null && BoardGames.hasCitizens();
+	}
+
+	protected void spawnNPC() {
+		if(!hasGameNPC()) return;
+		gameNPC.spawnNPC();
+	}
+
+	protected void npcLookAt(Player player) {
+		if(!hasGameNPC()) return;
+		gameNPC.lookAt(player);
 	}
 }
