@@ -90,4 +90,8 @@ public class GameImage {
 	public void setRotation(int r) {
 		rotation = r;
 	}
+	
+	public void resize(double change) {
+		image = ImageUtils.resize(image, change);
+	}
 }
