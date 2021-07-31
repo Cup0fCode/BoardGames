@@ -59,6 +59,7 @@ public enum ConfigUtil implements ConfigInterface {
     GUI_GAME_JOIN_TITLE("settings.messages.gui.gamejointitle", "%game% | Join Game"),
     GUI_GAME_READY_TITLE("settings.messages.gui.gamereadytitle", "%game% | Ready Game"),
     GUI_GAME_WAGER_TITLE("settings.messages.gui.gamewagertitle", "%game% | Wagers"),
+    GUI_GAME_TRADE_TITLE("settings.messages.gui.gametradetitle", "Bet items:"),
     GUI_CREATE_GAME_DATA_COLOR("settings.messages.gui.creategamedatacolor", "&a"),
 
     // GUI GAME OPTIONS
