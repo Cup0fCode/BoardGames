@@ -33,6 +33,7 @@ import water.of.cup.boardgames.game.games.minesweaper.MineSweeper;
 import water.of.cup.boardgames.game.games.sudoku.Sudoku;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
 import water.of.cup.boardgames.game.maps.MapManager;
+import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.storage.StorageManager;
 import water.of.cup.boardgames.listeners.BlockBreak;
 import water.of.cup.boardgames.listeners.BlockPlace;
@@ -138,6 +139,9 @@ public class BoardGames extends JavaPlugin {
 		// Disconnect from database
 		if(storageManager != null)
 			storageManager.closeConnection();
+
+		if(hasCitizens())
+			GameNPC.REGISTRY.deregisterAll();
 
 		/* Disable all current async tasks */
 		Bukkit.getScheduler().cancelTasks(this);
