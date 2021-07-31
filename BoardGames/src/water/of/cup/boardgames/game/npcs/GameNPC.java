@@ -42,8 +42,9 @@ public abstract class GameNPC {
 
     public void setMapValLoc(Location mapValLoc, int rot) {
         double[] xz = {loc[0], loc[2]};
-        for (int i = 0; i < rot; i++)
-            xz =  MathUtils.rotatePointAroundPoint90Degrees(new double[] {0 , 0} , xz);
+        double[] rotater = new double[] {0.5 , 0.5};
+        for (int i = rot; i > 0; i--)
+            xz =  MathUtils.rotatePointAroundPoint90Degrees(rotater , xz);
 
         npcLocation = mapValLoc.clone().add(xz[0], loc[1], xz[1]);
     }
