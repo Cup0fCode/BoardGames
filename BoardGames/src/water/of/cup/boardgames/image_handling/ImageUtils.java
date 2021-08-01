@@ -36,6 +36,18 @@ public class ImageUtils {
 		return scaleOp.filter(image, null);
 
 	}
+	
+	public static BufferedImage rotateSquareImage(BufferedImage image, double degrees) {
+		double w = image.getWidth();
+		double h = image.getHeight();
+
+		AffineTransform scaleTransform = new AffineTransform();
+		// last-in-first-applied: rotate, scale
+
+		scaleTransform.rotate(Math.PI * degrees / 180, w / 2, h / 2);
+		AffineTransformOp scaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+		return scaleOp.filter(image, null);
+	}
 
 	// from
 	// https://stackoverflow.com/questions/3514158/how-do-you-clone-a-bufferedimage
