@@ -20,6 +20,9 @@ import water.of.cup.boardgames.game.inventories.number.GameNumberInventory;
 import water.of.cup.boardgames.game.inventories.number.GameNumberInventoryCallback;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyCallback;
 import water.of.cup.boardgames.game.inventories.ready.GameReadyInventory;
+import water.of.cup.boardgames.game.inventories.trade.GameTrade;
+import water.of.cup.boardgames.game.inventories.trade.GameTradeCallback;
+import water.of.cup.boardgames.game.inventories.trade.GameTradeInventory;
 import water.of.cup.boardgames.game.inventories.wager.GameWagerCallback;
 import water.of.cup.boardgames.game.inventories.wager.GameWagerInventory;
 import water.of.cup.boardgames.game.inventories.wager.WagerOption;
@@ -49,13 +52,13 @@ public abstract class GameInventory {
     private final GameReadyInventory gameReadyInventory;
     private final GameWagerInventory gameWagerInventory;
     private final GameForfeitInventory gameForfeitInventory;
-    private final GameNumberInventory gameNumberInventory;
 
     private final BoardGames instance = BoardGames.getInstance();
     private final ArrayList<GameOption> gameOptions;
     private final int maxPlayers;
     private final int minPlayers;
     private final boolean hasWagers;
+    private final boolean hasItemWagers;
 
     // Vars that must be reset
     private final ArrayList<Player> joinPlayerQueue;
@@ -88,10 +91,16 @@ public abstract class GameInventory {
         this.maxPlayers = getMaxGame();
         this.minPlayers = getMinGame();
         this.hasWagers = hasGameWagers() && (instance.getEconomy() != null);
+        this.hasItemWagers = this.maxPlayers == 2;
 
         // Add team option if enabled
         if(hasTeamSelect() && game.getTeamNames() != null) {
             this.gameOptions.add(0, GameOption.getTeamSelectGameOption(game.getTeamNames()));
+        }
+
+        // Add item wager option if enabled
+        if(this.hasItemWagers) {
+            this.gameOptions.add(0, GameOption.getTradeItemsOption());
         }
 
         // Add wager option if enabled
@@ -118,7 +127,6 @@ public abstract class GameInventory {
         this.gameReadyInventory = new GameReadyInventory(this);
         this.gameWagerInventory = new GameWagerInventory(this);
         this.gameForfeitInventory = new GameForfeitInventory(this);
-        this.gameNumberInventory = new GameNumberInventory(this);
     }
 
     public void build(Player player) {
@@ -250,7 +258,11 @@ public abstract class GameInventory {
 
                 // Move players to ready screen
                 if(acceptedPlayers.size() == getMaxPlayers() - 1) {
-                    moveToReady();
+                    if(hasItemWagers && gameData.get("trade").equals(ConfigUtil.GUI_WAGERITEMS_ENABLED_LABEL.toString())) {
+                        moveToItemWager();
+                    } else {
+                        moveToReady();
+                    }
                 } else {
                     updateWaitPlayersInventory();
                     updateJoinGameInventory(player);
@@ -407,14 +419,19 @@ public abstract class GameInventory {
         };
     }
 
-    // TODO: Remove:
-    private GameNumberInventoryCallback handleGameNumbers() {
-        return new GameNumberInventoryCallback() {
+    private GameTradeCallback handleItemWager() {
+        return new GameTradeCallback() {
             @Override
-            public void onSubmit(String dataKey, int num) {
-                if(gameData.containsKey(dataKey)) {
-                    gameData.put(dataKey, num);
-                }
+            public void onAccept(GameTrade gameTrade) {
+                // TODO: Handle items
+
+                moveToReady();
+            }
+
+            @Override
+            public void onLeave(GameTrade gameTrade) {
+                gameTrade.sendBackItems();
+                resetGameInventory(ConfigUtil.CHAT_GUI_GAME_PLAYER_LEFT.toString(), true);
             }
         };
     }
@@ -451,6 +468,21 @@ public abstract class GameInventory {
         }
 
         gameReadyInventory.build(gameCreator, handleReady());
+    }
+
+    private void moveToItemWager() {
+        // Kick players still in queue
+        closePlayers(joinPlayerQueue, ConfigUtil.CHAT_GUI_GAME_ALREADY_CREATED.toString());
+
+        if(game.getGamePlayers().size() != 2) return;
+
+        Player player1 = game.getGamePlayers().get(0).getPlayer();
+        Player player2 = game.getGamePlayers().get(1).getPlayer();
+
+        GameTrade gameTrade = new GameTrade(player1, player2);
+
+        new GameTradeInventory(gameTrade).build(player1, handleItemWager());
+        new GameTradeInventory(gameTrade).build(player2, handleItemWager());
     }
 
     // Reset method, kicks everyone out, called when create game or game owner leaves

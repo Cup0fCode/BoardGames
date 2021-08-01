@@ -67,6 +67,9 @@ public enum ConfigUtil implements ConfigInterface {
     GUI_TEAM_LABEL("settings.messages.gui.teamlabel", "&2Team: "),
     GUI_RANKED_OPTION_TEXT("settings.messages.gui.rankedoption", "ranked"),
     GUI_UNRANKED_OPTION_TEXT("settings.messages.gui.unrankedoption", "unranked"),
+    GUI_WAGERITEMS_LABEL("settings.messages.gui.wageritemslabel", "&2Wager Items: "),
+    GUI_WAGERITEMS_DISABLED_LABEL("settings.messages.gui.wageritemsdisabledlabel", "NO"),
+    GUI_WAGERITEMS_ENABLED_LABEL("settings.messages.gui.wageritemsenabledlabel", "YES"),
 
     GUI_TEAM_RED_TEXT("settings.messages.gui.teamredtext", "RED"),
     GUI_TEAM_BLACK_TEXT("settings.messages.gui.teamblacktext", "BLACK"),
