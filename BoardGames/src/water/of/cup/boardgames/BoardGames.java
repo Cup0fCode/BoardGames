@@ -161,7 +161,7 @@ public class BoardGames extends JavaPlugin {
     // TODO: remove old citizens
     private void setupCitizens() {
 		if(getServer().getPluginManager().getPlugin("Citizens") == null || !getServer().getPluginManager().getPlugin("Citizens").isEnabled()) {
-			getLogger().log(Level.SEVERE, "[BoardGames] Citizens 2.0 not found or not enabled, NPCS disabled.");
+//			getLogger().log(Level.SEVERE, "[BoardGames] Citizens 2.0 not found or not enabled, NPCS disabled.");
 			hasCitizens = false;
 			return;
 		}
