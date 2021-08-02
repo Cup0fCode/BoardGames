@@ -12,6 +12,7 @@ public enum ConfigUtil implements ConfigInterface {
     // PLUGIN SETTINGS
     PERMISSIONS_ENABLED("settings.permissions", "true"),
     WAGERS_ENABLED("settings.wagers", "true"),
+    ITEM_WAGERS_ENABLED("settings.itemwagers", "true"),
     RECIPE_ENABLED("settings.recipe.enabled", "true"),
     DB_HOST("settings.database.host", "localhost"),
     DB_PORT("settings.database.port", "3306"),
@@ -59,7 +60,7 @@ public enum ConfigUtil implements ConfigInterface {
     GUI_GAME_JOIN_TITLE("settings.messages.gui.gamejointitle", "%game% | Join Game"),
     GUI_GAME_READY_TITLE("settings.messages.gui.gamereadytitle", "%game% | Ready Game"),
     GUI_GAME_WAGER_TITLE("settings.messages.gui.gamewagertitle", "%game% | Wagers"),
-    GUI_GAME_TRADE_TITLE("settings.messages.gui.gametradetitle", "Bet items:"),
+    GUI_GAME_TRADE_TITLE("settings.messages.gui.gametradetitle", "%game% | Bet Items"),
     GUI_CREATE_GAME_DATA_COLOR("settings.messages.gui.creategamedatacolor", "&a"),
 
     // GUI GAME OPTIONS
@@ -67,6 +68,9 @@ public enum ConfigUtil implements ConfigInterface {
     GUI_TEAM_LABEL("settings.messages.gui.teamlabel", "&2Team: "),
     GUI_RANKED_OPTION_TEXT("settings.messages.gui.rankedoption", "ranked"),
     GUI_UNRANKED_OPTION_TEXT("settings.messages.gui.unrankedoption", "unranked"),
+    GUI_WAGERITEMS_LABEL("settings.messages.gui.wageritemslabel", "&2Wager Items: "),
+    GUI_WAGERITEMS_DISABLED_LABEL("settings.messages.gui.wageritemsdisabledlabel", "NO"),
+    GUI_WAGERITEMS_ENABLED_LABEL("settings.messages.gui.wageritemsenabledlabel", "YES"),
 
     GUI_TEAM_RED_TEXT("settings.messages.gui.teamredtext", "RED"),
     GUI_TEAM_BLACK_TEXT("settings.messages.gui.teamblacktext", "BLACK"),
