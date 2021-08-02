@@ -100,4 +100,11 @@ public class GameOption {
     public static GameOption getTeamSelectGameOption(ArrayList<String> teams) {
         return new GameOption("team", Material.PAPER, GameOptionType.COUNT, ConfigUtil.GUI_TEAM_LABEL.toString(), teams.get(0), teams);
     }
+
+    public static GameOption getTradeItemsOption() {
+        List<String> options = new ArrayList<>();
+        options.add(ConfigUtil.GUI_WAGERITEMS_ENABLED_LABEL.toString());
+        options.add(ConfigUtil.GUI_WAGERITEMS_DISABLED_LABEL.toString());
+        return new GameOption("trade", Material.CHEST, GameOptionType.TOGGLE, ConfigUtil.GUI_WAGERITEMS_LABEL.toString(), options.get(0), options);
+    }
 }

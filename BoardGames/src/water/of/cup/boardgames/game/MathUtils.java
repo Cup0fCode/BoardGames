@@ -8,6 +8,11 @@ public class MathUtils {
 		return new int[] { (int) (- p2[1] + p1[0] + p1[1]), (int) (p2[0] - p1[0] + p1[1]) };
 	}
 
+	public static double[] rotatePointAroundPoint90Degrees(double[] p1, double[] p2) {
+		// p2 is being rotated around p1 90
+		return new double[] { (- p2[1] + p1[0] + p1[1]), (p2[0] - p1[0] + p1[1]) };
+	}
+
 	public static int[][] rotateMatrix(int mat[][]) {
 		// rotates Matrix 90 degrees
 		int lX = mat[0].length;

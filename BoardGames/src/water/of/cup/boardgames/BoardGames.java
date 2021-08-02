@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -23,6 +26,8 @@ import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
 import water.of.cup.boardgames.commands.bgCommands;
 import water.of.cup.boardgames.game.games.chess.Chess;
 import water.of.cup.boardgames.game.maps.MapManager;
+import water.of.cup.boardgames.game.npcs.GameNPC;
+import water.of.cup.boardgames.game.npcs.GameNPCRegistry;
 import water.of.cup.boardgames.game.storage.StorageManager;
 import water.of.cup.boardgames.listeners.BlockBreak;
 import water.of.cup.boardgames.listeners.BlockPlace;
@@ -44,6 +49,8 @@ public class BoardGames extends JavaPlugin {
 	//private DataSource dataStore;
 
 	private StorageManager storageManager;
+
+	private static boolean hasCitizens;
 
 	@SuppressWarnings("unchecked") // for register games
 	@Override
@@ -72,6 +79,8 @@ public class BoardGames extends JavaPlugin {
 //		getCommand("debug").setExecutor(new DebugCommand());
 		//Bukkit.getLogger().info("[ChessBoards] Successfully loaded piece images");
 
+		setupCitizens();
+
 		gameManager.registerGames(Chess.class);
 
 		getCommand("chessboards").setExecutor(new bgCommands());
@@ -93,6 +102,7 @@ public class BoardGames extends JavaPlugin {
 				Bukkit.getLogger().info("[BoardGames] Server must have Vault in order to place wagers on games.");
 			}
 		}
+
 
 		setupPlaceholders();
 
@@ -121,6 +131,9 @@ public class BoardGames extends JavaPlugin {
 		if(storageManager != null)
 			storageManager.closeConnection();
 
+		if(hasCitizens() && GameNPC.REGISTRY != null)
+			GameNPC.REGISTRY.deregisterAll();
+
 		/* Disable all current async tasks */
 		Bukkit.getScheduler().cancelTasks(this);
 	}
@@ -144,6 +157,17 @@ public class BoardGames extends JavaPlugin {
         economy = rsp.getProvider();
         return economy != null;
     }
+
+    // TODO: remove old citizens
+    private void setupCitizens() {
+		if(getServer().getPluginManager().getPlugin("Citizens") == null || !getServer().getPluginManager().getPlugin("Citizens").isEnabled()) {
+			getLogger().log(Level.SEVERE, "[BoardGames] Citizens 2.0 not found or not enabled, NPCS disabled.");
+			hasCitizens = false;
+			return;
+		}
+
+		hasCitizens = true;
+	}
 
     private void setupPlaceholders() {
 		if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
@@ -263,6 +287,10 @@ public class BoardGames extends JavaPlugin {
 
 	public boolean hasStorage() {
 		return this.storageManager != null && ConfigUtil.DB_ENABLED.toBoolean();
+	}
+
+	public static boolean hasCitizens() {
+		return hasCitizens;
 	}
 	
 //	public DataSource getDataStore() {

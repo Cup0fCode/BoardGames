@@ -28,6 +28,7 @@ import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.MapData;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.maps.Screen;
+import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.storage.StorageType;
 import water.of.cup.boardgames.game.teams.TeamManager;
@@ -53,6 +54,7 @@ public abstract class Game {
 	protected GameInventory gameInventory;
 	protected TeamManager teamManager;
 	protected GameStorage gameStorage;
+	private final GameNPC gameNPC;
 
 	protected ArrayList<GameMap> gameMaps; // game maps for the game
 	// public HashMap<Integer, Integer> mapValMapIds; // <mapval, mapid>
@@ -114,6 +116,7 @@ public abstract class Game {
 		gameInventory = getGameInventory();
 		gameStorage = getGameStorage();
 		gameConfig = getGameConfig();
+		gameNPC = BoardGames.hasCitizens() ? getGameNPC() : null;
 
 		gameData = new HashMap<>();
 	}
@@ -158,8 +161,20 @@ public abstract class Game {
 		// check that bottom blocks are not empty
 		for (int x = minX; x <= maxX; x++)
 			for (int z = minZ; z <= maxZ; z++) {
+				
+				// don't check positions where no map is placed
+				boolean hasBoard = false;
+				for (MapData mapData : mapManager.getMapDataAtLocationOnRotatedBoard(x - t1X, z - t1Z, 0)) 
+					if (mapData.getMapVal() > 0) {
+						hasBoard = true;
+						break;
+					}
+				if (!hasBoard)
+					continue;
+				
 				if (loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY() - 1, loc.getBlockZ() + z).isEmpty())
 					return false;
+				
 			}
 
 		return true;
@@ -196,6 +211,8 @@ public abstract class Game {
 
 		int maxZ = Math.max(t1Z, t2Z);
 		int minZ = Math.min(t1Z, t2Z);
+		
+		int[] npcLoc = {0,0,0};
 
 ////		// remove frames:
 //		for (int x = minX; x <= maxX; x++)
@@ -214,6 +231,10 @@ public abstract class Game {
 					for (MapData mapData : mapManager.getMapDataAtLocationOnRotatedBoard(x - t1X, z - t1Z, y - t1Y)) {
 
 						int mapVal = mapData.getMapVal();
+						
+						if (mapVal == getPlacedMapVal())
+							npcLoc = new int[]{x,y,z};
+						
 						// skip maps with value 0
 						if (mapVal <= 0)
 							continue;
@@ -258,6 +279,11 @@ public abstract class Game {
 			}
 		}
 
+		//create npc
+		if (hasGameNPC())
+			gameNPC.setMapValLoc(new Location(loc.getWorld(), loc.getBlockX() + npcLoc[0], loc.getBlockY() + npcLoc[1],
+					loc.getBlockZ() + npcLoc[2]), rotation);
+
 		// Debug
 		if (!hasGameInventory()) {
 			startGame();
@@ -280,6 +306,9 @@ public abstract class Game {
 
 		if (clock != null)
 			clock.cancel();
+
+		if(hasGameNPC())
+			gameNPC.removeNPC();
 
 		// Ensure map gets cleared
 		// renderInitial();
@@ -798,5 +827,23 @@ public abstract class Game {
 
 	public boolean allowOutsideClicks() {
 		return false;
+	}
+
+	public GameNPC getGameNPC() {
+		return null;
+	}
+
+	public boolean hasGameNPC() {
+		return gameNPC != null && BoardGames.hasCitizens();
+	}
+
+	protected void spawnNPC() {
+		if(!hasGameNPC()) return;
+		gameNPC.spawnNPC();
+	}
+
+	protected void npcLookAt(Player player) {
+		if(!hasGameNPC()) return;
+		gameNPC.lookAt(player);
 	}
 }

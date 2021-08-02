@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -34,6 +35,18 @@ public class ImageUtils {
 		AffineTransformOp scaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
 		return scaleOp.filter(image, null);
 
+	}
+	
+	public static BufferedImage rotateSquareImage(BufferedImage image, double degrees) {
+		double w = image.getWidth();
+		double h = image.getHeight();
+
+		AffineTransform scaleTransform = new AffineTransform();
+		// last-in-first-applied: rotate, scale
+
+		scaleTransform.rotate(Math.PI * degrees / 180, w / 2, h / 2);
+		AffineTransformOp scaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+		return scaleOp.filter(image, null);
 	}
 
 	// from
@@ -92,4 +105,18 @@ public class ImageUtils {
 		g2.dispose();
 		return clone;
 	}
+	
+	public static BufferedImage resize(BufferedImage img, double change) { 
+		int newW = (int) (img.getWidth() * change);
+		int newH = (int) (img.getHeight() * change);
+		
+	    Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_REPLICATE);
+	    BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+	    Graphics2D g2d = dimg.createGraphics();
+	    g2d.drawImage(tmp, 0, 0, null);
+	    g2d.dispose();
+
+	    return dimg;
+	}  
 }
