@@ -18,12 +18,15 @@ public class GuiStorageActionElement extends GuiElement  {
     private Runnable applyStorage;
     private Function<ValidatorInfo, Boolean> itemValidator;
 
-    public GuiStorageActionElement(char slotChar, Inventory storage, Action action) {
+    public GuiStorageActionElement(char slotChar, Inventory storage, GameTradePlayer gameTradePlayer, Action action) {
         super(slotChar, null);
         this.invSlot = -1;
         this.applyStorage = null;
         this.itemValidator = null;
         setAction(click -> {
+            if(gameTradePlayer.isReady()) {
+                return true;
+            }
             if (getStorageSlot(click.getWhoClicked(), click.getSlot()) < 0) {
                 return true;
             }

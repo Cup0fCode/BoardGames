@@ -26,6 +26,7 @@ import water.of.cup.boardgames.game.inventories.trade.GameTradeInventory;
 import water.of.cup.boardgames.game.inventories.wager.GameWagerCallback;
 import water.of.cup.boardgames.game.inventories.wager.GameWagerInventory;
 import water.of.cup.boardgames.game.inventories.wager.WagerOption;
+import water.of.cup.boardgames.game.wagers.ItemWager;
 import water.of.cup.boardgames.game.wagers.RequestWager;
 import water.of.cup.boardgames.game.wagers.WagerManager;
 
@@ -91,7 +92,7 @@ public abstract class GameInventory {
         this.maxPlayers = getMaxGame();
         this.minPlayers = getMinGame();
         this.hasWagers = hasGameWagers() && (instance.getEconomy() != null);
-        this.hasItemWagers = this.maxPlayers == 2;
+        this.hasItemWagers = this.maxPlayers == 2 && ConfigUtil.ITEM_WAGERS_ENABLED.toBoolean();
 
         // Add team option if enabled
         if(hasTeamSelect() && game.getTeamNames() != null) {
@@ -423,14 +424,16 @@ public abstract class GameInventory {
         return new GameTradeCallback() {
             @Override
             public void onAccept(GameTrade gameTrade) {
-                // TODO: Handle items
+                wagerManager.addWager(new ItemWager(gameTrade));
 
                 moveToReady();
             }
 
             @Override
             public void onLeave(GameTrade gameTrade) {
+                // Wager not yet created, so still need to send items back
                 gameTrade.sendBackItems();
+
                 resetGameInventory(ConfigUtil.CHAT_GUI_GAME_PLAYER_LEFT.toString(), true);
             }
         };
@@ -479,10 +482,10 @@ public abstract class GameInventory {
         Player player1 = game.getGamePlayers().get(0).getPlayer();
         Player player2 = game.getGamePlayers().get(1).getPlayer();
 
-        GameTrade gameTrade = new GameTrade(player1, player2);
-
-        new GameTradeInventory(gameTrade).build(player1, handleItemWager());
-        new GameTradeInventory(gameTrade).build(player2, handleItemWager());
+        GameTradeCallback gameTradeCallback = handleItemWager();
+        GameTrade gameTrade = new GameTrade(player1, player2, game, gameTradeCallback);
+        new GameTradeInventory(gameTrade, gameTradeCallback).build(player1);
+        new GameTradeInventory(gameTrade, gameTradeCallback).build(player2);
     }
 
     // Reset method, kicks everyone out, called when create game or game owner leaves

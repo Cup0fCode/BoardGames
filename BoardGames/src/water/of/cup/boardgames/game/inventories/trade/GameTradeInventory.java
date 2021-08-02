@@ -25,34 +25,32 @@ import java.util.stream.Collectors;
 public class GameTradeInventory {
 
     private final GameTrade gameTrade;
+    private final GameTradeCallback gameTradeCallback;
 
-    public GameTradeInventory(GameTrade gameTrade) {
+    public GameTradeInventory(GameTrade gameTrade, GameTradeCallback gameTradeCallback) {
         this.gameTrade = gameTrade;
+        this.gameTradeCallback = gameTradeCallback;
     }
 
-    public void build(Player player, GameTradeCallback gameTradeCallback) {
+    public void build(Player player) {
+        build(player, -1);
+    }
+
+    public void build(Player player, int timeLeft) {
         String[] guiSetup = getGuiSetup();
-        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, ConfigUtil.GUI_GAME_TRADE_TITLE.toString(), guiSetup);
+
+        String title = ConfigUtil.GUI_GAME_TRADE_TITLE.buildString(gameTrade.getGame().getAltName());
+        if(timeLeft != -1)
+            title += " (" + timeLeft + ")";
+
+        InventoryGui gui = new InventoryGui(BoardGames.getInstance(), player, title, guiSetup);
 
         gui.setFiller(new ItemStack(Material.BLACK_STAINED_GLASS_PANE));
 
-        Inventory inv = Bukkit.createInventory(null, InventoryType.CHEST);
-
-        gui.addElement(new GuiStorageActionElement('i', inv, click -> {
-            List<ItemStack> items = arrayToList(inv.getStorageContents());
-
-            for(ItemStack itemStack :items) {
-                player.sendMessage(itemStack.getType().toString());
-            }
-
-            player.sendMessage("Inv content size: " + items.size());
-            this.gameTrade.updateInventory(player, new ArrayList<>(items));
-            return false;
-        }));
-
-        GuiElementGroup group = new GuiElementGroup('j');
         GameTradePlayer gameTradePlayer = gameTrade.getGameTradePlayer(player);
         GameTradePlayer otherPlayer = gameTrade.getOtherPlayer(gameTradePlayer);
+        GuiElementGroup group = new GuiElementGroup('j');
+
         for(int i = 0; i < 12; i++) {
             int finalI = i;
             group.addElement(new DynamicGuiElement('j', (viewer) ->
@@ -77,32 +75,53 @@ public class GameTradeInventory {
                         change -> gameTrade.setReady(player, true),
                         "ready",
                         new ItemStack(Material.LIME_STAINED_GLASS_PANE),
-                        ChatColor.GREEN + "READY",
-                        ChatColor.GRAY + "Click to unready"
+                        ConfigUtil.GUI_READY_TEXT.toString()
                 ),
                 new GuiStateElement.State(
                         change -> gameTrade.setReady(player, false),
                         "unready",
                         new ItemStack(Material.RED_STAINED_GLASS_PANE),
-                        ChatColor.RED + "NOT READY",
-                        ChatColor.GRAY + "Click to ready"
+                        ConfigUtil.GUI_UNREADY_TEXT.toString()
                 )
         );
 
-        confirmButton.setState("unready");
+        confirmButton.setState(gameTradePlayer.isReady() ? "ready" : "unready");
         gui.addElement(confirmButton);
 
         gui.addElement(new DynamicGuiElement('t', (viewer) -> {
             return new StaticGuiElement('t', otherPlayer.isReady() ? new ItemStack(Material.LIME_STAINED_GLASS_PANE) : new ItemStack(Material.RED_STAINED_GLASS_PANE),
                     click -> true,
-                    otherPlayer.isReady() ? ChatColor.GREEN + "READY" : ChatColor.RED + "NOT READY");
+                    otherPlayer.isReady() ? ConfigUtil.GUI_READY_TEXT.toString() : ConfigUtil.GUI_NOT_READY_TEXT.toString());
         }));
 
-        // TODO: on both ready, start countdown, when ready, dont let them move items
+
+        Inventory inv = Bukkit.createInventory(null, InventoryType.CHEST);
+        // If the inventory gets refreshed, refill their items
+        if(arrayToList(inv.getStorageContents()).size() == 0 && gameTradePlayer.getItems().size() > 0) {
+            for (ItemStack itemStack : gameTradePlayer.getItems()) {
+                inv.addItem(itemStack);
+            }
+        }
+
+        // If not ready
+        if(timeLeft == -1) {
+            gui.addElement(new GuiStorageActionElement('i', inv, gameTradePlayer, click -> {
+                List<ItemStack> items = arrayToList(inv.getStorageContents());
+
+                this.gameTrade.updateInventory(player, new ArrayList<>(items));
+                return false;
+            }));
+        } else {
+            GuiElementGroup itemGroup = new GuiElementGroup('i');
+            for (ItemStack itemStack : gameTradePlayer.getItems()) {
+                itemGroup.addElement((new StaticGuiElement('i', itemStack, itemStack.getAmount(), click -> true)));
+            }
+
+            gui.addElement(itemGroup);
+        }
+
 
         gui.setCloseAction(close -> {
-            List<ItemStack> items = Arrays.stream(inv.getContents()).filter(Objects::nonNull).collect(Collectors.toList());
-            player.sendMessage("Inv content size: " + items.size());
             gameTradeCallback.onLeave(gameTrade);
             return false;
         });
