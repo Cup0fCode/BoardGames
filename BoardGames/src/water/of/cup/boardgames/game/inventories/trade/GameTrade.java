@@ -115,6 +115,13 @@ public class GameTrade {
             gameTradeCallback.onAccept(this);
     }
 
+    public void cancelTimer() {
+        if(gameTradeTimer != null) {
+            gameTradeTimer.cancel();
+            gameTradeTimer = null;
+        }
+    }
+
     private boolean allReady() {
         for(GameTradePlayer gameTradePlayer : players) {
             if(!gameTradePlayer.isReady()) return false;
