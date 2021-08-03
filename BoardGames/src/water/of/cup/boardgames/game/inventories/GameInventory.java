@@ -433,6 +433,7 @@ public abstract class GameInventory {
             public void onLeave(GameTrade gameTrade) {
                 // Wager not yet created, so still need to send items back
                 gameTrade.sendBackItems();
+                gameTrade.cancelTimer();
 
                 resetGameInventory(ConfigUtil.CHAT_GUI_GAME_PLAYER_LEFT.toString(), true);
             }
