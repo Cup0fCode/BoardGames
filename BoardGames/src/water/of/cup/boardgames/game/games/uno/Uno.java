@@ -126,6 +126,8 @@ public class Uno extends Game {
 			loc[1] += (1 - (posCounter + 2) / 4) * 128; // set Y cords
 			loc[0] += (1 - (posCounter) / 4) * 128; // set X cords
 
+			if(loc[1] < 0) loc[1] = loc[1] * -1;
+
 			// create position image
 			Button b = new Button(this, "UNO_DECK", loc, (4 - rotation) % 4, "deck");
 			handButtons.put(player, b);
@@ -161,6 +163,8 @@ public class Uno extends Game {
 
 		iLoc[1] += (1 - (boardPos + 2) / 4) * 128; // set Y cords
 		iLoc[0] += (1 - (boardPos) / 4) * 128; // set X cords
+
+		if(iLoc[1] < 0) iLoc[1] = 256 + iLoc[1];
 
 		int handPos = 0;
 		for (UnoCard card : hand.getCards(currentCard)) {
