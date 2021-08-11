@@ -46,7 +46,9 @@ public class UnoConfig extends GameConfig {
 
     @Override
     protected HashMap<String, Object> getCustomValues() {
-        return null;
+        HashMap<String, Object> configOptions = new HashMap<>();
+        configOptions.put("middle_card_size", 2);
+        return configOptions;
     }
 
     @Override

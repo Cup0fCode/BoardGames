@@ -2,6 +2,7 @@ package water.of.cup.boardgames.game.games.uno;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -28,6 +29,8 @@ public class Uno extends Game {
 
 	private UnoCard currentCard;
 	private Button currentCardButton;
+
+	private int middleCardSize = 2;
 
 	public Uno(int rotation) {
 		super(rotation);
@@ -67,9 +70,18 @@ public class Uno extends Game {
 		handButtons = new HashMap<GamePlayer, Button>();
 		createPlayerHands();
 
+		if(getConfigValue("middle_card_size") != null) {
+			String cardSize = getConfigValue("middle_card_size") + "";
+			if(MathUtils.isNumeric(cardSize)) {
+				int cardSizeNum = Integer.parseInt(cardSize);
+				if(cardSizeNum > 0)
+					middleCardSize = cardSizeNum;
+			}
+		}
+
 		GameImage currentCardImage = currentCard.getGameImage().clone();
-		currentCardImage.resize(2);
-		currentCardButton = new Button(this, currentCardImage, new int[] { 120, 114 }, 0,
+		currentCardImage.resize(middleCardSize);
+		currentCardButton = new Button(this, currentCardImage, new int[] { 128 - (4 * middleCardSize), 128 - (7 * middleCardSize) }, 0,
 				"currentCardButton");
 		currentCardButton.setClickable(false);
 		buttons.add(currentCardButton);
@@ -93,6 +105,7 @@ public class Uno extends Game {
 	}
 
 	private void toggleColorButtons() {
+		currentCardButton.setVisibleForAll(!isWild);
 		for (Button b : colorButtons) {
 			b.setVisibleForAll(isWild);
 			b.setClickable(isWild);
@@ -213,7 +226,7 @@ public class Uno extends Game {
 			currentCard = card;
 
 			GameImage currentCardImage = currentCard.getGameImage().clone();
-			currentCardImage.resize(2);
+			currentCardImage.resize(middleCardSize);
 			currentCardButton.setImage(currentCardImage);
 			setCardButtons(player);
 
