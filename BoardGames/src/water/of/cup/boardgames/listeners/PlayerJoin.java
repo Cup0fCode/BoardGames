@@ -20,8 +20,10 @@ public class PlayerJoin implements Listener {
         Player player = event.getPlayer();
         gameManager.rerender(player);
         
-        if(ConfigUtil.RECIPE_ENABLED.toBoolean()) {
+        if(ConfigUtil.RECIPE_ENABLED.toBoolean() && ConfigUtil.RECIPE_AUTO_DISCOVER_ENABLED.toBoolean()) {
             for (String name : gameManager.getGameNames()) {
+                if(ConfigUtil.PERMISSIONS_ENABLED.toBoolean() && !player.hasPermission("boardgames.recipe." + name)) continue;
+
                 Game temp = gameManager.newGame(name, 0);
 
                 if (temp != null && temp.getGameRecipe() != null) {

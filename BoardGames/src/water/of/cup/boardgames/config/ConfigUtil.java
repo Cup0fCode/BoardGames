@@ -14,6 +14,7 @@ public enum ConfigUtil implements ConfigInterface {
     WAGERS_ENABLED("settings.wagers", "true"),
     ITEM_WAGERS_ENABLED("settings.itemwagers", "true"),
     RECIPE_ENABLED("settings.recipe.enabled", "true"),
+    RECIPE_AUTO_DISCOVER_ENABLED("settings.recipe.autodiscover", "true"),
     DB_HOST("settings.database.host", "localhost"),
     DB_PORT("settings.database.port", "3306"),
     DB_NAME("settings.database.database", "chessboards"),

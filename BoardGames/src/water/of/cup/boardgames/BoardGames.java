@@ -29,12 +29,7 @@ import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.npcs.GameNPCRegistry;
 import water.of.cup.boardgames.game.storage.StorageManager;
-import water.of.cup.boardgames.listeners.BlockBreak;
-import water.of.cup.boardgames.listeners.BlockPlace;
-import water.of.cup.boardgames.listeners.BoardInteract;
-import water.of.cup.boardgames.listeners.ChunkLoad;
-import water.of.cup.boardgames.listeners.PlayerJoin;
-import water.of.cup.boardgames.listeners.PlayerQuit;
+import water.of.cup.boardgames.listeners.*;
 import water.of.cup.boardgames.metrics.Metrics;
 import water.of.cup.boardgames.placeholder.BoardGamesPlaceholder;
 
@@ -91,7 +86,7 @@ public class BoardGames extends JavaPlugin {
 		
 //		if(config.getBoolean("settings.chessboard.recipe.enabled"))
 //			addGameRecipes();
-		registerListeners(new PlayerQuit(), new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak(), new PlayerJoin());
+		registerListeners(new PlayerQuit(), new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak(), new PlayerJoin(), new PlayerItemCraft());
 
 		// Load recipes after config and games are initialized
 		GameConfigLoader.loadGameConfig();
@@ -219,6 +214,7 @@ public class BoardGames extends JavaPlugin {
 			- boardgames.command.stats
 			- boardgames.command.leaderboard
 			- boardgames.command.reload
+		boardgames.recipe.GAMENAME
 		 */
 
 		// Load in defaults from ConfigUtil
@@ -237,10 +233,10 @@ public class BoardGames extends JavaPlugin {
 			}
 		}
 
-//		File savedGamesDir = new File(getDataFolder(), "saved_games");
-//		if (!savedGamesDir.exists()) {
-//			savedGamesDir.mkdir();
-//		}
+		File customImages = new File(getDataFolder(), "custom_images");
+		if (!customImages.exists()) {
+			customImages.mkdir();
+		}
 
 		this.saveConfig();
 	}
