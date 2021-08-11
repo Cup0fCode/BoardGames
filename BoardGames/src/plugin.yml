@@ -1,6 +1,6 @@
 main: water.of.cup.boardgames.BoardGames
 name: ChessBoards
-version: '1.2.8'
+version: '1.2.9'
 description: Adds chess games to Minecraft.
 author: Nicholas Kopiwoda & Matt C.
 api-version: 1.16
