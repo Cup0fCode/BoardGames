@@ -27,8 +27,13 @@ public class ImageManager {
 			return images.get(name);
 		}
 
-		String filePath = "water/of/cup/boardgames/images/" + name + ".png";
-		InputStream is = BoardGames.getInstance().getResource(filePath);
+		// Try to find custom image
+		InputStream is = getCustomImage(name);
+
+		if(is == null) {
+			String filePath = "water/of/cup/boardgames/images/" + name + ".png";
+			is = BoardGames.getInstance().getResource(filePath);
+		}
 
 		if(is == null) return null;
 
@@ -42,6 +47,30 @@ public class ImageManager {
 	}
 
 	public static void addImage(String name, BufferedImage image) {
-		images.put(name, image);
+		BufferedImage customImage = null;
+		if(getCustomImage(name) != null) {
+			try {
+				customImage = ImageIO.read(getCustomImage(name));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		images.put(name, customImage != null ? customImage : image);
+	}
+
+	private static InputStream getCustomImage(String name) {
+		File customImages = new File(BoardGames.getInstance().getDataFolder() + "/custom_images");
+		InputStream is = null;
+		if(customImages.exists()) {
+			File customImage = new File(customImages + "/" + name + ".png");
+			if(customImage.exists() && customImage.isFile()) {
+				try {
+					is = new FileInputStream(customImage);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return is;
 	}
 }

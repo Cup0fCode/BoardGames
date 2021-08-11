@@ -67,7 +67,9 @@ public class Uno extends Game {
 		handButtons = new HashMap<GamePlayer, Button>();
 		createPlayerHands();
 
-		currentCardButton = new Button(this, currentCard.getGameImage(), new int[] { 124, 121 }, 0,
+		GameImage currentCardImage = currentCard.getGameImage().clone();
+		currentCardImage.resize(2);
+		currentCardButton = new Button(this, currentCardImage, new int[] { 120, 114 }, 0,
 				"currentCardButton");
 		currentCardButton.setClickable(false);
 		buttons.add(currentCardButton);
@@ -205,7 +207,10 @@ public class Uno extends Game {
 			}
 
 			currentCard = card;
-			currentCardButton.setImage(currentCard.getGameImage());
+
+			GameImage currentCardImage = currentCard.getGameImage().clone();
+			currentCardImage.resize(2);
+			currentCardButton.setImage(currentCardImage);
 			setCardButtons(player);
 
 			// check if card is wild
