@@ -2,7 +2,6 @@ package water.of.cup.boardgames.game.wagers;
 
 import org.bukkit.entity.Player;
 
-import net.md_5.bungee.api.ChatColor;
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.GamePlayer;
 
@@ -19,10 +18,10 @@ public class RequestWager {
 		this.amount = amount;
 	}
 
-	public Wager createWager(Player otherPlayer) {
+	public EconomyWager createWager(Player otherPlayer) {
 		instance.getEconomy().withdrawPlayer(otherPlayer, amount);
 
-		return new Wager(owner, otherPlayer, ownerBet, amount);
+		return new EconomyWager(owner, otherPlayer, ownerBet, amount);
 	}
 
 	public Player getOwner() {

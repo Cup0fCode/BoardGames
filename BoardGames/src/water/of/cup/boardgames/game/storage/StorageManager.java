@@ -291,15 +291,17 @@ public class StorageManager {
 
 		String tableName = gameStorage.getTableName();
 		String isDesc = orderBy.isOrderByDescending() ? "DESC" : "ASC";
-		String sql = "SELECT * FROM `" + tableName + "` ORDER BY `" + orderBy.getKey() + "` " + isDesc + " LIMIT " + (page * 10)
-				+ ", 10";
+		String sql = "SELECT * FROM `" + tableName + "` ORDER BY `" + orderBy.getKey() + "` " + isDesc;
+		if(orderBy.isOrderByDescending()) sql += " LIMIT " + (page * 10) + ", 10";
 
+		String finalSql = sql;
 		executorService.submit(() -> {
 			try {
 				try (Connection con = getConnection();
-						PreparedStatement fetchQuery = con.prepareStatement(sql);
-						ResultSet resultSet = fetchQuery.executeQuery()) {
+					 PreparedStatement fetchQuery = con.prepareStatement(finalSql);
+					 ResultSet resultSet = fetchQuery.executeQuery()) {
 					LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>> bottomPlayers = new LinkedHashMap<>();
+
 					while (resultSet.next()) {
 						String playerUUID = resultSet.getString("uuid");
 						if (playerUUID == null)
@@ -324,6 +326,19 @@ public class StorageManager {
 
 					for(OfflinePlayer bottomPlayer : bottomPlayers.keySet()) {
 						topPlayers.put(bottomPlayer, bottomPlayers.get(bottomPlayer));
+					}
+
+					if(!orderBy.isOrderByDescending()) {
+						LinkedHashMap<OfflinePlayer, LinkedHashMap<StorageType, Object>> pagePlayers = new LinkedHashMap<>();
+						for(int i = page * 10; i < page * 10 + 10; i++) {
+							ArrayList<OfflinePlayer> players = new ArrayList<>(topPlayers.keySet());
+							if(i >= players.size()) break;
+
+							OfflinePlayer player = new ArrayList<>(topPlayers.keySet()).get(i);
+							pagePlayers.put(player, topPlayers.get(player));
+						}
+						future.complete(pagePlayers);
+						return;
 					}
 
 					future.complete(topPlayers);

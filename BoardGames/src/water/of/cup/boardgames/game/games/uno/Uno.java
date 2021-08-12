@@ -2,6 +2,7 @@ package water.of.cup.boardgames.game.games.uno;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -28,6 +29,8 @@ public class Uno extends Game {
 
 	private UnoCard currentCard;
 	private Button currentCardButton;
+
+	private int middleCardSize = 2;
 
 	public Uno(int rotation) {
 		super(rotation);
@@ -67,7 +70,18 @@ public class Uno extends Game {
 		handButtons = new HashMap<GamePlayer, Button>();
 		createPlayerHands();
 
-		currentCardButton = new Button(this, currentCard.getGameImage(), new int[] { 124, 121 }, 0,
+		if(getConfigValue("middle_card_size") != null) {
+			String cardSize = getConfigValue("middle_card_size") + "";
+			if(MathUtils.isNumeric(cardSize)) {
+				int cardSizeNum = Integer.parseInt(cardSize);
+				if(cardSizeNum > 0)
+					middleCardSize = cardSizeNum;
+			}
+		}
+
+		GameImage currentCardImage = currentCard.getGameImage().clone();
+		currentCardImage.resize(middleCardSize);
+		currentCardButton = new Button(this, currentCardImage, new int[] { 128 - (4 * middleCardSize), 128 - (7 * middleCardSize) }, 0,
 				"currentCardButton");
 		currentCardButton.setClickable(false);
 		buttons.add(currentCardButton);
@@ -91,6 +105,7 @@ public class Uno extends Game {
 	}
 
 	private void toggleColorButtons() {
+		currentCardButton.setVisibleForAll(!isWild);
 		for (Button b : colorButtons) {
 			b.setVisibleForAll(isWild);
 			b.setClickable(isWild);
@@ -123,6 +138,8 @@ public class Uno extends Game {
 //			}
 			loc[1] += (1 - (posCounter + 2) / 4) * 128; // set Y cords
 			loc[0] += (1 - (posCounter) / 4) * 128; // set X cords
+
+			if(loc[1] < 0) loc[1] = loc[1] * -1;
 
 			// create position image
 			Button b = new Button(this, "UNO_DECK", loc, (4 - rotation) % 4, "deck");
@@ -159,6 +176,8 @@ public class Uno extends Game {
 
 		iLoc[1] += (1 - (boardPos + 2) / 4) * 128; // set Y cords
 		iLoc[0] += (1 - (boardPos) / 4) * 128; // set X cords
+
+		if(iLoc[1] < 0) iLoc[1] = 256 + iLoc[1];
 
 		int handPos = 0;
 		for (UnoCard card : hand.getCards(currentCard)) {
@@ -205,7 +224,10 @@ public class Uno extends Game {
 			}
 
 			currentCard = card;
-			currentCardButton.setImage(currentCard.getGameImage());
+
+			GameImage currentCardImage = currentCard.getGameImage().clone();
+			currentCardImage.resize(middleCardSize);
+			currentCardButton.setImage(currentCardImage);
 			setCardButtons(player);
 
 			// check if card is wild

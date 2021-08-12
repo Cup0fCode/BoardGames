@@ -5,18 +5,19 @@ import java.util.ArrayList;
 import org.bukkit.entity.Player;
 
 import water.of.cup.boardgames.BoardGames;
-import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GamePlayer;
 
 public class WagerManager {
 
 	private final BoardGames instance = BoardGames.getInstance();
-	private final ArrayList<Wager> wagers;
+	private final ArrayList<EconomyWager> economyWagers;
 	private final ArrayList<RequestWager> requestWagers;
+	private final ArrayList<Wager> wagers;
 
 	public WagerManager() {
-		wagers = new ArrayList<>();
+		economyWagers = new ArrayList<>();
 		requestWagers = new ArrayList<>();
+		wagers = new ArrayList<>();
 	}
 	
 	public void addRequestWager(RequestWager requestWager) {
@@ -25,22 +26,29 @@ public class WagerManager {
 	}
 
 	public void initGameWager(GamePlayer gameCreator, double amount) {
-		Wager gameWager = new Wager(gameCreator.getPlayer(), null, gameCreator, amount);
+		EconomyWager gameWager = new EconomyWager(gameCreator.getPlayer(), null, gameCreator, amount);
 		instance.getEconomy().withdrawPlayer(gameCreator.getPlayer(), amount);
+		economyWagers.add(gameWager);
 		wagers.add(gameWager);
 	}
 
 	public void addGameWagerPlayer(Player player, Player gameCreator) {
-		Wager gameWager = getWager(gameCreator);
+		EconomyWager gameWager = getWager(gameCreator);
 		instance.getEconomy().withdrawPlayer(player, gameWager.getAmount());
 		gameWager.setPlayer2(player);
+	}
+
+	public void addWager(Wager wager) {
+		wagers.add(wager);
 	}
 
 	public void endAllWagers() {
 		for (Wager wager : wagers) {
 			wager.cancel();
 		}
+
 		wagers.clear();
+		economyWagers.clear();
 	}
 
 	public void endAllRequestWagers() {
@@ -66,18 +74,21 @@ public class WagerManager {
 		for (Wager wager : wagers) {
 			wager.complete(winner);
 		}
+
 		wagers.clear();
+		economyWagers.clear();
 	}
 
 	public void acceptRequestWager(Player player, RequestWager requestWager) {
-		Wager wager = requestWager.createWager(player);
+		EconomyWager wager = requestWager.createWager(player);
 
 		wagers.add(wager);
+		economyWagers.add(wager);
 		requestWagers.remove(requestWager);
 	}
 
-	public Wager getWager(Player player) {
-		for(Wager wager : wagers) {
+	public EconomyWager getWager(Player player) {
+		for(EconomyWager wager : economyWagers) {
 			if(wager.getPlayer1() != null && wager.getPlayer1().equals(player))
 				return wager;
 			if(wager.getPlayer2() != null && wager.getPlayer2().equals(player))
