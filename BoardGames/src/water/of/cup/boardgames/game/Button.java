@@ -15,12 +15,12 @@ public class Button {
 	private int[] location;
 	private int rotation;
 	private GameImage image;
-	private Boolean turnBased; // if true, button is only clickable when it is a player's turn
-	private Boolean renderTurnBased; // if true, button is only rendered when it is a player's turn
-	private Boolean canClickInvisible;
+	private boolean turnBased; // if true, button is only clickable when it is a player's turn
+	private boolean renderTurnBased; // if true, button is only rendered when it is a player's turn
+	private boolean canClickInvisible;
 	
 	
-	private Boolean visible;
+	private boolean visible;
 
 	private Screen screen;
 
