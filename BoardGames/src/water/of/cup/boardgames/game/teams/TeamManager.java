@@ -7,6 +7,7 @@ import water.of.cup.boardgames.game.GamePlayer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 public class TeamManager {
 
@@ -134,4 +135,11 @@ public class TeamManager {
     public ArrayList<GamePlayer> getGamePlayers() {
         return new ArrayList<>(teams.values());
     }
+
+	public String getTeamByPlayer(GamePlayer gamePlayer) {
+		for (Entry<String, GamePlayer> entry : teams.entrySet())
+			if (entry.getValue() == gamePlayer)
+				return entry.getKey();
+		return null;
+	}
 }
