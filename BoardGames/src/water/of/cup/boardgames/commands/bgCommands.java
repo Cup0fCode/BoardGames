@@ -45,6 +45,9 @@ public class bgCommands implements CommandExecutor {
 		Player p = (Player) sender;
 		boolean permissions = ConfigUtil.PERMISSIONS_ENABLED.toBoolean();
 
+		// /bg npc leaderboard GAME STAT [NUM PLAYERS]
+		// /bg npc queue GAME/ALL
+		// /bg queue GAME/ALL
 		if (cmd.getName().equalsIgnoreCase("bg")) {
 			if(permissions && !p.hasPermission("boardgames.command"))
 				return false;

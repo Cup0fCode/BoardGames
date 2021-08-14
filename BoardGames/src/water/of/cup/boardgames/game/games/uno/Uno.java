@@ -91,8 +91,11 @@ public class Uno extends Game {
 		// set color buttons
 		colorButtons = new ArrayList<Button>();
 		int i = 0;
+		double colorImageResize = middleCardSize / 2.0;
 		for (String s : new String[] { "RED", "BLUE", "YELLOW", "GREEN" }) {
-			Button b = new Button(this, "UNOCARD_" + s, new int[] { 120 + (i / 2) * 8, 114 + (i % 2) * 14 }, 0, s);
+			GameImage colorImage = new GameImage("UNOCARD_" + s);
+			colorImage.resize(colorImageResize);
+			Button b = new Button(this, colorImage, new int[] { 128 - (int) (8 * colorImageResize) + (i / 2) * (int) (8 * colorImageResize), 128 -  (int) (14 * colorImageResize) + (i % 2) * (int) (14 * colorImageResize) }, 0, s);
 			buttons.add(b);
 			colorButtons.add(b);
 			toggleColorButtons();
@@ -219,8 +222,6 @@ public class Uno extends Game {
 				// say uno
 				this.getGamePlayers()
 						.forEach((p) -> p.getPlayer().sendMessage(player.getPlayer().getDisplayName() + ": Uno!"));
-			} else if (hand.cardsLeft() == 0) {
-				this.endGame(player);
 			}
 
 			currentCard = card;
@@ -228,6 +229,12 @@ public class Uno extends Game {
 			GameImage currentCardImage = currentCard.getGameImage().clone();
 			currentCardImage.resize(middleCardSize);
 			currentCardButton.setImage(currentCardImage);
+
+			if (hand.cardsLeft() == 0) {
+				this.endGame(player);
+				return false;
+			}
+
 			setCardButtons(player);
 
 			// check if card is wild
@@ -351,14 +358,22 @@ public class Uno extends Game {
 		}
 
 		UnoHand hand = playerHands.get(gamePlayer);
+		UnoCard card = getSelectedCard(gamePlayer, b);
+
 		if (!hand.canPlay(currentCard)) {
 			player.sendMessage(ConfigUtil.CHAT_GAME_UNO_FORCE_DRAW.toString());
-			hand.draw(deck, 1);
-			setCardButtons(gamePlayer);
-			mapManager.renderBoard();
+			UnoCard drawedCard = hand.draw(deck, 1).get(0);
+			if(!currentCard.matches(drawedCard) && !drawedCard.getColor().equals("ALL")) {
+				setCardButtons(gamePlayer);
+				teamManager.nextTurn();
+				toggleHandButtons();
+				mapManager.renderBoard();
+				return;
+			}
+			// Force player to play drawed card
+			card = drawedCard;
 		}
 
-		UnoCard card = getSelectedCard(gamePlayer, b);
 		if (card == null)
 			return;
 
@@ -369,8 +384,11 @@ public class Uno extends Game {
 			toggleHandButtons();
 			setCardButtons(teamManager.getTurnPlayer());
 			mapManager.renderBoard();
-		} else {
+		} else if (!card.matches(currentCard)) {
 			player.sendMessage(ConfigUtil.CHAT_GAME_UNO_INVALID_CARD.toString());
+		} else {
+			// Game over, render final card
+			mapManager.renderBoard();
 		}
 
 		// if (playCard(gamePlayer, ))

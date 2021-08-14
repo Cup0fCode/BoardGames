@@ -78,6 +78,7 @@ public class BoardGamesPlaceholder extends PlaceholderExpansion {
             }
 
             LinkedHashMap<StorageType, Object> playerStats = plugin.getStorageManager().fetchPlayerStats(player, tempGame.getGameStore(), true);
+            if(playerStats == null) return null;
             if(playerStats.get(storeType) == null) return null;
 
             return playerStats.get(storeType) + "";
