@@ -735,11 +735,13 @@ public abstract class Game {
 		gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
 
 		if (gameStorage.canExecute(StorageType.BEST_TIME)) {
-			Double bestTime = (Double) BoardGames.getInstance().getStorageManager()
-					.fetchPlayerStats(gamePlayerWinner.getPlayer(), getGameStore(), false).get(StorageType.BEST_TIME);
+			LinkedHashMap<StorageType, Object> playerStats = BoardGames.getInstance().getStorageManager()
+					.fetchPlayerStats(gamePlayerWinner.getPlayer(), getGameStore(), false);
 			Double time = clock.getPlayerTimes().get(gamePlayerWinner);
 
-			if (bestTime == null || bestTime <= 0 || bestTime > time)
+			double bestTime = 0;
+			if(playerStats != null && playerStats.containsKey(StorageType.BEST_TIME)) bestTime = (Double) playerStats.get(StorageType.BEST_TIME);
+			if (bestTime <= 0 || bestTime > time)
 				gameStorage.setData(gamePlayerWinner.getPlayer(), StorageType.BEST_TIME, time);
 		}
 

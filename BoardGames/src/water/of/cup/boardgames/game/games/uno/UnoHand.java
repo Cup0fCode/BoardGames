@@ -9,8 +9,10 @@ public class UnoHand {
 		cards = new ArrayList<UnoCard>();
 	}
 	
-	public void draw(UnoDeck deck, int n) {
-		cards.addAll(deck.drawCards(n));
+	public ArrayList<UnoCard> draw(UnoDeck deck, int n) {
+		ArrayList<UnoCard> drawCards = deck.drawCards(n);
+		cards.addAll(drawCards);
+		return drawCards;
 	}
 	
 	public ArrayList<UnoCard> getCards() {
