@@ -16,12 +16,14 @@ public class PlayerItemCraft implements Listener {
     public void onItemCraft(PrepareItemCraftEvent event) {
         if(event.getInventory().getResult() != null) {
             ItemStack result = event.getInventory().getResult();
-            Player player = (Player) event.getViewers().get(0);
-            if(BoardItem.isBoardItem(result)) {
-                BoardItem boardItem = new BoardItem(result);
-                if(ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
-                        && !player.hasPermission("boardgames.recipe." + boardItem.getName())) {
-                    event.getInventory().setResult(null);
+            if(event.getViewers().size() > 0) {
+                Player player = (Player) event.getViewers().get(0);
+                if (BoardItem.isBoardItem(result)) {
+                    BoardItem boardItem = new BoardItem(result);
+                    if (ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
+                            && !player.hasPermission("boardgames.recipe." + boardItem.getName())) {
+                        event.getInventory().setResult(null);
+                    }
                 }
             }
         }
