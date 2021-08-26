@@ -106,7 +106,7 @@ public class MapManager {
 		for (Screen screen : game.getScreens()) {
 			if (screen.containsMapVal(mapVal)) {
 				// calculate position on board:
-				loc = screen.getPosition();
+				loc = new int[] {screen.getPosition()[0], screen.getPosition()[1]};
 				loc[screen.getDirection() % 2] = loc[screen.getDirection() % 2]
 						+ screen.getMapValsLocationOnScreen(mapVal)[0];
 				break;
