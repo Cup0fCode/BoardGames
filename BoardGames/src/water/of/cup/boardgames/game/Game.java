@@ -317,6 +317,10 @@ public abstract class Game {
 	public void setInGame() {
 		ingame = true;
 	}
+	
+	protected void setInGame(boolean inGame) {
+		this.ingame = inGame;
+	}
 
 	public boolean isIngame() {
 		return ingame;
