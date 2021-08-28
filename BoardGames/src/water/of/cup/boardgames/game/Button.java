@@ -15,10 +15,12 @@ public class Button {
 	private int[] location;
 	private int rotation;
 	private GameImage image;
-	private Boolean turnBased; // if true, button is only clickable when it is a player's turn
-	private Boolean renderTurnBased; // if true, button is only rendered when it is a player's turn
+	private boolean turnBased; // if true, button is only clickable when it is a player's turn
+	private boolean renderTurnBased; // if true, button is only rendered when it is a player's turn
+	private boolean canClickInvisible;
 	
-	private Boolean visible;
+	
+	private boolean visible;
 
 	private Screen screen;
 
@@ -52,6 +54,7 @@ public class Button {
 		turnBased = false;
 		renderTurnBased = false;
 		visible = true;
+		canClickInvisible = false;
 	}
 
 	public void changeLocationByRotation() { // 14 / 2 + 14 - (14 + 8) / 2
@@ -69,7 +72,7 @@ public class Button {
 		if (!clickAble)
 			return false;
 
-		if (!visibleForPlayer(gamePlayer))
+		if (!canClickInvisible && !visibleForPlayer(gamePlayer))
 				return false;
 
 //		if (turnBased && !game.getTurn().equals(gamePlayer))
@@ -133,7 +136,7 @@ public class Button {
 	}
 
 	public boolean isVisibleForAll() {
-		return visibleForAll;
+		return visibleForAll && visible;
 	}
 
 	public void setVisibleForAll(boolean visibleForAll) {
@@ -185,5 +188,13 @@ public class Button {
 		rotation = rot;
 		image.setRotation(rot);
 		
+	}
+
+	public Boolean getCanClickInvisible() {
+		return canClickInvisible;
+	}
+
+	public void setCanClickInvisible(Boolean canClickInvisible) {
+		this.canClickInvisible = canClickInvisible;
 	}
 }

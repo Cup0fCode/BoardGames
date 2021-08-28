@@ -126,6 +126,8 @@ public class Screen {
 	public void renderScreen() {
 		for (int mapVal : getMapVals()) {
 			GameMap map = game.getGameMapByMapVal(mapVal);
+			if (map == null)
+				continue;
 			MapMeta mapMeta = map.getMapMeta();
 			MapView view = mapMeta.getMapView();
 			for (MapRenderer renderer : view.getRenderers())

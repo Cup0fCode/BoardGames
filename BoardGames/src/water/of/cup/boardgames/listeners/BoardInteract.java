@@ -1,6 +1,7 @@
 package water.of.cup.boardgames.listeners;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -33,6 +34,7 @@ public class BoardInteract implements Listener {
 
 	private BoardGames instance = BoardGames.getInstance();
 	private GameManager gameManager = instance.getGameManager();
+	private final HashMap<Player, Long> clickDelays = new HashMap<>();
 
 	@EventHandler
 	public void clickBoard(PlayerInteractEvent e) {
@@ -50,6 +52,16 @@ public class BoardInteract implements Listener {
 		// check hand to prevent double click
 		if (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (e.getHand().equals(EquipmentSlot.HAND)) {
+				return;
+			}
+		}
+
+		// Click delay
+		if(clickDelays.containsKey(player)) {
+			long currentTime = System.currentTimeMillis();
+			if(currentTime - clickDelays.get(player) >= ConfigUtil.BOARD_CLICK_DELAY.toInteger()) {
+				clickDelays.remove(player);
+			} else {
 				return;
 			}
 		}
@@ -218,6 +230,7 @@ public class BoardInteract implements Listener {
 					loc = new double[] { pos.getX(), pos.getY() };
 				}
 
+				clickDelays.put(player, System.currentTimeMillis());
 				game.click(player, loc, map);
 			} else {
 				game.displayGameInventory(player);

@@ -101,20 +101,24 @@ public class MapManager {
 
 	public int[] getMapValsLocationOnRotatedBoard(int mapVal) {
 		int[] loc = getMapValsLocationOnBoard(mapVal);
-
+		int tempRotation = rotation;
 		// check if screen contains mapval
 		for (Screen screen : game.getScreens()) {
 			if (screen.containsMapVal(mapVal)) {
 				// calculate position on board:
-				loc = screen.getPosition();
+				tempRotation = (rotation -screen.getDirection()) % 4;
+
+				loc = new int[] { screen.getPosition()[0], screen.getPosition()[1] };
+
 				loc[screen.getDirection() % 2] = loc[screen.getDirection() % 2]
 						+ screen.getMapValsLocationOnScreen(mapVal)[0];
+
 				break;
 			}
 		}
 
 		int i = 0;
-		while (i < rotation) {
+		while (i < tempRotation) {
 			i++;
 			loc = MathUtils.rotatePointAroundPoint90Degrees(new double[] { 0, 0 }, loc);
 		}
@@ -216,7 +220,7 @@ public class MapManager {
 				});
 			}
 	}
-	
+
 	public void renderBoard(Player player) {
 		for (int mapVal : getMapVals()) {
 			GameMap map = game.getGameMapByMapVal(mapVal);
@@ -253,7 +257,7 @@ public class MapManager {
 					}
 				});
 			}
-		
+
 	}
 
 	public void resetRenderers() {
