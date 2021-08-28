@@ -3,6 +3,7 @@ package water.of.cup.boardgames.config;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.game.MathUtils;
 import water.of.cup.boardgames.game.storage.StorageType;
 
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public enum ConfigUtil implements ConfigInterface {
     DB_PASS("settings.database.password", " "),
     DB_ENABLED("settings.database.enabled", "false"),
     DB_TRANSFERRED("settings.database.chesstransfer", "false"),
+    BOARD_CLICK_DELAY("settings.clickdelay", "0"),
 
     // GUI MESSAGES
     GUI_NEXT_PAGE("settings.messages.gui.nextpage", "&aNext Page"),
@@ -173,6 +175,13 @@ public enum ConfigUtil implements ConfigInterface {
         if(configString == null) return false;
 
         return configString.equals("true");
+    }
+
+    public int toInteger() {
+        if(MathUtils.isNumeric(this.toString())) {
+           return Integer.parseInt(this.toString());
+        }
+        return 0;
     }
 
     public static String translateTeamName(String teamName) {
