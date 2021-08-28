@@ -18,6 +18,7 @@ import water.of.cup.boardgames.game.storage.StorageType;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 public class bgCommands implements CommandExecutor {
 
@@ -57,19 +58,16 @@ public class bgCommands implements CommandExecutor {
 				return true;
 			}
 
-			if (args[0].equalsIgnoreCase("games")) {
-				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
-					return false;
+			if(permissions && ARG_PERMS.containsKey(args[0].toLowerCase(Locale.ROOT)) && !p.hasPermission(ARG_PERMS.get(args[0].toLowerCase(Locale.ROOT))))
+				return false;
 
+			if (args[0].equalsIgnoreCase("games")) {
 				p.sendMessage(ConfigUtil.CHAT_GAME_NAMES.toString());
 				for (String name : instance.getGameManager().getAltGameNames()) {
 					p.sendMessage(name);
 				}
 				
 			} else if (args[0].equalsIgnoreCase("board")) {
-				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
-					return false;
-
 				if (args.length == 2) {
 					String gameName = gameManager.getGameNameByAlt(args[1]);
 					Game game = gameManager.newGame(gameName, 0);
@@ -78,9 +76,6 @@ public class bgCommands implements CommandExecutor {
 					}
 				}
 			} else if (args[0].equalsIgnoreCase("stats")) {
-				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
-					return false;
-
 				if(args.length != 3) {
 					sendHelpMessage(p);
 					return false;
@@ -125,9 +120,6 @@ public class bgCommands implements CommandExecutor {
 
 				return true;
 			} else if (args[0].equalsIgnoreCase("leaderboard")) {
-				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
-					return false;
-
 				if(args.length < 2) {
 					sendHelpMessage(p);
 					return false;
@@ -198,9 +190,6 @@ public class bgCommands implements CommandExecutor {
 					count++;
 				}
 			} else if (args[0].equalsIgnoreCase("reload")) {
-				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
-					return false;
-
 				p.sendMessage(ConfigUtil.CHAT_RELOAD.toString());
 
 				instance.loadConfig();
