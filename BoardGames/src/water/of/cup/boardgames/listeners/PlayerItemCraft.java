@@ -21,7 +21,7 @@ public class PlayerItemCraft implements Listener {
                 if (BoardItem.isBoardItem(result)) {
                     BoardItem boardItem = new BoardItem(result);
                     if (ConfigUtil.PERMISSIONS_ENABLED.toBoolean()
-                            && !player.hasPermission("boardgames.recipe." + boardItem.getName())) {
+                            && !player.hasPermission("chessboard.recipe." + boardItem.getName())) {
                         event.getInventory().setResult(null);
                     }
                 }

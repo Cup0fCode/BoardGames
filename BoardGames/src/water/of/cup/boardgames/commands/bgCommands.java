@@ -18,6 +18,7 @@ import water.of.cup.boardgames.game.storage.StorageType;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 public class bgCommands implements CommandExecutor {
 
@@ -52,18 +53,15 @@ public class bgCommands implements CommandExecutor {
 				return true;
 			}
 
-			if (args[0].equalsIgnoreCase("give")) {
-				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
-					return false;
+			if(permissions && ARG_PERMS.containsKey(args[0].toLowerCase(Locale.ROOT)) && !p.hasPermission(ARG_PERMS.get(args[0].toLowerCase(Locale.ROOT))))
+				return false;
 
+			if (args[0].equalsIgnoreCase("give")) {
 				Game game = gameManager.newGame("Chess", 0);
 				if (game != null) {
 					p.getWorld().dropItem(p.getLocation(), game.getBoardItem());
 				}
 			} else if (args[0].equalsIgnoreCase("stats")) {
-				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
-					return false;
-
 				if(args.length != 2) {
 					sendHelpMessage(p);
 					return false;
@@ -108,9 +106,6 @@ public class bgCommands implements CommandExecutor {
 
 				return true;
 			} else if (args[0].equalsIgnoreCase("leaderboard")) {
-				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
-					return false;
-
 				if(!instance.hasStorage()) {
 					p.sendMessage(ConfigUtil.CHAT_NO_DB.toString());
 					return false;
@@ -176,9 +171,6 @@ public class bgCommands implements CommandExecutor {
 					count++;
 				}
 			} else if (args[0].equalsIgnoreCase("reload")) {
-				if(permissions && !p.hasPermission(ARG_PERMS.get(args[0])))
-					return false;
-
 				p.sendMessage(ConfigUtil.CHAT_RELOAD.toString());
 
 				instance.loadConfig();
