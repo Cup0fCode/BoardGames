@@ -1,6 +1,6 @@
 main: water.of.cup.boardgames.BoardGames
 name: BoardGames
-version: '1.0.10'
+version: '1.0.12'
 description: Adds board games to Minecraft.
 author: Nicholas Kopiwoda & Matt C.
 api-version: 1.16
