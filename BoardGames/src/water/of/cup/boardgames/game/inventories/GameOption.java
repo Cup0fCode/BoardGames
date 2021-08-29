@@ -105,6 +105,6 @@ public class GameOption {
         List<String> options = new ArrayList<>();
         options.add(ConfigUtil.GUI_WAGERITEMS_ENABLED_LABEL.toString());
         options.add(ConfigUtil.GUI_WAGERITEMS_DISABLED_LABEL.toString());
-        return new GameOption("trade", Material.CHEST, GameOptionType.TOGGLE, ConfigUtil.GUI_WAGERITEMS_LABEL.toString(), options.get(0), options);
+        return new GameOption("trade", Material.CHEST, GameOptionType.TOGGLE, ConfigUtil.GUI_WAGERITEMS_LABEL.toString(), options.get(1), options);
     }
 }
