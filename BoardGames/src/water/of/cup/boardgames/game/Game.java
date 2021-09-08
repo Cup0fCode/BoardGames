@@ -548,7 +548,12 @@ public abstract class Game {
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(BoardGames.getInstance(), new Runnable() {
 			@Override
 			public void run() {
-				placeBoard(loc, frotation, fmapVal);
+				try {
+					placeBoard(loc, frotation, fmapVal);
+				}
+				catch (java.lang.IllegalArgumentException e) {
+					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(BoardGames.getInstance(), this, 20);
+				}
 			}
 		}, 20);
 	}
