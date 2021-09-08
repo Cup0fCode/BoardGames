@@ -35,6 +35,10 @@ public class GameConfigLoader {
         loadDefaults();
     }
 
+    public static void unloadConfig() {
+        GAMES.clear();
+    }
+
     private static void loadRecipes() {
         for(String gameName : GAMES.keySet()) {
             Game game = GAMES.get(gameName);

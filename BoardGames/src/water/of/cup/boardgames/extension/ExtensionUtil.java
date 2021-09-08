@@ -80,7 +80,7 @@ public class ExtensionUtil {
                         BufferedImage image = ImageIO.read(is);
 
                         String fileName = getFileName(je.getName());
-                        ImageManager.addImage(fileName, image);
+                        BoardGames.getImageManager().addImage(fileName, image);
 
                         Bukkit.getLogger().info("[BoardGames] Loaded extension image: " + fileName);
                     }

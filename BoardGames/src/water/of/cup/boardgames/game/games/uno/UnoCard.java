@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game.games.uno;
 
+import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.image_handling.ImageManager;
 
@@ -25,8 +26,8 @@ public class UnoCard {
 	}
 	
 	public GameImage getGameImage() {
-		GameImage image = new GameImage(ImageManager.getImage("UNOCARD_" + color), 0);
-		image.addGameImage(new GameImage(ImageManager.getImage("UNOCARD_" + type), 0), new int[] {0,0});
+		GameImage image = new GameImage(BoardGames.getImageManager().getImage("UNOCARD_" + color), 0);
+		image.addGameImage(new GameImage(BoardGames.getImageManager().getImage("UNOCARD_" + type), 0), new int[] {0,0});
 		return image;
 	}
 	

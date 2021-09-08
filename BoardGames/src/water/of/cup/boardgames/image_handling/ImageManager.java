@@ -19,10 +19,14 @@ import water.of.cup.boardgames.extension.BoardGamesExtension;
 
 public class ImageManager {
 
-	private static final HashMap<String, BufferedImage> images = new HashMap<>(); //image name then image
+	private final HashMap<String, BufferedImage> images; //image name then image
+
+	public ImageManager() {
+		images = new HashMap<>();
+	}
 
 	@Nullable
-	public static BufferedImage getImage(String name) {
+	public BufferedImage getImage(String name) {
 		if(images.containsKey(name)) {
 			return images.get(name);
 		}
@@ -46,7 +50,7 @@ public class ImageManager {
 		}
 	}
 
-	public static void addImage(String name, BufferedImage image) {
+	public void addImage(String name, BufferedImage image) {
 		BufferedImage customImage = null;
 		if(getCustomImage(name) != null) {
 			try {
@@ -58,7 +62,7 @@ public class ImageManager {
 		images.put(name, customImage != null ? customImage : image);
 	}
 
-	private static InputStream getCustomImage(String name) {
+	private InputStream getCustomImage(String name) {
 		File customImages = new File(BoardGames.getInstance().getDataFolder() + "/custom_images");
 		InputStream is = null;
 		if(customImages.exists()) {
@@ -72,5 +76,9 @@ public class ImageManager {
 			}
 		}
 		return is;
+	}
+
+	public void clearImages() {
+		images.clear();
 	}
 }

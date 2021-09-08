@@ -3,6 +3,7 @@ package water.of.cup.boardgames.game.games.chess;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.image_handling.ImageManager;
 import water.of.cup.boardgames.image_handling.ImageUtils;
 
@@ -336,7 +337,7 @@ public enum ChessPiece {
 	}
 	
 	public BufferedImage getImage() {
-		BufferedImage image =  ImageManager.getImage(this.toString());
+		BufferedImage image =  BoardGames.getImageManager().getImage(this.toString());
 		if (this.getColor() == "BLACK")
 			image = ImageUtils.rotateImage(image, 2);
 		return image;
