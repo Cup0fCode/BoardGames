@@ -27,7 +27,6 @@ import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
-import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
 import water.of.cup.boardgames.game.maps.GameMap;
 
 public class BoardInteract implements Listener {
@@ -87,7 +86,7 @@ public class BoardInteract implements Listener {
 			ItemFrame frame = (ItemFrame) entity;
 			ItemStack item = frame.getItem();
 			boolean isGameMap = GameMap.isGameMap(item);
-			if (isGameMap || ChessBoardsUtil.isChessBoardsMap(item)) {
+			if (isGameMap) {
 				// Game found
 
 				GameMap gameMap = null;
@@ -138,7 +137,7 @@ public class BoardInteract implements Listener {
 			if(newGame == null)
 				return;
 
-			ChessBoardsUtil.removeChessBoard(gameFrame);
+//			ChessBoardsUtil.removeChessBoard(gameFrame);
 
 			Location loc = gameFrame.getLocation().getBlock().getLocation();
 			newGame.replace(loc, newGame.getRotation(), 1);

@@ -20,19 +20,17 @@ import net.milkbowl.vault.economy.Economy;
 import water.of.cup.boardgames.commands.bgCommandsTabCompleter;
 import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.config.GameConfigLoader;
-import water.of.cup.boardgames.extension.ExtensionManager;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
-import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
-import water.of.cup.boardgames.game.games.uno.Uno;
+import water.of.cup.boardgames.game.games.blackjack.Blackjack;
+import water.of.cup.boardgames.game.games.hilo.HiLo;
+import water.of.cup.boardgames.game.games.mines.Mines;
+import water.of.cup.boardgames.game.games.plinko.Plinko;
+import water.of.cup.boardgames.game.games.poker.Poker;
+import water.of.cup.boardgames.game.games.roulette.Roulette;
+import water.of.cup.boardgames.game.games.slots.slotsgames.LibertyBell;
+import water.of.cup.boardgames.game.games.slots.slotsgames.MoneyHoney;
 import water.of.cup.boardgames.commands.bgCommands;
-import water.of.cup.boardgames.game.games.checkers.Checkers;
-import water.of.cup.boardgames.game.games.chess.Chess;
-import water.of.cup.boardgames.game.games.connectfour.ConnectFour;
-import water.of.cup.boardgames.game.games.conways_game_of_life.ConwaysGameOfLife;
-import water.of.cup.boardgames.game.games.minesweaper.MineSweeper;
-import water.of.cup.boardgames.game.games.sudoku.Sudoku;
-import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.npcs.GameNPCRegistry;
@@ -53,7 +51,6 @@ public class BoardGames extends JavaPlugin {
 	//private DataSource dataStore;
 
 	private StorageManager storageManager;
-	private ExtensionManager extensionManager;
 	private static ImageManager IMAGE_MANAGER;
 
 	private static boolean hasCitizens;
@@ -90,10 +87,10 @@ public class BoardGames extends JavaPlugin {
 
 		setupCitizens();
 
-		gameManager.registerGames(Sudoku.class, Chess.class, ConwaysGameOfLife.class, TicTacToe.class, ConnectFour.class, Checkers.class, MineSweeper.class, Uno.class);
+		gameManager.registerGames(LibertyBell.class, Mines.class, Poker.class, MoneyHoney.class, HiLo.class, Plinko.class, Blackjack.class, Roulette.class);
 
 		// Register extension board games
-		loadExtensionManager();
+//		loadExtensionManager();
 
 		getCommand("bg").setExecutor(new bgCommands());
 		getCommand("bg").setTabCompleter(new bgCommandsTabCompleter());
@@ -119,7 +116,7 @@ public class BoardGames extends JavaPlugin {
 		setupPlaceholders();
 
 		// Load in old chess games
-		ChessBoardsUtil.loadGames();
+//		ChessBoardsUtil.loadGames();
 
 		//GameManager.loadGames();
 
@@ -305,11 +302,6 @@ public class BoardGames extends JavaPlugin {
 
 	public boolean hasStorage() {
 		return this.storageManager != null && ConfigUtil.DB_ENABLED.toBoolean();
-	}
-
-	private void loadExtensionManager() {
-		this.extensionManager = new ExtensionManager();
-		this.extensionManager.loadExtensions();
 	}
 
 	public static boolean hasCitizens() {

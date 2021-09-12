@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
 import water.of.cup.boardgames.game.maps.GameMap;
 
 import java.util.Collection;
@@ -27,7 +26,7 @@ public class BlockBreak implements Listener {
                 ItemStack item = frame.getItem();
 
                 // TODO: check if game is in manager
-                if (GameMap.isGameMap(item) || ChessBoardsUtil.isChessBoardsMap(item)) {
+                if (GameMap.isGameMap(item)) {
                     event.setCancelled(true);
                 }
             }

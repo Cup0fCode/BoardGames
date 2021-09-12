@@ -11,7 +11,6 @@ import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.BoardItem;
 import water.of.cup.boardgames.game.Game;
 import water.of.cup.boardgames.game.GameManager;
-import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
 
 public class BlockPlace implements Listener {
 
@@ -28,15 +27,10 @@ public class BlockPlace implements Listener {
 		int rotation = ((int) ((yaw - 45) / 90 + 3) % 4);
 
 		// check if itemStack is boardItem
-		if (!BoardItem.isBoardItem(itemStack) && !ChessBoardsUtil.isChessBoardsItem(itemStack))
+		if (!BoardItem.isBoardItem(itemStack))
 			return;
 
-		Game game;
-		if(ChessBoardsUtil.isChessBoardsItem(itemStack)) {
-			game = gameManager.newGame("Chess", rotation);
-		} else {
-			game = gameManager.newGame(new BoardItem(itemStack), rotation);
-		}
+		Game game = gameManager.newGame(new BoardItem(itemStack), rotation);
 
 		
 //		if (itemStack.getType() == Material.OAK_SAPLING)

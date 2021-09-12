@@ -7,8 +7,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.config.ConfigUtil;
-import water.of.cup.boardgames.game.Game;
-import water.of.cup.boardgames.game.games.chess.OldChessPlayer;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -74,10 +72,6 @@ public class StorageManager {
 		}
 
 		this.refreshGameStorageColumns(gameStorage);
-
-		if(gameStorage.getTableName().equals("chess") && !ConfigUtil.DB_TRANSFERRED.toBoolean()) {
-			this.transferChessBoardsData();
-		}
 	}
 
 	private void refreshGameStorageColumns(GameStorage gameStorage) {
@@ -437,71 +431,5 @@ public class StorageManager {
 	public void closeConnection() {
 		if (ds != null)
 			ds.close();
-	}
-
-	// ChessBoards Only
-	private ArrayList<OldChessPlayer> getOldChessPlayers() {
-		CompletableFuture<ArrayList<OldChessPlayer>> future = new CompletableFuture<>();
-		ArrayList<OldChessPlayer> players = new ArrayList<>();
-
-		executorService.submit(() -> {
-			try {
-				try (Connection con = getConnection();
-					 PreparedStatement sql = con.prepareStatement("SELECT * FROM chess_players;");
-					 ResultSet playerData = sql.executeQuery();) {
-
-					while (playerData.next()) {
-						OldChessPlayer newPlayer = new OldChessPlayer(playerData);
-						players.add(newPlayer);
-					}
-				}
-
-				future.complete(players);
-			} catch (SQLException throwables) {
-				throwables.printStackTrace();
-				future.complete(null);
-			}
-		});
-
-		return future.join();
-	}
-
-	private void insertOldChessPlayer(OldChessPlayer player) {
-		String createPlayerSql = "INSERT INTO `chess` (uuid, wins, losses, ties, rating, rating_deviation, rating_volatility) VALUES "
-				+ "(?,?,?,?,?,?,?);";
-
-		executorService.submit(() -> {
-			try {
-				try (Connection con = getConnection();
-					 PreparedStatement sql = con.prepareStatement(createPlayerSql);) {
-
-					sql.setString(1, player.getUuid());
-					sql.setInt(2, player.getWins());
-					sql.setInt(3, player.getLosses());
-					sql.setInt(4, player.getTies());
-					sql.setDouble(5, player.getRating());
-					sql.setDouble(6, player.getRatingDeviation());
-					sql.setDouble(7, player.getVolatility());
-
-					sql.execute();
-				}
-			} catch (SQLException throwables) {
-				throwables.printStackTrace();
-			}
-		});
-	}
-
-	private void transferChessBoardsData() {
-		if(!tableExists("chess_players")) return;
-		if(!tableExists("chess")) return;
-
-		ArrayList<OldChessPlayer> oldChessPlayers = getOldChessPlayers();
-		if(oldChessPlayers == null) return;
-
-		for(OldChessPlayer oldChessPlayer : oldChessPlayers) {
-			insertOldChessPlayer(oldChessPlayer);
-		}
-
-		ConfigUtil.DB_TRANSFERRED.setValue("true");
 	}
 }

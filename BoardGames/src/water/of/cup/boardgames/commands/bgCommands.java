@@ -183,7 +183,7 @@ public class bgCommands implements CommandExecutor {
 
 				int count = 1 + (page * 10);;
 
-				p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_HEADER.buildString(tempGame.getAltName(), orderBy.getKey()) + " (" + (page + 1) + "/"
+				p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_HEADER.buildStringLeaderboard(tempGame.getAltName(), orderBy.getKey()) + " (" + (page + 1) + "/"
 						+ numOfPages + ")");
 				for(OfflinePlayer player : topPlayers.keySet()) {
 					p.sendMessage(ConfigUtil.CHAT_LEADERBOARD_FORMAT.buildLeaderBoardFormat(count, player.getName(),  topPlayers.get(player).get(orderBy) + ""));
