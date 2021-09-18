@@ -1,6 +1,7 @@
 package water.of.cup.boardgames.game.games.chess;
 
 import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.storage.BoardGamesStorageType;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.storage.StorageType;
 
@@ -18,12 +19,12 @@ public class ChessStorage extends GameStorage {
     @Override
     protected StorageType[] getGameStores() {
         return new StorageType[] {
-                StorageType.WINS,
-                StorageType.LOSSES,
-                StorageType.TIES,
-                StorageType.Rating,
-                StorageType.RatingDeviation,
-                StorageType.RatingVolatility,
+                BoardGamesStorageType.WINS,
+                BoardGamesStorageType.LOSSES,
+                BoardGamesStorageType.TIES,
+                BoardGamesStorageType.Rating,
+                BoardGamesStorageType.RatingDeviation,
+                BoardGamesStorageType.RatingVolatility,
         };
     }
 }

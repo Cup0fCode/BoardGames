@@ -3,6 +3,7 @@ package water.of.cup.boardgames.game;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 
+import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.image_handling.ImageManager;
 import water.of.cup.boardgames.image_handling.ImageUtils;
 
@@ -33,7 +34,7 @@ public class GameImage {
 	}
 	
 	public void setImage(String imageName) {
-		BufferedImage image = ImageManager.getImage(imageName);
+		BufferedImage image = BoardGames.getImageManager().getImage(imageName);
 		assert image != null;
 		this.image = ImageUtils.copyImage(image);
 	}

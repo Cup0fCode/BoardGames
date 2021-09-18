@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import water.of.cup.boardgames.config.ConfigUtil;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -23,6 +24,10 @@ public class InventoryUtils {
 
     public static ItemStack getPlayerHead(Player player, boolean enchanted) {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD, 1);
+
+        if(!ConfigUtil.LOAD_SKULLS.toBoolean())
+            return item;
+
         ItemMeta meta = item.getItemMeta();
 
         if(enchanted) {
@@ -45,6 +50,10 @@ public class InventoryUtils {
 
     public static ItemStack getCustomTextureHead(String value) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1, (short) 3);
+
+        if(!ConfigUtil.LOAD_SKULLS.toBoolean())
+            return head;
+
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         GameProfile profile = new GameProfile(UUID.randomUUID(), "");
         profile.getProperties().put("textures", new Property("textures", value));

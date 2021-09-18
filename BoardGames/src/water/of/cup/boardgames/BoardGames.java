@@ -29,6 +29,7 @@ import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.npcs.GameNPCRegistry;
 import water.of.cup.boardgames.game.storage.StorageManager;
+import water.of.cup.boardgames.image_handling.ImageManager;
 import water.of.cup.boardgames.listeners.*;
 import water.of.cup.boardgames.metrics.Metrics;
 import water.of.cup.boardgames.placeholder.BoardGamesPlaceholder;
@@ -44,6 +45,7 @@ public class BoardGames extends JavaPlugin {
 	//private DataSource dataStore;
 
 	private StorageManager storageManager;
+	private static ImageManager IMAGE_MANAGER;
 
 	private static boolean hasCitizens;
 
@@ -51,6 +53,9 @@ public class BoardGames extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
+
+		//Init imageManager
+		IMAGE_MANAGER = new ImageManager();
 
 		// Config loads database settings
 		loadConfig();
@@ -121,6 +126,12 @@ public class BoardGames extends JavaPlugin {
 
 		// TODO: Fix/Add save games
 //		gameManager.saveGames();
+
+		// Clear image cache
+		IMAGE_MANAGER.clearImages();
+
+		// Unload games
+		GameConfigLoader.unloadConfig();
 
 		// Disconnect from database
 		if(storageManager != null)
@@ -287,6 +298,10 @@ public class BoardGames extends JavaPlugin {
 
 	public static boolean hasCitizens() {
 		return hasCitizens;
+	}
+
+	public static ImageManager getImageManager() {
+		return IMAGE_MANAGER;
 	}
 	
 //	public DataSource getDataStore() {

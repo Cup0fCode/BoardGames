@@ -3,6 +3,7 @@ package water.of.cup.boardgames.game;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.maps.Screen;
 import water.of.cup.boardgames.image_handling.ImageManager;
 
@@ -27,7 +28,7 @@ public class Button {
 	// public Button(Game game, BufferedImage image, int[] loc, String name, )
 
 	public Button(Game game, String imageName, int[] location, int rotation, String name) {
-		image = new GameImage(ImageManager.getImage(imageName), rotation);
+		image = new GameImage(BoardGames.getImageManager().getImage(imageName), rotation);
 		visiblePlayers = new ArrayList<GamePlayer>();
 		visibleForAll = true;
 		this.game = game;
@@ -35,7 +36,7 @@ public class Button {
 		this.clickAble = false;
 		this.location = location;
 		this.rotation = rotation;
-		image = new GameImage(ImageManager.getImage(imageName), rotation);
+		image = new GameImage(BoardGames.getImageManager().getImage(imageName), rotation);
 		turnBased = false;
 		renderTurnBased = false;
 		visible = true;
@@ -128,7 +129,7 @@ public class Button {
 	}
 
 	public void setImage(String imageName) {
-		image = new GameImage(ImageManager.getImage(imageName), rotation);
+		image = new GameImage(BoardGames.getImageManager().getImage(imageName), rotation);
 	}
 	
 	public void setVisible(boolean visible) {
