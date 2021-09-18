@@ -24,6 +24,7 @@ public enum ConfigUtil implements ConfigInterface {
     DB_ENABLED("settings.database.enabled", "false"),
     DB_TRANSFERRED("settings.database.chesstransfer", "false"),
     BOARD_CLICK_DELAY("settings.clickdelay", "0"),
+    LOAD_SKULLS("settings.loadskulls", "true"),
 
     // GUI MESSAGES
     GUI_NEXT_PAGE("settings.messages.gui.nextpage", "&aNext Page"),

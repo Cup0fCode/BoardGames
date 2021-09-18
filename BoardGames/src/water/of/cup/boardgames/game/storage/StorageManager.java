@@ -26,14 +26,14 @@ public class StorageManager {
 	private final ExecutorService executorService = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
 
 	public StorageManager() {
-		this.gameStores = new ArrayList<>();
+		gameStores = new ArrayList<>();
 
 		initialize();
 	}
 
 	public void addGameStorage(GameStorage gameStorage) {
 		if (!hasGameStore(gameStorage)) {
-			this.gameStores.add(gameStorage);
+			gameStores.add(gameStorage);
 
 			gameStorage.initializeConfig();
 
@@ -403,7 +403,7 @@ public class StorageManager {
 			Object result = resultSet.getObject(storageType.getKey());
 
 			if (result != null) {
-				if (storageType == StorageType.BEST_TIME) {
+				if (storageType.getKey().equals("best_time")) {
 					result = (int) ((double) result / 60) + ":" + (int) ((double) result % 60);
 				}
 				playerStats.put(storageType, result.toString());
