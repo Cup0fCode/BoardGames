@@ -5,8 +5,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.GamePlayer;
+import water.of.cup.boardgames.config.ConfigUtil;
 
 public class PokerTurnTimer extends BukkitRunnable {
 

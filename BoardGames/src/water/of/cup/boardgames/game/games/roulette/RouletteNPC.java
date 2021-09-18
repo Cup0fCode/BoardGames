@@ -1,8 +1,8 @@
 package water.of.cup.boardgames.game.games.roulette;
 
-import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.npcs.NPCSkin;
+import water.of.cup.boardgames.config.ConfigUtil;
 
 public class RouletteNPC extends GameNPC {
 

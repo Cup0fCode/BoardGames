@@ -5,10 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.*;
-import water.of.cup.boardgames.game.games.gameutils.EconomyUtils;
-import water.of.cup.boardgames.game.games.gameutils.cards.Card;
-import water.of.cup.boardgames.game.games.gameutils.cards.Deck;
-import water.of.cup.boardgames.game.games.gameutils.cards.Hand;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
 import water.of.cup.boardgames.game.inventories.GameOptionType;
@@ -16,6 +12,11 @@ import water.of.cup.boardgames.game.inventories.number.GameNumberInventory;
 import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.config.ConfigUtil;
+import water.of.cup.boardgames.game.games.gameutils.EconomyUtils;
+import water.of.cup.boardgames.game.games.gameutils.cards.Card;
+import water.of.cup.boardgames.game.games.gameutils.cards.Deck;
+import water.of.cup.boardgames.game.games.gameutils.cards.Hand;
+import water.of.cup.boardgames.game.storage.CasinoGamesStorageType;
 
 import java.util.ArrayList;
 
@@ -493,7 +494,7 @@ public class Blackjack extends Game {
 	@Override
 	protected GameStorage getGameStorage() {
 		// TODO Auto-generated method stub
-		return null;
+		return new BlackjackStorage(this);
 	}
 
 	@Override
@@ -723,11 +724,12 @@ public class Blackjack extends Game {
 				if (dealerScore > score) {
 					// dealer wins
 					this.dealerSendMessage(n, ConfigUtil.CHAT_BLACKJACK_PLAYERLOSE.buildString(score, dealerScore));
-
+					CasinoGamesStorageType.updateGameStorage(this, gamePlayerAtLocation[n], playerBets[n] * -1);
 					continue;
 				}
 			}
 			EconomyUtils.playerGiveMoney(gamePlayerAtLocation[n].getPlayer(), payout);
+			CasinoGamesStorageType.updateGameStorage(this, gamePlayerAtLocation[n], payout);
 			this.dealerSendMessage(n, ConfigUtil.CHAT_BLACKJACK_PLAYERWINBET.buildString(payout + ""));
 
 		}

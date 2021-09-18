@@ -6,7 +6,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
-import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.Button;
 import water.of.cup.boardgames.game.Clock;
 import water.of.cup.boardgames.game.Game;
@@ -15,6 +14,8 @@ import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.MapData;
 import water.of.cup.boardgames.game.maps.Screen;
 import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.config.ConfigUtil;
+import water.of.cup.boardgames.game.storage.CasinoGamesStorageType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,6 +108,7 @@ public abstract class SlotsGame extends Game {
 		// give payout
 		Player player = teamManager.getTurnPlayer().getPlayer();
 		instance.getEconomy().depositPlayer(player, payout);
+		CasinoGamesStorageType.updateGameStorage(this, teamManager.getTurnPlayer(), payout == 0 ? initialBet * -1 : payout);
 		player.sendMessage(ConfigUtil.CHAT_SLOTS_WIN.buildString(payout + ""));
 //		player.sendMessage("Win Ratio: " + winRatio);
 //		player.sendMessage("Average Win Payout: " + getAverageWinPayout());
@@ -267,7 +269,7 @@ public abstract class SlotsGame extends Game {
 	@Override
 	protected GameStorage getGameStorage() {
 		// TODO Auto-generated method stub
-		return null;
+		return new SlotsStorageType(this);
 	}
 
 	@Override

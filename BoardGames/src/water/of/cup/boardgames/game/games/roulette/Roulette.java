@@ -4,19 +4,19 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
-import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.*;
-import water.of.cup.boardgames.game.games.gameutils.EconomyUtils;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
 import water.of.cup.boardgames.game.inventories.GameOptionType;
 import water.of.cup.boardgames.game.inventories.number.GameNumberInventory;
 import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.config.ConfigUtil;
+import water.of.cup.boardgames.game.games.gameutils.EconomyUtils;
+import water.of.cup.boardgames.game.storage.CasinoGamesStorageType;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Roulette extends Game {
@@ -284,7 +284,7 @@ public class Roulette extends Game {
 	@Override
 	protected GameStorage getGameStorage() {
 		// TODO Auto-generated method stub
-		return null;
+		return new RouletteStorageType(this);
 	}
 
 	@Override
@@ -387,9 +387,11 @@ public class Roulette extends Game {
 		for (GamePlayer player : playerBets.keySet()) {
 			ArrayList<RouletteBet> bets = playerBets.get(player);
 			double total = 0;
+			double betAmount = 0;
 			for (RouletteBet bet : bets) {
 				double win = bet.getWin(spinnerVal);
 				total += win;
+				betAmount += bet.getAmount();
 				if (win == 0) {
 					Button b = bet.getButton();
 					betButtons.remove(b);
@@ -398,6 +400,7 @@ public class Roulette extends Game {
 			}
 
 			player.getPlayer().sendMessage(ConfigUtil.CHAT_ROULETTE_WIN.buildString(total + ""));
+			CasinoGamesStorageType.updateGameStorage(this, player, total == 0 ? betAmount * -1 : total);
 			EconomyUtils.playerGiveMoney(player.getPlayer(), total);
 		}
 		mapManager.renderBoard();

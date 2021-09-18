@@ -12,6 +12,7 @@ import water.of.cup.boardgames.game.maps.MapData;
 import water.of.cup.boardgames.game.maps.Screen;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.config.ConfigUtil;
+import water.of.cup.boardgames.game.storage.CasinoGamesStorageType;
 
 import java.util.ArrayList;
 
@@ -173,7 +174,7 @@ public class Plinko extends Game {
 	@Override
 	protected GameStorage getGameStorage() {
 		// TODO Auto-generated method stub
-		return null;
+		return new PlinkoStorage(this);
 	}
 
 	@Override
@@ -211,6 +212,7 @@ public class Plinko extends Game {
 		// TODO get bet multiplier
 		teamManager.getTurnPlayer().getPlayer().sendMessage(ConfigUtil.CHAT_PLINKO_WIN.buildString(bet + ""));
 		instance.getEconomy().depositPlayer(teamManager.getTurnPlayer().getPlayer(), bet);
+		CasinoGamesStorageType.updateGameStorage(this, teamManager.getTurnPlayer(), bet);
 		endGame(teamManager.getTurnPlayer());
 
 	}

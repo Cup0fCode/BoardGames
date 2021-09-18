@@ -4,17 +4,18 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
-import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.*;
-import water.of.cup.boardgames.game.games.gameutils.cards.Card;
-import water.of.cup.boardgames.game.games.gameutils.cards.Deck;
-import water.of.cup.boardgames.game.games.gameutils.cards.Hand;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
 import water.of.cup.boardgames.game.inventories.GameOptionType;
 import water.of.cup.boardgames.game.inventories.number.GameNumberInventory;
 import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.storage.GameStorage;
+import water.of.cup.boardgames.config.ConfigUtil;
+import water.of.cup.boardgames.game.games.gameutils.cards.Card;
+import water.of.cup.boardgames.game.games.gameutils.cards.Deck;
+import water.of.cup.boardgames.game.games.gameutils.cards.Hand;
+import water.of.cup.boardgames.game.storage.CasinoGamesStorageType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -436,7 +437,7 @@ public class Poker extends Game {
 
     @Override
     protected GameStorage getGameStorage() {
-        return null;
+        return new PokerStorageType(this);
     }
 
     @Override
@@ -614,6 +615,8 @@ public class Poker extends Game {
         // Add their bet to the pot
         if(this.playerBets.containsKey(gamePlayer) && this.playerBets.get(gamePlayer) > 0) {
             gamePot += this.playerBets.get(gamePlayer);
+
+            CasinoGamesStorageType.updateGameStorage(this, gamePlayer, this.playerBets.get(gamePlayer) * -1);
         }
 
         this.playerBets.remove(gamePlayer);
@@ -758,6 +761,14 @@ public class Poker extends Game {
         // Send money to players
         for(GamePlayer inGamePlayer : finalPlayers.keySet()) {
             instance.getEconomy().depositPlayer(inGamePlayer.getPlayer(), finalPlayers.get(inGamePlayer));
+            CasinoGamesStorageType.updateGameStorage(this, inGamePlayer, finalPlayers.get(inGamePlayer));
+        }
+
+        // Everyone that lost money
+        for(GamePlayer gamePlayer : playerBets.keySet()) {
+            if(!finalPlayers.containsKey(gamePlayer)) {
+                CasinoGamesStorageType.updateGameStorage(this, gamePlayer, playerBets.get(gamePlayer) * -1);
+            }
         }
 
         // Show cards

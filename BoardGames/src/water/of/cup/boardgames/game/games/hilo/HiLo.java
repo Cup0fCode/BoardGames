@@ -5,11 +5,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.*;
-import water.of.cup.boardgames.game.games.gameutils.cards.Card;
-import water.of.cup.boardgames.game.games.gameutils.cards.Deck;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.config.ConfigUtil;
+import water.of.cup.boardgames.game.games.gameutils.cards.Card;
+import water.of.cup.boardgames.game.games.gameutils.cards.Deck;
+import water.of.cup.boardgames.game.storage.CasinoGamesStorageType;
 
 import java.util.ArrayList;
 
@@ -102,6 +103,7 @@ public class HiLo extends Game {
 		} else {
 			// loss
 			teamManager.getTurnPlayer().getPlayer().sendMessage(ConfigUtil.CHAT_HILO_LOSE.buildString(bet + ""));
+			CasinoGamesStorageType.updateGameStorage(this, teamManager.getTurnPlayer(), bet * -1);
 			endGame(null);
 		}
 		
@@ -115,6 +117,7 @@ public class HiLo extends Game {
 	private void cashOut() {
 		teamManager.getTurnPlayer().getPlayer().sendMessage(ConfigUtil.CHAT_HILO_WIN.buildString(bet + ""));
 		instance.getEconomy().depositPlayer(teamManager.getTurnPlayer().getPlayer(), bet);
+		CasinoGamesStorageType.updateGameStorage(this, teamManager.getTurnPlayer(), bet);
 		endGame(teamManager.getTurnPlayer());
 	}
 
@@ -164,7 +167,7 @@ public class HiLo extends Game {
 	@Override
 	protected GameStorage getGameStorage() {
 		// TODO Auto-generated method stub
-		return null;
+		return new HiLoStorage(this);
 	}
 
 	@Override
