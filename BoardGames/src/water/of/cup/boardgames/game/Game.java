@@ -29,6 +29,7 @@ import water.of.cup.boardgames.game.maps.MapData;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.maps.Screen;
 import water.of.cup.boardgames.game.npcs.GameNPC;
+import water.of.cup.boardgames.game.storage.BoardGamesStorageType;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.storage.StorageType;
 import water.of.cup.boardgames.game.teams.TeamManager;
@@ -694,8 +695,8 @@ public abstract class Game {
 		teamManager.removeTeamByPlayer(player);
 
 		if (hasGameStorage()) {
-			if (gameStorage.canExecute(StorageType.LOSSES)) {
-				gameStorage.updateData(player, StorageType.LOSSES, 1);
+			if (gameStorage.canExecute(BoardGamesStorageType.LOSSES)) {
+				gameStorage.updateData(player, BoardGamesStorageType.LOSSES, 1);
 			}
 		}
 
@@ -715,7 +716,7 @@ public abstract class Game {
 			return;
 
 		// update ratings
-		if (gameStorage.canExecute(StorageType.Rating)) {
+		if (gameStorage.canExecute(BoardGamesStorageType.Rating)) {
 			if (teamManager.getGamePlayers().size() == 2) {
 
 				GamePlayer winner = teamManager.getGamePlayers().get(0);
@@ -731,34 +732,34 @@ public abstract class Game {
 
 		if (gamePlayerWinner == null) {
 			if (teamManager.getGamePlayers().size() == 1) {
-				gameStorage.updateData(teamManager.getGamePlayers().get(0).getPlayer(), StorageType.LOSSES, 1);
+				gameStorage.updateData(teamManager.getGamePlayers().get(0).getPlayer(), BoardGamesStorageType.LOSSES, 1);
 				return;
 			}
 
 			for (GamePlayer player : teamManager.getGamePlayers()) {
-				gameStorage.updateData(player.getPlayer(), StorageType.TIES, 1);
+				gameStorage.updateData(player.getPlayer(), BoardGamesStorageType.TIES, 1);
 			}
 			return;
 		}
 
-		gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.WINS, 1);
+		gameStorage.updateData(gamePlayerWinner.getPlayer(), BoardGamesStorageType.WINS, 1);
 
-		if (gameStorage.canExecute(StorageType.BEST_TIME)) {
+		if (gameStorage.canExecute(BoardGamesStorageType.BEST_TIME)) {
 			LinkedHashMap<StorageType, Object> playerStats = BoardGames.getInstance().getStorageManager()
 					.fetchPlayerStats(gamePlayerWinner.getPlayer(), getGameStore(), false);
 			Double time = clock.getPlayerTimes().get(gamePlayerWinner);
 
 			double bestTime = 0;
-			if(playerStats != null && playerStats.containsKey(StorageType.BEST_TIME)) bestTime = (Double) playerStats.get(StorageType.BEST_TIME);
+			if(playerStats != null && playerStats.containsKey(BoardGamesStorageType.BEST_TIME)) bestTime = (Double) playerStats.get(BoardGamesStorageType.BEST_TIME);
 			if (bestTime <= 0 || bestTime > time)
-				gameStorage.setData(gamePlayerWinner.getPlayer(), StorageType.BEST_TIME, time);
+				gameStorage.setData(gamePlayerWinner.getPlayer(), BoardGamesStorageType.BEST_TIME, time);
 		}
 
 		for (GamePlayer player : teamManager.getGamePlayers()) {
 			if (player.getPlayer().getName().equals(gamePlayerWinner.getPlayer().getName()))
 				continue;
 
-			gameStorage.updateData(player.getPlayer(), StorageType.LOSSES, 1);
+			gameStorage.updateData(player.getPlayer(), BoardGamesStorageType.LOSSES, 1);
 		}
 	}
 
@@ -797,22 +798,22 @@ public abstract class Game {
 		LinkedHashMap<StorageType, Object> loserStats = BoardGames.getInstance().getStorageManager()
 				.fetchPlayerStats(loser.getPlayer(), getGameStore(), false);
 
-		boolean isFirstWinner = winnerStats == null || winnerStats.get(StorageType.Rating) == null;
-		if (isFirstWinner || (double) winnerStats.get(StorageType.Rating) <= 0.1) {
+		boolean isFirstWinner = winnerStats == null || winnerStats.get(BoardGamesStorageType.Rating) == null;
+		if (isFirstWinner || (double) winnerStats.get(BoardGamesStorageType.Rating) <= 0.1) {
 			ratingWinner = new Rating(winnerUUID, rc);
 		} else {
-			ratingWinner = new Rating(winnerUUID, rc, (double) winnerStats.get(StorageType.Rating),
-					(double) winnerStats.get(StorageType.RatingDeviation),
-					(double) winnerStats.get(StorageType.RatingVolatility));
+			ratingWinner = new Rating(winnerUUID, rc, (double) winnerStats.get(BoardGamesStorageType.Rating),
+					(double) winnerStats.get(BoardGamesStorageType.RatingDeviation),
+					(double) winnerStats.get(BoardGamesStorageType.RatingVolatility));
 		}
 
-		boolean isFirstLoser = loserStats == null || loserStats.get(StorageType.Rating) == null;
-		if (isFirstLoser || (double) loserStats.get(StorageType.Rating) <= 0.1) {
+		boolean isFirstLoser = loserStats == null || loserStats.get(BoardGamesStorageType.Rating) == null;
+		if (isFirstLoser || (double) loserStats.get(BoardGamesStorageType.Rating) <= 0.1) {
 			ratingLoser = new Rating(loserUUID, rc);
 		} else {
-			ratingLoser = new Rating(loserUUID, rc, (double) loserStats.get(StorageType.Rating),
-					(double) loserStats.get(StorageType.RatingDeviation),
-					(double) loserStats.get(StorageType.RatingVolatility));
+			ratingLoser = new Rating(loserUUID, rc, (double) loserStats.get(BoardGamesStorageType.Rating),
+					(double) loserStats.get(BoardGamesStorageType.RatingDeviation),
+					(double) loserStats.get(BoardGamesStorageType.RatingVolatility));
 		}
 
 		water.of.cup.boardgames.game.glicko2.RatingPeriodResults rpr = new RatingPeriodResults();
@@ -826,13 +827,13 @@ public abstract class Game {
 		}
 		rc.updateRatings(rpr);
 
-		gameStorage.setData(winner.getPlayer(), StorageType.Rating, ratingWinner.getRating());
-		gameStorage.setData(winner.getPlayer(), StorageType.RatingDeviation, ratingWinner.getRatingDeviation());
-		gameStorage.setData(winner.getPlayer(), StorageType.RatingVolatility, ratingWinner.getVolatility());
+		gameStorage.setData(winner.getPlayer(), BoardGamesStorageType.Rating, ratingWinner.getRating());
+		gameStorage.setData(winner.getPlayer(), BoardGamesStorageType.RatingDeviation, ratingWinner.getRatingDeviation());
+		gameStorage.setData(winner.getPlayer(), BoardGamesStorageType.RatingVolatility, ratingWinner.getVolatility());
 
-		gameStorage.setData(loser.getPlayer(), StorageType.Rating, ratingLoser.getRating());
-		gameStorage.setData(loser.getPlayer(), StorageType.RatingDeviation, ratingLoser.getRatingDeviation());
-		gameStorage.setData(loser.getPlayer(), StorageType.RatingVolatility, ratingLoser.getVolatility());
+		gameStorage.setData(loser.getPlayer(), BoardGamesStorageType.Rating, ratingLoser.getRating());
+		gameStorage.setData(loser.getPlayer(), BoardGamesStorageType.RatingDeviation, ratingLoser.getRatingDeviation());
+		gameStorage.setData(loser.getPlayer(), BoardGamesStorageType.RatingVolatility, ratingLoser.getVolatility());
 
 	}
 

@@ -1,6 +1,7 @@
 package water.of.cup.boardgames.game.games.tictactoe;
 
 import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.storage.BoardGamesStorageType;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.storage.StorageType;
 
@@ -18,9 +19,9 @@ public class TicTacToeStorage extends GameStorage {
     @Override
     protected StorageType[] getGameStores() {
         return new StorageType[] {
-                StorageType.WINS,
-                StorageType.LOSSES,
-                StorageType.TIES,
+                BoardGamesStorageType.WINS,
+                BoardGamesStorageType.LOSSES,
+                BoardGamesStorageType.TIES,
         };
     }
 }
