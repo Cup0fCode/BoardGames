@@ -432,4 +432,17 @@ public class StorageManager {
 		if (ds != null)
 			ds.close();
 	}
+
+	public StorageType getStorageTypeByKey(String key) {
+		if(gameStores == null) return null;
+
+		for(GameStorage gameStorage : gameStores) {
+			for(StorageType storageType : gameStorage.getStorageTypes()) {
+				if(storageType.getKey().equals(key))
+					return storageType;
+			}
+		}
+
+		return null;
+	}
 }
