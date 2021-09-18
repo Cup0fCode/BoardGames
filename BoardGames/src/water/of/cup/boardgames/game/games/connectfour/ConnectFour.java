@@ -11,6 +11,7 @@ import water.of.cup.boardgames.game.*;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToeStorage;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.maps.Screen;
+import water.of.cup.boardgames.game.storage.BoardGamesStorageType;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.storage.StorageType;
 
@@ -278,7 +279,7 @@ public class ConnectFour extends Game {
 		if(!hasGameStorage()) return;
 
 		if(gamePlayerWinner != null && crossWin) {
-			gameStorage.updateData(gamePlayerWinner.getPlayer(), StorageType.CROSS_WINS, 1);
+			gameStorage.updateData(gamePlayerWinner.getPlayer(), BoardGamesStorageType.CROSS_WINS, 1);
 		}
 	}
 

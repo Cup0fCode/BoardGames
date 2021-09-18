@@ -72,7 +72,7 @@ public class BoardGamesPlaceholder extends PlaceholderExpansion {
                 return null;
             }
 
-            StorageType storeType = StorageType.getStorageTypeByKey(storeTypeString);
+            StorageType storeType = BoardGames.getInstance().getStorageManager().getStorageTypeByKey(storeTypeString);
             if(storeType == null) {
                 return null;
             }

@@ -47,20 +47,5 @@ public enum BoardGamesStorageType implements StorageType {
         return this.query;
     }
 
-    public static boolean isValidColumn(String columnName) {
-        for(StorageType storageType : StorageType.values()) {
-            if(storageType.getKey().equals(columnName)) return true;
-        }
-
-        return false;
-    }
-
-    public static StorageType getStorageTypeByKey(String key) {
-        for(StorageType storageType : StorageType.values()) {
-            if(storageType.getKey().equals(key)) return storageType;
-        }
-
-        return null;
-    }
 }
 

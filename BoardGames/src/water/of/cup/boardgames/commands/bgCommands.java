@@ -148,12 +148,9 @@ public class bgCommands implements CommandExecutor {
 
 				if(args.length > 2) {
 					String orderByType = args[2];
-					for(StorageType storageType : StorageType.values()) {
-						if(storageType.getKey().equalsIgnoreCase(orderByType)) {
-							orderBy = storageType;
-							break;
-						}
-					}
+					StorageType storageType = instance.getStorageManager().getStorageTypeByKey(orderByType);
+					if(storageType != null)
+						orderBy = storageType;
 				}
 
 				int numGamePlayers = instance.getStorageManager().getGamePlayerTotal(gameStorage);
