@@ -207,8 +207,12 @@ public class Plinko extends Game {
 	}
 
 	public void endGame() {
+		// Null check
+		if(teamManager.getTurnPlayer() == null) return;
+
 		double multiplier = multipliers[Math.abs(ballLoc[0] - 61) / 14];
-		double bet = initialBet * multiplier;
+		double bet = Math.round((initialBet * multiplier) * 100.0) / 100.0;
+
 		// TODO get bet multiplier
 		teamManager.getTurnPlayer().getPlayer().sendMessage(ConfigUtil.CHAT_PLINKO_WIN.buildString(bet + ""));
 		instance.getEconomy().depositPlayer(teamManager.getTurnPlayer().getPlayer(), bet);

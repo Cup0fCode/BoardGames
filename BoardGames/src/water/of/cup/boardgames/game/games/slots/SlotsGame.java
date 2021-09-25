@@ -103,6 +103,9 @@ public abstract class SlotsGame extends Game {
 	}
 
 	private void givePayout() {
+		// Null check
+		if(teamManager.getTurnPlayer() == null) return;
+
 		double payout = calculatePayout() * initialBet;
 
 		// give payout
