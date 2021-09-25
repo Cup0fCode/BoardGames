@@ -82,7 +82,7 @@ public class ExtensionUtil {
                         String fileName = getFileName(je.getName());
                         BoardGames.getImageManager().addImage(fileName, image);
 
-                        Bukkit.getLogger().info("[BoardGames] Loaded extension image: " + fileName);
+//                        Bukkit.getLogger().info("[BoardGames] Loaded extension image: " + fileName);
                     }
                 }
             } catch (IOException ex) {

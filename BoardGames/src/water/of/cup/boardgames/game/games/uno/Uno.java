@@ -265,7 +265,7 @@ public class Uno extends Game {
 			}
 			if (action.equals("DRAW4")) {
 				playerHands.get(player).draw(deck, 4);
-				player.getPlayer().sendMessage(ConfigUtil.CHAT_GAME_UNO_FORCE_2.toString());
+				player.getPlayer().sendMessage(ConfigUtil.CHAT_GAME_UNO_FORCE_4.toString());
 				setCardButtons(player);
 				continue;
 			}
