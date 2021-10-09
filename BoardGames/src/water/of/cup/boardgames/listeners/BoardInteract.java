@@ -178,7 +178,7 @@ public class BoardInteract implements Listener {
 					&& !player.hasPermission("boardgames.destroy"))
 				return;
 
-			if (!game.isIngame() && game.destroy(gameFrame)) {
+			if (e.getClickedBlock() != null && !game.isIngame() && game.destroy(gameFrame)) {
 
 				// drop the board item TODO: check if board item should be dropped (player not in creative, game settings)
 				ItemStack boardItem = game.getBoardItem();
