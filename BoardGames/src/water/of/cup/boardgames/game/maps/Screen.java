@@ -164,6 +164,10 @@ public class Screen {
 	public int getDirection() {
 		return direction;
 	}
+	
+	public int getInitialDirection() {
+		return initialDirection;
+	}
 
 	public GameImage getGameImage() {
 		return gameImage;
