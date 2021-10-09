@@ -25,6 +25,8 @@ public enum ConfigUtil implements ConfigInterface {
     DB_TRANSFERRED("settings.database.chesstransfer", "false"),
     BOARD_CLICK_DELAY("settings.clickdelay", "0"),
     LOAD_SKULLS("settings.loadskulls", "true"),
+    PLAYER_DISTANCE_AMOUNT("settings.distance.amount", "5"),
+    PLAYER_DISTANCE_TIME("settings.distance.time", "5000"),
 
     // GUI MESSAGES
     GUI_NEXT_PAGE("settings.messages.gui.nextpage", "&aNext Page"),
@@ -124,7 +126,8 @@ public enum ConfigUtil implements ConfigInterface {
     CHAT_PLAYER_INGAME("settings.messages.chat.playeringame", "&cYou must finish your game before joining another."),
     CHAT_PLACED_BOARD("settings.messages.chat.placedboard", "&aPlaced board."),
     CHAT_NO_BOARD_ROOM("settings.messages.chat.noboardroom", "&cNo room to place board."),
-    CHAT_WELCOME_GAME("settings.messages.chat.welcomegame", "&aWelcome to %game%!");
+    CHAT_WELCOME_GAME("settings.messages.chat.welcomegame", "&aWelcome to %game%!"),
+    CHAT_RETURN_TO_GAME("settings.messages.chat.returntogame", "&cReturn to your %game% game!");
 
     private final String path;
     private final String defaultValue;
