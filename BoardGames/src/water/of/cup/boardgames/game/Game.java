@@ -53,6 +53,7 @@ public abstract class Game {
 	protected GameInventory gameInventory;
 	protected TeamManager teamManager;
 	protected GameStorage gameStorage;
+	private Location placedMapLoc;
 	private final GameNPC gameNPC;
 
 	protected ArrayList<GameMap> gameMaps; // game maps for the game
@@ -282,6 +283,8 @@ public abstract class Game {
 		if (hasGameNPC())
 			gameNPC.setMapValLoc(new Location(loc.getWorld(), loc.getBlockX() + npcLoc[0], loc.getBlockY() + npcLoc[1],
 					loc.getBlockZ() + npcLoc[2]), rotation);
+
+		placedMapLoc = loc.clone();
 
 		// Debug
 		if (!hasGameInventory()) {
@@ -858,5 +861,9 @@ public abstract class Game {
 	protected void npcLookAt(Player player) {
 		if(!hasGameNPC()) return;
 		gameNPC.lookAt(player);
+	}
+
+	public Location getPlacedMapLoc() {
+		return placedMapLoc;
 	}
 }
