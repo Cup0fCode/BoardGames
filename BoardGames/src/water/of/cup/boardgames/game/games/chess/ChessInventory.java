@@ -13,6 +13,7 @@ import water.of.cup.boardgames.game.games.checkers.Checkers;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
 import water.of.cup.boardgames.game.inventories.GameOptionType;
+import water.of.cup.boardgames.game.storage.BoardGamesStorageType;
 
 public class ChessInventory extends GameInventory {
 
@@ -29,7 +30,9 @@ public class ChessInventory extends GameInventory {
 
         List<String> rankedValues =  Arrays.asList(ConfigUtil.GUI_RANKED_OPTION_TEXT.toString(), ConfigUtil.GUI_UNRANKED_OPTION_TEXT.toString());
         GameOption ranked = new GameOption("ranked", Material.EXPERIENCE_BOTTLE, GameOptionType.TOGGLE, null, rankedValues.get(0), rankedValues);
-        options.add(ranked);
+
+        if (game.getGameStorage().canExecute(BoardGamesStorageType.Rating))
+            options.add(ranked);
 
         List<String> timeValues =  Arrays.asList( "1 min", "1 | 1", "2 | 1", "3 min", "3 | 2", "5 min", "10 min",
 			"30 min", "60 min");
