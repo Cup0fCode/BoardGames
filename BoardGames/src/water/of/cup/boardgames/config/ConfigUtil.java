@@ -6,6 +6,7 @@ import water.of.cup.boardgames.BoardGames;
 import water.of.cup.boardgames.game.MathUtils;
 import water.of.cup.boardgames.game.storage.StorageType;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 public enum ConfigUtil implements ConfigInterface {
@@ -195,7 +196,8 @@ public enum ConfigUtil implements ConfigInterface {
     CHAT_BLACKJACK_SPLITACE("settings.messages.chat.bjsplitace", "You split aces and have no more moves."),
     CHAT_BLACKJACK_NOMONEYINSURACE("settings.messages.chat.bjnomoneyinsurance", "You can't afford insurance."),
     CHAT_BLACKJACK_BETRETURN("settings.messages.chat.bjbetreturn", "Your bet of $%num% was returned to you."),
-    CHAT_BLACKJACK_DRAWCARD("settings.messages.chat.bjdrawcard", "I drew a"),
+    CHAT_BLACKJACK_DRAWCARD("settings.messages.chat.bjdrawcard", "I drew a %string%"),
+    CHAT_BLACKJACK_FLIPCARD("settings.messages.chat.bjflipcard", "I flipped a %string%"),
     CHAT_BLACKJACK_START_TIMER("settings.messages.chat.bjgamestarttimer", "Time to next game: %num%:%num2%"),
     CHAT_BLACKJACK_PLAYER_TIMER("settings.messages.chat.bjgameplayertimer", "%player%'s time left: %num%:%num2%"),
 
@@ -252,7 +254,7 @@ public enum ConfigUtil implements ConfigInterface {
     GUI_POKER_RAISE_LIMIT_LABEL("settings.messages.gui.pokerraiselimitlabel", "&aRaise Limit: "),
     GUI_PLINKO_LOW_RISK("settings.messages.gui.plinkolowrisk", "Low Risk"),
     GUI_PLINKO_NORMAL_RISK("settings.messages.gui.plinkonormalrisk", "Normal Risk"),
-    GUI_PLINKO_HIGH_RISK("settings.messages.gui.plinkohighrisk", "High Risk");
+    GUI_PLINKO_HIGH_RISK("settings.messages.gui.plinkohighrisk", "High Risk"),
     CHAT_RETURN_TO_GAME("settings.messages.chat.returntogame", "&cReturn to your %game% game!");
 
     private final String path;
@@ -346,7 +348,7 @@ public enum ConfigUtil implements ConfigInterface {
 
         formatted = formatted.replace("%player%", player)
                 .replace("%game%", game)
-                .replace("%num%", num + "");
+                .replace("%num%", getFormattedNum(num));
         return formatted;
     }
 
@@ -377,8 +379,8 @@ public enum ConfigUtil implements ConfigInterface {
         String formatted = this.toString();
 
         formatted = formatted
-                .replace("%num%", num + "")
-                .replace("%num2%", num2 + "");
+                .replace("%num%", getFormattedNum(num))
+                .replace("%num2%", getFormattedNum(num2));
 
         return formatted;
     }
@@ -426,6 +428,10 @@ public enum ConfigUtil implements ConfigInterface {
     public void setValue(String value) {
         instance.getConfig().set(this.path, value);
         instance.saveConfig();
+    }
+
+    private String getFormattedNum(Number number) {
+        return new DecimalFormat("#.##").format(number);
     }
 
 }

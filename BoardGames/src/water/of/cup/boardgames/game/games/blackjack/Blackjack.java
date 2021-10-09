@@ -341,7 +341,7 @@ public class Blackjack extends Game {
 		}
 		dealerHand.draw(deck, 2);
 		String dealerCardName = dealerHand.getCards().get(0).getShortName();
-		dealerSendAll(ConfigUtil.CHAT_BLACKJACK_DRAWCARD.toString() + (dealerCardName.charAt(0) == 'A' ? "n " : " ") + dealerCardName + ".");
+		dealerSendAll(ConfigUtil.CHAT_BLACKJACK_DRAWCARD.buildString(dealerCardName));
 	}
 
 	private void updateDealerHandButtons(boolean cardDown) {
@@ -609,6 +609,14 @@ public class Blackjack extends Game {
 
 	private void moveCurrentHandButton() {
 		int n = getPlayerBoardLocation(teamManager.getTurnPlayer());
+		
+		//null pointer check
+		if (n == -1) {
+			currentHandButton.setVisibleForAll(false);
+			return;
+		}
+		
+		
 		Button cardButton = cardButtons[n].get(activePlayerHands[n]).get(0);
 		int[] cardLoc = cardButton.getLocation();
 		int rotation = cardButton.getRotation();
@@ -645,12 +653,12 @@ public class Blackjack extends Game {
 
 	private void completeDealersTurn() {
 		String dealerCardName = dealerHand.getCards().get(1).getShortName();
-		dealerSendAll("I flipped a" + (dealerCardName.charAt(0) == 'A' ? "n " : " ") + dealerCardName + ".");
+		dealerSendAll(ConfigUtil.CHAT_BLACKJACK_FLIPCARD.buildString(dealerCardName));
 
 		while (dealerHand.getHandBlackJackTotal() < 17) {
 			dealerHand.draw(deck);
 			dealerCardName = dealerHand.getCards().get(dealerHand.getAmountOfCards() - 1).getShortName();
-			dealerSendAll("I drew a" + (dealerCardName.charAt(0) == 'A' ? "n " : " ") + dealerCardName + ".");
+			dealerSendAll(ConfigUtil.CHAT_BLACKJACK_DRAWCARD.buildString(dealerCardName));
 		}
 		int dealerScore = dealerHand.getHandBlackJackTotal();
 		boolean dealerBlackjack = dealerScore == 21;
@@ -843,6 +851,10 @@ public class Blackjack extends Game {
 	}
 
 	private void join(Player player, int n) {
+		if (teamManager.getGamePlayer(player) != null) {
+			this.toggleJoinButtons();
+			return;
+		}
 		gamePlayerAtLocation[n] = this.addPlayer(player);
 		teamManager.addTeam(gamePlayerAtLocation[n]);
 		if (!inRound)
