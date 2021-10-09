@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.Hash;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.EnumUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -646,10 +644,13 @@ public abstract class Game {
 			return null;
 
 		String soundName = BoardGames.getInstance().getConfig().getString(configLoc + "." + key);
-		if (!EnumUtils.isValidEnum(Sound.class, soundName))
-			return null;
 
-		return Sound.valueOf(soundName);
+		try {
+			return Sound.valueOf(soundName);
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+
 	}
 
 	@Nullable
