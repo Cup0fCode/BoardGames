@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.Hash;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.EnumUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -55,6 +53,7 @@ public abstract class Game {
 	protected GameInventory gameInventory;
 	protected TeamManager teamManager;
 	protected GameStorage gameStorage;
+	private Location placedMapLoc;
 	private final GameNPC gameNPC;
 
 	protected ArrayList<GameMap> gameMaps; // game maps for the game
@@ -284,6 +283,8 @@ public abstract class Game {
 		if (hasGameNPC())
 			gameNPC.setMapValLoc(new Location(loc.getWorld(), loc.getBlockX() + npcLoc[0], loc.getBlockY() + npcLoc[1],
 					loc.getBlockZ() + npcLoc[2]), rotation);
+
+		placedMapLoc = loc.clone();
 
 		// Debug
 		if (!hasGameInventory()) {
@@ -646,10 +647,13 @@ public abstract class Game {
 			return null;
 
 		String soundName = BoardGames.getInstance().getConfig().getString(configLoc + "." + key);
-		if (!EnumUtils.isValidEnum(Sound.class, soundName))
-			return null;
 
-		return Sound.valueOf(soundName);
+		try {
+			return Sound.valueOf(soundName);
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+
 	}
 
 	@Nullable
@@ -857,5 +861,9 @@ public abstract class Game {
 	protected void npcLookAt(Player player) {
 		if(!hasGameNPC()) return;
 		gameNPC.lookAt(player);
+	}
+
+	public Location getPlacedMapLoc() {
+		return placedMapLoc;
 	}
 }

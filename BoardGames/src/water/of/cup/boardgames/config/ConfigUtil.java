@@ -25,6 +25,8 @@ public enum ConfigUtil implements ConfigInterface {
     DB_TRANSFERRED("settings.database.chesstransfer", "false"),
     BOARD_CLICK_DELAY("settings.clickdelay", "0"),
     LOAD_SKULLS("settings.loadskulls", "true"),
+    PLAYER_DISTANCE_AMOUNT("settings.distance.amount", "5"),
+    PLAYER_DISTANCE_TIME("settings.distance.time", "5000"),
 
     // GUI MESSAGES
     GUI_NEXT_PAGE("settings.messages.gui.nextpage", "&aNext Page"),
@@ -251,6 +253,7 @@ public enum ConfigUtil implements ConfigInterface {
     GUI_PLINKO_LOW_RISK("settings.messages.gui.plinkolowrisk", "Low Risk"),
     GUI_PLINKO_NORMAL_RISK("settings.messages.gui.plinkonormalrisk", "Normal Risk"),
     GUI_PLINKO_HIGH_RISK("settings.messages.gui.plinkohighrisk", "High Risk");
+    CHAT_RETURN_TO_GAME("settings.messages.chat.returntogame", "&cReturn to your %game% game!");
 
     private final String path;
     private final String defaultValue;
