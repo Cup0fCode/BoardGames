@@ -30,11 +30,10 @@ public class PlayerOutOfBoundsTimer extends BukkitRunnable {
         if(!game.hasPlayer(player)) {
             callback.onComplete();
             cancel();
+            return;
         }
 
-        double distanceFromGame = boardLoc.distance(player.getLocation());
-
-        if(distanceFromGame < DISTANCE) {
+        if(PlayerMove.playerIsInRange(boardLoc, player.getLocation())) {
             callback.onComplete();
             cancel();
             return;
