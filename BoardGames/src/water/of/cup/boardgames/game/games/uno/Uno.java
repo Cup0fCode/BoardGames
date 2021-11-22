@@ -32,6 +32,15 @@ public class Uno extends Game {
 
 	private int middleCardSize = 2;
 
+	private static final HashMap<String, String> COLOR_MAP = new HashMap<>();
+
+	static {
+		COLOR_MAP.put("RED", ConfigUtil.CHAT_GAME_UNO_COLOR_RED.toString());
+		COLOR_MAP.put("BLUE", ConfigUtil.CHAT_GAME_UNO_COLOR_BLUE.toString());
+		COLOR_MAP.put("YELLOW", ConfigUtil.CHAT_GAME_UNO_COLOR_YELLOW.toString());
+		COLOR_MAP.put("GREEN", ConfigUtil.CHAT_GAME_UNO_COLOR_GREEN.toString());
+	}
+
 	public Uno(int rotation) {
 		super(rotation);
 	}
@@ -221,7 +230,7 @@ public class Uno extends Game {
 			if (hand.cardsLeft() == 1) {
 				// say uno
 				this.getGamePlayers()
-						.forEach((p) -> p.getPlayer().sendMessage(player.getPlayer().getDisplayName() + ": Uno!"));
+						.forEach((p) -> p.getPlayer().sendMessage(ConfigUtil.CHAT_GAME_UNO_LAST_CARD.buildString(player.getPlayer().getDisplayName())));
 			}
 
 			currentCard = card;
@@ -350,7 +359,7 @@ public class Uno extends Game {
 				setCardButtons(teamManager.getTurnPlayer());
 				mapManager.renderBoard();
 				this.getGamePlayers().forEach((p) -> p.getPlayer()
-						.sendMessage(player.getPlayer().getDisplayName() + ": " + b.getName() + "!"));
+						.sendMessage(buildColorString(player, b.getName())));
 			} else {
 				player.sendMessage(ConfigUtil.CHAT_GAME_UNO_SELECT_COLOR.toString());
 			}
@@ -416,4 +425,11 @@ public class Uno extends Game {
 		
 	}
 
+	private String buildColorString(Player player, String color) {
+		String formatted = ConfigUtil.CHAT_GAME_UNO_COLOR.toString();
+
+		formatted = formatted.replace("%player%", player.getDisplayName()).replace("%color%", COLOR_MAP.get(color));
+
+		return formatted;
+	}
 }

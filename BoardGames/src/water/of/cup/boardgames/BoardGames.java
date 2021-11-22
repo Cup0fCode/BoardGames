@@ -135,6 +135,9 @@ public class BoardGames extends JavaPlugin {
 		Bukkit.getLogger().info("[BoardGames] bStats: " + metrics.isEnabled() + " plugin ver: " + getDescription().getVersion());
 
 		metrics.addCustomChart(new Metrics.SimplePie("plugin_version", () -> getDescription().getVersion()));
+
+		/* update spawn chunks*/
+		updateLoadedChunkBoards();
 	}
 
 	@Override
@@ -161,9 +164,6 @@ public class BoardGames extends JavaPlugin {
 
 		/* Disable all current async tasks */
 		Bukkit.getScheduler().cancelTasks(this);
-		
-		/* update spawn chunks*/
-		updateLoadedChunkBoards();
 	}
 
 	private void updateLoadedChunkBoards() {
