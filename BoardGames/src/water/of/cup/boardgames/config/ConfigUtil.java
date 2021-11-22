@@ -111,6 +111,12 @@ public enum ConfigUtil implements ConfigInterface {
     CHAT_GAME_UNO_FORCE_DRAW("settings.messages.chat.unoforcedraw", "You have no playable cards and were forced to draw a card."),
     CHAT_GAME_UNO_INVALID_CARD("settings.messages.chat.unoinvalidcard", "You can not play that card."),
     CHAT_GAME_PLAYER_LEAVE("settings.messages.chat.gameplayerleave", "%player% has left %game%."),
+    CHAT_GAME_UNO_LAST_CARD("settings.messages.chat.unolastcard", "%player%: Uno!"),
+    CHAT_GAME_UNO_COLOR_RED("settings.messages.chat.unored", "RED"),
+    CHAT_GAME_UNO_COLOR_BLUE("settings.messages.chat.unoblue", "BLUE"),
+    CHAT_GAME_UNO_COLOR_YELLOW("settings.messages.chat.unoyellow", "YELLOW"),
+    CHAT_GAME_UNO_COLOR_GREEN("settings.messages.chat.unogreen", "GREEN"),
+    CHAT_GAME_UNO_COLOR("settings.messages.chat.unocolor", "%player%: %color%!"),
 
     // CHAT MESSAGES
     CHAT_NO_DB("settings.messages.chat.nodb", "&cDatabase must be enabled to view stats."),
