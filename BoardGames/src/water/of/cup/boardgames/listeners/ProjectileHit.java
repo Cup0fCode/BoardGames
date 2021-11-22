@@ -17,7 +17,7 @@ public class ProjectileHit implements Listener {
 		
 		if (event.getHitBlock() != null) { // check if a block was hit
 			Block hitBlock = event.getHitBlock();
-			Bukkit.getLogger().info("hight:" + hitBlock.getBoundingBox().getHeight());
+//			Bukkit.getLogger().info("hight:" + hitBlock.getBoundingBox().getHeight());
 			if (gameManager.getGamesInRegion(hitBlock.getWorld(), hitBlock.getBoundingBox().getMin(),
 					hitBlock.getBoundingBox().getMax()).size() != 0) {
 				if (!event.getEntity().isDead())

@@ -137,7 +137,7 @@ public class BoardGames extends JavaPlugin {
 		metrics.addCustomChart(new Metrics.SimplePie("plugin_version", () -> getDescription().getVersion()));
 
 		/* update spawn chunks*/
-		updateLoadedChunkBoards();
+//		updateLoadedChunkBoards();
 	}
 
 	@Override
