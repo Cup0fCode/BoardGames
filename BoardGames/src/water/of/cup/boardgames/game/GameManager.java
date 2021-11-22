@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.util.Vector;
 
 import water.of.cup.boardgames.BoardGames;
+import water.of.cup.boardgames.game.maps.GameMap;
 
 public class GameManager {
 	private HashMap<String, Class<? extends Game>> nameToGameTypes;
@@ -39,7 +40,7 @@ public class GameManager {
 			try {
 				cons = gameType.getConstructor(int.class);
 				Game game = cons.newInstance(0);
-				if(game.isEnabled())
+				if (game.isEnabled())
 					nameToGameTypes.put(game.getName(), gameType);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -62,11 +63,11 @@ public class GameManager {
 		}
 		return null;
 	}
-	
+
 	public Game newGame(BoardItem item, int rotation) {
 		return newGame(getGameNameByAlt(item.getName()), rotation);
 	}
-	
+
 	public String[] getGameNames() {
 		return nameToGameTypes.keySet().toArray(new String[nameToGameTypes.keySet().size()]);
 	}
@@ -84,7 +85,7 @@ public class GameManager {
 	}
 
 	public String getGameNameByAlt(String altName) {
-		if(nameToGameTypes.containsKey(altName)) {
+		if (nameToGameTypes.containsKey(altName)) {
 			return altName;
 		}
 
@@ -100,8 +101,9 @@ public class GameManager {
 	}
 
 	public boolean isValidGame(String name) {
-		for(String gameName : getGameNames()) {
-			if(gameName.equals(name)) return true;
+		for (String gameName : getGameNames()) {
+			if (gameName.equals(name))
+				return true;
 		}
 
 		return false;
@@ -209,11 +211,15 @@ public class GameManager {
 				continue;
 			ItemFrame frame = (ItemFrame) entity;
 			ItemStack item = frame.getItem();
-			if (item != null && item.getType() == Material.FILLED_MAP && ((MapMeta) item.getItemMeta()).hasMapId()) {
-				Game game = getGameByGameId(((MapMeta) item.getItemMeta()).getMapId());
-				if (game != null && entity.getLocation().toVector().isInAABB(p1, p2))
-					games.add(game);
-			}
+
+			if (!GameMap.isGameMap(item))
+				continue;
+			GameMap gameMap = new GameMap(item);
+
+			Game game = getGameByGameId(gameMap.getGameId());
+			if (game != null && entity.getLocation().toVector().isInAABB(p1, p2))
+				games.add(game);
+
 		}
 		return games;
 	}
@@ -258,6 +264,6 @@ public class GameManager {
 		for (Game game : games) {
 			game.rerender(player);
 		}
-		
+
 	}
 }

@@ -9,10 +9,16 @@ import java.util.logging.Level;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -91,7 +97,7 @@ public class BoardGames extends JavaPlugin {
 		
 //		if(config.getBoolean("settings.chessboard.recipe.enabled"))
 //			addGameRecipes();
-		registerListeners(new PlayerQuit(), new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak(), new PlayerJoin(), new PlayerItemCraft(), new PlayerMove());
+		registerListeners(new PlayerQuit(), new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak(), new PlayerJoin(), new PlayerItemCraft(), new PlayerMove(), new ProjectileHit(), new HangingBreakByEntity());
 
 		// Load recipes after config and games are initialized
 		GameConfigLoader.loadGameConfig();
@@ -116,6 +122,9 @@ public class BoardGames extends JavaPlugin {
 		Bukkit.getLogger().info("[ChessBoards] bStats: " + metrics.isEnabled() + " plugin ver: " + getDescription().getVersion());
 
 		metrics.addCustomChart(new Metrics.SimplePie("plugin_version", () -> getDescription().getVersion()));
+
+		/* update spawn chunks*/
+//		updateLoadedChunkBoards();
 	}
 
 	@Override
@@ -142,6 +151,36 @@ public class BoardGames extends JavaPlugin {
 
 		/* Disable all current async tasks */
 		Bukkit.getScheduler().cancelTasks(this);
+	}
+
+	private void updateLoadedChunkBoards() {
+		for (World world : Bukkit.getWorlds()) 
+			for (Chunk chunk : world.getLoadedChunks())
+				for (Entity entity : chunk.getEntities()) {
+					if (entity.isDead())
+						continue;
+					if (!(entity instanceof ItemFrame))
+						continue;
+					ItemFrame frame = (ItemFrame) entity;
+					ItemStack item = frame.getItem();
+					if (!GameMap.isGameMap(item))
+						continue;
+					GameMap gameMap = new GameMap(item);
+
+					if (gameManager.getGameByGameId(gameMap.getGameId()) == null) {
+						final Game game = gameManager.newGame(gameMap.getGameName(), gameMap.getRotation());
+						if (game == null) {
+							continue;
+						}
+						// if (game.getPlacedMapVal() == gameMap.getMapVal()) {
+						Location loc = frame.getLocation().getBlock().getLocation();
+						game.replace(loc, game.getRotation(), gameMap.getMapVal());
+						gameManager.addGame(game);
+						// game.placeBoard(frame.getLocation(), game.getRotation());
+						// }
+					}
+				}
+		
 	}
 
 	private void registerListeners(Listener... listeners) {

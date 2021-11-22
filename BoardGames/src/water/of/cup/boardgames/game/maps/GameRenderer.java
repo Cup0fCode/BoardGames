@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game.maps;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -54,7 +55,8 @@ public class GameRenderer extends MapRenderer {
 			gameImage = game.getGameImage().clone();
 		}
 
-		for (Button button : game.getButtons()) {
+		ArrayList<Button> gameButtons = new ArrayList<>(game.getButtons());
+		for (Button button : gameButtons) {
 			// check that button is visible for player &
 			// check that button belongs to screen/board (button.getScreen() returns null if
 			// button belongs to game)
