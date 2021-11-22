@@ -103,7 +103,7 @@ public class BoardGames extends JavaPlugin {
 		
 //		if(config.getBoolean("settings.chessboard.recipe.enabled"))
 //			addGameRecipes();
-		registerListeners(new PlayerQuit(), new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak(), new PlayerJoin(), new PlayerItemCraft(), new PlayerMove());
+		registerListeners(new PlayerQuit(), new ChunkLoad(), new BlockPlace(), new BoardInteract(), new BlockBreak(), new PlayerJoin(), new PlayerItemCraft(), new PlayerMove(), new ProjectileHit(), new HangingBreakByEntity());
 
 		// Load recipes after config and games are initialized
 		GameConfigLoader.loadGameConfig();
