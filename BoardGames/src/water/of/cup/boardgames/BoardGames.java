@@ -9,10 +9,16 @@ import java.util.logging.Level;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -33,6 +39,7 @@ import water.of.cup.boardgames.game.games.conways_game_of_life.ConwaysGameOfLife
 import water.of.cup.boardgames.game.games.minesweaper.MineSweeper;
 import water.of.cup.boardgames.game.games.sudoku.Sudoku;
 import water.of.cup.boardgames.game.games.tictactoe.TicTacToe;
+import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.npcs.GameNPCRegistry;
@@ -154,6 +161,39 @@ public class BoardGames extends JavaPlugin {
 
 		/* Disable all current async tasks */
 		Bukkit.getScheduler().cancelTasks(this);
+		
+		/* update spawn chunks*/
+		updateLoadedChunkBoards();
+	}
+
+	private void updateLoadedChunkBoards() {
+		for (World world : Bukkit.getWorlds()) 
+			for (Chunk chunk : world.getLoadedChunks())
+				for (Entity entity : chunk.getEntities()) {
+					if (entity.isDead())
+						continue;
+					if (!(entity instanceof ItemFrame))
+						continue;
+					ItemFrame frame = (ItemFrame) entity;
+					ItemStack item = frame.getItem();
+					if (!GameMap.isGameMap(item))
+						continue;
+					GameMap gameMap = new GameMap(item);
+
+					if (gameManager.getGameByGameId(gameMap.getGameId()) == null) {
+						final Game game = gameManager.newGame(gameMap.getGameName(), gameMap.getRotation());
+						if (game == null) {
+							continue;
+						}
+						// if (game.getPlacedMapVal() == gameMap.getMapVal()) {
+						Location loc = frame.getLocation().getBlock().getLocation();
+						game.replace(loc, game.getRotation(), gameMap.getMapVal());
+						gameManager.addGame(game);
+						// game.placeBoard(frame.getLocation(), game.getRotation());
+						// }
+					}
+				}
+		
 	}
 
 	private void registerListeners(Listener... listeners) {
