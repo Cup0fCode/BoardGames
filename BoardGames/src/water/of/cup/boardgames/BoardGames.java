@@ -31,6 +31,7 @@ import water.of.cup.boardgames.game.GameManager;
 import water.of.cup.boardgames.game.games.chess.ChessBoardsUtil;
 import water.of.cup.boardgames.commands.bgCommands;
 import water.of.cup.boardgames.game.games.chess.Chess;
+import water.of.cup.boardgames.game.maps.GameMap;
 import water.of.cup.boardgames.game.maps.MapManager;
 import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.npcs.GameNPCRegistry;
