@@ -248,17 +248,25 @@ public class Hand {
 
 	}
 
-	public static Hand getBestHand(ArrayList<Hand> hands, ArrayList<Card> extraCards) {
-		Hand bestHand = hands.get(0);
+	public static ArrayList<Hand> getBestHand(ArrayList<Hand> hands, ArrayList<Card> extraCards) {
+		ArrayList<Hand> bestHands = new ArrayList<>();
+
 		int bestHandPoints = 0;
 		for (Hand hand : hands) {
 			int points = hand.getHandPoints(extraCards);
 			if (points > bestHandPoints) {
 				bestHandPoints = points;
-				bestHand = hand;
 			}
 		}
-		return bestHand;
+
+		for (Hand hand : hands) {
+			int points = hand.getHandPoints(extraCards);
+			if (points == bestHandPoints) {
+				bestHands.add(hand);
+			}
+		}
+
+		return bestHands;
 	}
 
 	public GameImage getGameImage(boolean moveCardsDown) {
