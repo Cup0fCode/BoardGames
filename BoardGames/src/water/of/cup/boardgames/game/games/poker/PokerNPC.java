@@ -1,8 +1,8 @@
 package water.of.cup.boardgames.game.games.poker;
 
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.npcs.GameNPC;
 import water.of.cup.boardgames.game.npcs.NPCSkin;
-import water.of.cup.boardgames.config.ConfigUtil;
 
 public class PokerNPC extends GameNPC {
 

@@ -1,11 +1,11 @@
 package water.of.cup.boardgames.game.games.poker;
 
 import org.bukkit.Material;
+import water.of.cup.boardgames.config.ConfigUtil;
 import water.of.cup.boardgames.game.GamePlayer;
 import water.of.cup.boardgames.game.inventories.GameInventory;
 import water.of.cup.boardgames.game.inventories.GameOption;
 import water.of.cup.boardgames.game.inventories.GameOptionType;
-import water.of.cup.boardgames.config.ConfigUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

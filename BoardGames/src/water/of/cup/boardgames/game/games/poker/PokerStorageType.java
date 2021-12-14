@@ -1,9 +1,9 @@
 package water.of.cup.boardgames.game.games.poker;
 
 import water.of.cup.boardgames.game.Game;
+import water.of.cup.boardgames.game.storage.CasinoGamesStorageType;
 import water.of.cup.boardgames.game.storage.GameStorage;
 import water.of.cup.boardgames.game.storage.StorageType;
-import water.of.cup.boardgames.game.storage.CasinoGamesStorageType;
 
 public class PokerStorageType extends GameStorage {
 

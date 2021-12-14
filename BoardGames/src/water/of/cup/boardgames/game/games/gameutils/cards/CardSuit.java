@@ -1,5 +1,6 @@
 package water.of.cup.boardgames.game.games.gameutils.cards;
 
+
 import water.of.cup.boardgames.config.ConfigUtil;
 
 public enum CardSuit {

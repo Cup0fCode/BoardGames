@@ -1,8 +1,8 @@
 package water.of.cup.boardgames.game.games.gameutils.cards;
 
 import water.of.cup.boardgames.BoardGames;
-import water.of.cup.boardgames.game.GameImage;
 import water.of.cup.boardgames.config.ConfigUtil;
+import water.of.cup.boardgames.game.GameImage;
 
 public class Card {
 	int num; // ace is 0

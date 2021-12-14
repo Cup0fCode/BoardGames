@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class Hand {
-	ArrayList<Card> cards;
+	private ArrayList<Card> cards;
 
 	public Hand() {
 		cards = new ArrayList<Card>();
@@ -33,6 +33,14 @@ public class Hand {
 	public int getHandPoints() {
 		return getHandPoints(new ArrayList<Card>());
 	}
+
+//	public int getCardPoints() {
+//		int cardPoints = 0;
+//		for(Card card : cards) {
+//			cardPoints += card.getPoints();
+//		}
+//		return cardPoints;
+//	}
 
 	public int getHandPoints(ArrayList<Card> extraCards) {
 		ArrayList<Card> handCards = new ArrayList<Card>();
@@ -248,7 +256,7 @@ public class Hand {
 
 	}
 
-	public static ArrayList<Hand> getBestHand(ArrayList<Hand> hands, ArrayList<Card> extraCards) {
+	public static Hand getBestHand(ArrayList<Hand> hands, ArrayList<Card> extraCards) {
 		ArrayList<Hand> bestHands = new ArrayList<>();
 
 		int bestHandPoints = 0;
@@ -266,7 +274,19 @@ public class Hand {
 			}
 		}
 
-		return bestHands;
+		// If they share best hand in/with flop, go to best individual hand
+		if(bestHands.size() > 1) {
+			Hand bestHand = bestHands.get(0);
+			for(Hand hand : hands) {
+				if(hand.getHandPoints() > bestHand.getHandPoints()) {
+					bestHand = hand;
+				}
+			}
+			return bestHand;
+		} else {
+			// Best hand / highest point card in hand
+			return bestHands.get(0);
+		}
 	}
 
 	public GameImage getGameImage(boolean moveCardsDown) {
