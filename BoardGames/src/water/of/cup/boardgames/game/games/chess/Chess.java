@@ -27,6 +27,7 @@ public class Chess extends Game {
 
 	public Chess(int rotation) {
 		super(rotation);
+		teamManager.setTurn("WHITE");
 		// TODO Auto-generated constructor stub
 	}
 	
