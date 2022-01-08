@@ -512,6 +512,20 @@ public abstract class Game {
 		return BoardGames.getInstance().getConfig().getString(configLoc);
 	}
 
+	public int getMaxWager() {
+		String configLoc = "settings.games." + getName() + ".maxWager";
+		Object maxWager = BoardGames.getInstance().getConfig().get(configLoc);
+
+		if(maxWager == null || !MathUtils.isNumeric(maxWager + ""))
+			return Integer.MAX_VALUE;
+
+		int maxWagerNum = Integer.parseInt(maxWager + "");
+
+		if(maxWagerNum < 0) return Integer.MAX_VALUE;
+
+		return maxWagerNum;
+	}
+
 	public static NamespacedKey getGameNameKey() {
 		return gameNameKey;
 	}

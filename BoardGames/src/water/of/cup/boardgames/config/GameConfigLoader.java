@@ -120,6 +120,7 @@ public class GameConfigLoader {
                 String configLoc = "settings.games." + temp.getName();
                 defaultConfig.put(configLoc + ".enabled", "true");
                 defaultConfig.put(configLoc + ".altName", temp.getName());
+                defaultConfig.put(configLoc + ".maxWager", "-1");
             }
         }
 

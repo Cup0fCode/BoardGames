@@ -120,7 +120,11 @@ public class GameNumberInventory extends InventoryScreen {
 
         // Max amount
         gui.addElement(new StaticGuiElement('c', new ItemStack(Material.BLUE_STAINED_GLASS_PANE), click -> {
-                    int maxAmount = gameOption.requiresEconomy() ? (int) instance.getEconomy().getBalance(player) : gameOption.getMaxIntValue();
+                    int maxAmount = gameOption.getMaxIntValue();
+                    if(gameOption.requiresEconomy() && (int) instance.getEconomy().getBalance(player) < maxAmount) {
+                        maxAmount = (int) instance.getEconomy().getBalance(player);
+                    }
+
                     setNumAmounts(numAmounts, maxAmount);
                     normalizeNumAmounts(numAmounts, gameOption);
                     click.getGui().draw();

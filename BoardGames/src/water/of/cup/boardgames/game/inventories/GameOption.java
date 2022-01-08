@@ -93,8 +93,8 @@ public class GameOption {
         return maxIntValue;
     }
 
-    public static GameOption getWagerGameOption() {
-        return new GameOption("wager", Material.GOLD_INGOT, GameOptionType.COUNT, ConfigUtil.GUI_WAGER_LABEL.toString(), "0", true);
+    public static GameOption getWagerGameOption(int maxWager) {
+        return new GameOption("wager", Material.GOLD_INGOT, GameOptionType.COUNT, ConfigUtil.GUI_WAGER_LABEL.toString(), "0", true, 0, maxWager);
     }
 
     public static GameOption getTeamSelectGameOption(ArrayList<String> teams) {

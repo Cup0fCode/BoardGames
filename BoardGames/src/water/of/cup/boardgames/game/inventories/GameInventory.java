@@ -106,7 +106,7 @@ public abstract class GameInventory {
 
         // Add wager option if enabled
         if(this.hasWagers) {
-            this.gameOptions.add(0, GameOption.getWagerGameOption());
+            this.gameOptions.add(0, GameOption.getWagerGameOption(game.getMaxWager()));
         }
 
         // Remove economy required options if no economy is found
