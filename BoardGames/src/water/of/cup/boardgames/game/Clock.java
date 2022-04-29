@@ -89,11 +89,14 @@ public class Clock extends BukkitRunnable {
 		String timeText = "";
 		for (GamePlayer gamePlayer : game.getGamePlayers()) {
 			timeText += gamePlayer.getPlayer().getName() + ": " + (int) (playerTimes.get(gamePlayer) / 60) + ":"
-					+ (int) (playerTimes.get(gamePlayer) % 60) + " | ";
+					+ String.format("%02d",(int) (playerTimes.get(gamePlayer) % 60)) + " | ";
 		}
 
+		/*
+		System.out.println("timetext " + timeText);
 		timeText = timeText.substring(0, timeText.length() - 2);
-
+		System.out.println("timetext " + timeText);
+		 */
 		for (GamePlayer gamePlayer : game.getGamePlayers()) {
 			gamePlayer.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR,
 					TextComponent.fromLegacyText(ChatColor.YELLOW + timeText));

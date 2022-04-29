@@ -203,9 +203,14 @@ public class Chess extends Game {
 				return; // none clicked
 			board.promotePawn(teamTurn, ChessPiece.valueOf(promotion + "_" + promotionNames[p]));
 			promotion = "NONE";
-			clock.run();
-			teamManager.nextTurn();
 			paintBoard();
+			teamManager.nextTurn();
+			if (!board.checkGameOver().equals("")) {
+				GamePlayer playerWinner = teamManager.getGamePlayerByTeam(board.checkGameOver());
+				endGame(playerWinner);
+				return;
+			}
+			clock.run();
 			return;
 		}
 
@@ -264,7 +269,6 @@ public class Chess extends Game {
 	@Override
 	protected void gamePlayerOutOfTime(GamePlayer turn) {
 		this.endGame(teamManager.getTurnPlayer() == turn ? teamManager.nextTurn() : teamManager.getTurnPlayer());
-
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package water.of.cup.boardgames.game;
 
-import org.bukkit.Sound;
 import water.of.cup.boardgames.config.GameRecipe;
 import water.of.cup.boardgames.config.GameSound;
 

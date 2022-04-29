@@ -182,7 +182,7 @@ public class ChessBoard {
 
 	protected String getPawnPromotion() {
 		for (int i = 0; i < 8; i++) {
-			if ((structure[7][i] == ChessPiece.BLACK_PAWN)) {
+			if (structure[7][i] == ChessPiece.BLACK_PAWN) {
 				return "BLACK";
 			} else if (structure[0][i] == ChessPiece.WHITE_PAWN) {
 				return "WHITE";

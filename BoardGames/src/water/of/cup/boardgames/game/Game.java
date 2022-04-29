@@ -300,6 +300,7 @@ public abstract class Game {
 
 	public void endGame(GamePlayer winner) {
 		ingame = false;
+
 		wagerManager.completeWagers(winner);
 		sendGameWinMoney(winner);
 		sendEndGameMessage(winner);

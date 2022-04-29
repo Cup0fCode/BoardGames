@@ -34,8 +34,7 @@ public class ChessInventory extends GameInventory {
         if(ConfigUtil.getBoolean("settings.games.Chess.database.rating"))
             options.add(ranked);
 
-        List<String> timeValues =  Arrays.asList( "1 min", "1 | 1", "2 | 1", "3 min", "3 | 2", "5 min", "10 min",
-			"30 min", "60 min");
+        List<String> timeValues =  Arrays.asList( "10 min", "20 min", "30 min", "40 min", "50 min", "60 min");
         GameOption times = new GameOption("time", Material.LEATHER, GameOptionType.COUNT, null, timeValues.get(0), timeValues);
         options.add(times);
 

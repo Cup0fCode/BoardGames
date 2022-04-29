@@ -330,7 +330,10 @@ public class Checkers extends Game {
 
 		String winner = checkGameOver();
 		if (!winner.equals("EMPTY")) {
-			GamePlayer playerWinner = teamManager.getGamePlayerByTeam(winner);
+			GamePlayer playerWinner = null;
+			if(!winner.equals("TIE")){
+				playerWinner = teamManager.getGamePlayerByTeam(winner);
+			}
 			endGame(playerWinner);
 			return;
 		}
